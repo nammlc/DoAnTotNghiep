@@ -1,0 +1,80 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="row">
+
+    <!-- Left Section: Menu -->
+    <div class="col-md-8" style="border-right: rgb(195, 194, 191) solid 0.5px ;">
+        <form action="" class="search-container">
+            <input type="text" name="search" id="search_dish" placeholder="Tìm tên món ăn , đồ uống ,...">
+        </form>
+        <div class="row">
+            @for (int i = 0; i < 12; i++)
+            {
+                <div class="col-md-3" style="text-align: center;">
+                    <div class="menu-item">
+                        <img src="https://www.highlandscoffee.com.vn/vnt_upload/product/11_2023/3P_COMBO_Freeze_Berry.jpg"
+                            alt="Food Item" style="height: 180px; width: 100%;">
+                        <div class="price">$5.00</div> <!-- Giá nằm trên ảnh -->
+                        <div class="name_dish">Tên món ăn</div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Right Section: Order Summary -->
+    <div class="col-md-4">
+        <div class="order-summary">
+            <h4>Đơn hàng của bạn</h4>
+            <ul class="list-group">
+                <!-- Nếu chưa gọi món nào -->
+                @if (true)
+                {
+                    <p class="no-items">Chưa gọi món nào</p>
+                }
+                else
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Burger
+                        <span class="badge bg-primary rounded-pill">$8.00</span>
+                        <input type="number" value="1" class="form-control" style="width: 60px;" />
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Fries
+                        <span class="badge bg-primary rounded-pill">$3.00</span>
+                        <input type="number" value="1" class="form-control" style="width: 60px;" />
+                    </li>
+                }
+            </ul>
+
+            <div class="mt-3">
+                <h5>Tổng cộng: <span class="text-primary">$11.00</span></h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
