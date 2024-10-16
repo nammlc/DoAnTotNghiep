@@ -26,33 +26,34 @@ body {
   position: relative;
   margin-bottom: 20px;
   text-align: center;
-  transition: all 0.3s ease; /* Thêm hiệu ứng chuyển đổi mượt mà */
+  transition: all 0.3s ease;
   background-color: #fff;
   border-radius: 10px;
 }
 
 .search-container {
-  display: flex; /* Sử dụng Flexbox */
+  display: flex;
   position: relative;
   left: 50px;
-  justify-content: center; /* Căn giữa theo chiều ngang */
-  margin-bottom: 20px; /* Khoảng cách dưới form tìm kiếm */
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .col-md-8 .search-container {
-  width: 90%; /* Chiều rộng của form */
+  width: 90%;
 }
 
 .search-container input {
-  width: 100%; /* Chiều rộng của input */
-  padding: 10px; /* Padding cho input */
-  border-radius: 10px; /* Bo tròn các góc */
-  border: 1px solid #ccc; /* Đường viền cho input */
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng cho input */
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
+
 .menu-item:hover {
-  opacity: 0.5; /* Làm mờ món ăn khi trỏ vào */
-  cursor: pointer; /* Con trỏ chuột thành pointer */
+  opacity: 0.5;
+  cursor: pointer;
 }
 
 .menu-item img {
@@ -104,9 +105,10 @@ body {
   margin-bottom: 20px;
 }
 
-.btn_header:hover{
+.btn_header:hover {
   opacity: 0.5;
 }
+
 .employee-info {
   display: flex;
   align-items: center;

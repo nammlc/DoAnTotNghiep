@@ -70,12 +70,26 @@
 
             <div class="mt-3">
                 <h5>Tổng cộng: <span class="text-primary">$11.00</span></h5>
-                <form method="post" asp-page-handler="GenerateQR">
-                    <button type="submit" class="btn btn-primary">Tạo mã QR</button>
-                </form>
-                <form method="post" asp-page-handler="GetAllBanks" style="padding-top: 10px;">
+                <button type="button" class="btn btn-primary" id="openQrModal">Tạo mã QR</button>
+                
+                <form method="get" asp-page-handler="GetAllBanks" style="padding-top: 10px;">
                     <button type="submit" class="btn btn-primary">Danh sách các ngân hàng ở Việt Nam</button>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrModalLabel">Mã QR Thanh Toán</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="qrCodeImage" src="@Model.QRCodeModel.QRCodeUrl" alt="QR Code" class="img-fluid" style="max-width: 300px;">
+                <div></div>
             </div>
         </div>
     </div>
@@ -86,6 +100,9 @@
     <h4>Danh sách ngân hàng</h4>
     @if (Model.Banks != null && Model.Banks.Count > 0)
     {
+        <div>
+            Có tổng cộng @Model.Banks.Count ngân hàng
+        </div>
         foreach (var bank in Model.Banks)
         {
             <div class="col-md-4" style="text-align: center;">
@@ -121,7 +138,7 @@
 
             // In danh sách ngân hàng vào console
             console.log(banks);
-            
+
             // Hiển thị danh sách ngân hàng
             const bankList = document.querySelector(".row.mt-4");
             bankList.innerHTML = '<h4>Danh sách ngân hàng</h4>'; // Reset danh sách
@@ -149,5 +166,33 @@
     document.querySelector('form[asp-page-handler="GetAllBanks"]').addEventListener('submit', async (event) => {
         event.preventDefault(); // Ngăn chặn gửi form mặc định
         await fetchBanks(); // Gọi hàm fetchBanks
+    });
+</script>
+<script>
+    document.getElementById("openQrModal").addEventListener("click", async function () {
+        @* try {
+            const response = await fetch('/Index?handler=GetQR', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            });
+
+            if (response.ok) {
+                console.log(response.status)
+                var qrCodeImage = document.getElementById("qrCodeImage");
+                document.getElementById("qrCodeImage").src = @Model.QRCodeModel.QRCodeUrl  *@
+                var qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+                qrModal.show();
+            @* } else {
+                const errorText = await response.text();
+                console.error('Có lỗi xảy ra khi lấy mã QR:', errorText);
+                alert("Có lỗi xảy ra: " + errorText);
+            }
+        } catch (error) {
+            console.error('Có lỗi xảy ra:', error);
+            alert("Có lỗi xảy ra khi gửi yêu cầu.");
+        } *@
     });
 </script>
