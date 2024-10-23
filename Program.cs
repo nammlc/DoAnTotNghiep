@@ -1,26 +1,50 @@
+using MySql.Data.MySqlClient;
+using Microsoft.EntityFrameworkCore;
+using DoAnTotNghiep.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorPages();
-builder.Services.AddHttpClient();
+// Thêm dịch vụ vào container.
+builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<MyDbContext>(options =>
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    new MySqlServerVersion(new Version(8, 0, 25)))); // Điều chỉnh phiên bản MySQL nếu cần
+builder.Services.AddRazorPages(); // Phải thêm dịch vụ trước khi gọi builder.Build()
+builder.Services.AddHttpClient(); // Thêm các dịch vụ trước khi build ứng dụng
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Khởi tạo và kiểm tra kết nối cơ sở dữ liệu
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<MyDbContext>();
+    try
+    {
+        dbContext.Database.CanConnect();
+        Console.WriteLine("Kết nối cơ sở dữ liệu thành công.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Lỗi kết nối cơ sở dữ liệu: {ex.Message}");
+    }
+}
+
+// Cấu hình pipeline xử lý HTTP.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
-app.MapRazorPages();
+app.MapRazorPages(); 
+app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapRazorPages();
+    });
 
 app.Run();

@@ -43,6 +43,22 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.1.35, )"
+            },
+            "MySql.Data": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "MySqlConnector": {
+              "target": "Package",
+              "version": "[2.3.7, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
             "QRCode": {
               "target": "Package",
               "version": "[2.2.0, )"
@@ -51,9 +67,21 @@
               "target": "Package",
               "version": "[1.6.0, )"
             },
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.8.6, )"
+            },
             "System.Drawing.Common": {
               "target": "Package",
               "version": "[8.0.10, )"
+            },
+            "X.PagedList": {
+              "target": "Package",
+              "version": "[10.5.3, )"
+            },
+            "X.PagedList.Mvc.Core": {
+              "target": "Package",
+              "version": "[10.5.3, )"
             }
           },
           "imports": [

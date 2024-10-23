@@ -1,5 +1,5 @@
 ﻿@page
-@model IndexModel
+@model DoAnTotNghiep.Pages.IndexModel;
 @{
     ViewData["Title"] = "Home page";
 }
@@ -7,21 +7,35 @@
 <div class="row">
     <!-- Left Section: Menu -->
     <div class="col-md-8" style="border-right: rgb(195, 194, 191) solid 0.5px;">
-        <form action="" class="search-container">
-            <input type="text" name="search" id="search_dish" placeholder="Tìm tên món ăn, đồ uống,...">
+        <form method="get" action="@Url.Action("")" class="search-container">
+            <input type="text" id="searchInput" name="searchQuery" value="@ViewBag.SearchQuery"
+                placeholder="Tìm kiếm tên, loại món ăn..." class="form-control">
         </form>
         <div class="row" id="menu-items">
-            @for (int i = 0; i < 12; i++)
+            @if (Model != null && Model.MonAn != null && Model.MonAn.Any())
+
             {
-                <div class="col-md-3" style="text-align: center;">
-                    <div class="menu-item">
-                        <img src="https://www.highlandscoffee.com.vn/vnt_upload/product/11_2023/3P_COMBO_Freeze_Berry.jpg"
-                            alt="Food Item" style="height: 180px; width: 100%;">
-                        <div class="price">$5.00</div>
-                        <div class="name_dish">Tên món ăn</div>
+                int TongMonAn = (int)ViewData["TongMonAn"];
+                int TotalPages = (int)ViewData["TotalPages"];
+                int CurrentPage = (int)(ViewData["CurrentPage"] ?? 1);
+                @foreach (var monAn in Model.MonAn)
+                {
+                    <div class="col-md-3" style="text-align: center;">
+                        <div class="menu-item">
+                            <img src="https://www.highlandscoffee.com.vn/vnt_upload/product/11_2023/3P_COMBO_Freeze_Berry.jpg"
+                                alt="Food Item" style="height: 180px; width: 100%;">
+                            <div class="price"> @monAn.gia_mon_an</div>
+                            <div class="name_dish">@monAn.ten_mon_an</div>
+                        </div>
                     </div>
-                </div>
+                }
             }
+            else
+            {
+                <div style="display: flex; ;padding-left: 41%;"> Không có món ăn nào</div>
+
+            }
+
         </div>
 
         <!-- Pagination -->
@@ -71,7 +85,7 @@
             <div class="mt-3">
                 <h5>Tổng cộng: <span class="text-primary">$11.00</span></h5>
                 <button type="button" class="btn btn-primary" id="openQrModal">Tạo mã QR</button>
-                
+
                 <form method="get" asp-page-handler="GetAllBanks" style="padding-top: 10px;">
                     <button type="submit" class="btn btn-primary">Danh sách các ngân hàng ở Việt Nam</button>
                 </form>
@@ -88,7 +102,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">
-                <img id="qrCodeImage" src="@Model.QRCodeModel.QRCodeUrl" alt="QR Code" class="img-fluid" style="max-width: 300px;">
+                <img id="qrCodeImage" src="@Model.QRCodeModel.QRCodeUrl" alt="QR Code" class="img-fluid"
+                    style="max-width: 300px;">
                 <div></div>
             </div>
         </div>
@@ -164,35 +179,14 @@
     }
 
     document.querySelector('form[asp-page-handler="GetAllBanks"]').addEventListener('submit', async (event) => {
-        event.preventDefault(); // Ngăn chặn gửi form mặc định
-        await fetchBanks(); // Gọi hàm fetchBanks
+        event.preventDefault();
+        await fetchBanks();
     });
 </script>
 <script>
     document.getElementById("openQrModal").addEventListener("click", async function () {
-        @* try {
-            const response = await fetch('/Index?handler=GetQR', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                }
-            });
+        var qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+        qrModal.show();
 
-            if (response.ok) {
-                console.log(response.status)
-                var qrCodeImage = document.getElementById("qrCodeImage");
-                document.getElementById("qrCodeImage").src = @Model.QRCodeModel.QRCodeUrl  *@
-                var qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
-                qrModal.show();
-            @* } else {
-                const errorText = await response.text();
-                console.error('Có lỗi xảy ra khi lấy mã QR:', errorText);
-                alert("Có lỗi xảy ra: " + errorText);
-            }
-        } catch (error) {
-            console.error('Có lỗi xảy ra:', error);
-            alert("Có lỗi xảy ra khi gửi yêu cầu.");
-        } *@
     });
 </script>

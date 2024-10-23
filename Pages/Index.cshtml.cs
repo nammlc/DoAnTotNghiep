@@ -5,27 +5,59 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using DoAnTotNghiep.Models;
+using DoAnTotNghiep.Data;
+using System.Data.SqlClient;
 
 namespace DoAnTotNghiep.Pages
 {
     public class IndexModel : PageModel
     {
+        public  string SearchQuery{get; set ;}
+        public int TotalPages{get; set;}
         private readonly ILogger<IndexModel> _logger;
+        private readonly MyDbContext _context ;
+        private readonly string _connectionString;
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(ILogger<IndexModel> logger, MyDbContext context, IConfiguration configuration)
         {
             _logger = logger;
+            _context = context;
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
-
+        public IList<MonAn> MonAn {get;set;} = new List<MonAn>(); // Danh sách món ăn
         public IList<Bank> Banks { get; set; } = new List<Bank>(); // Danh sách ngân hàng
         public QRCodeViewModel QRCodeModel { get; set; } = new QRCodeViewModel();
 
-        public async Task<IActionResult> OnGet()
+
+        //Lấy danh sách món ăn, khởi tạo dự án
+
+        public async Task<IActionResult> OnGet(int? page, string searchQuery)
         {
-            await GenerateQRCode(); // Tạo mã QR khi truy cập trang
-            await GetAllBanks(); // Lấy danh sách ngân hàng khi truy cập trang
+            SearchQuery = searchQuery;
+
+            var allDish = _context.MonAn.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                allDish = allDish.Where(e => e.ten_mon_an.Contains(searchQuery) || e.phan_loai_thuc_an.Contains(SearchQuery) || e.loai_mon_an.Contains(searchQuery));
+            }
+
+            int pageSize = 12;
+            int pageNumber = page ?? 1;
+
+            TotalPages = (int)Math.Ceiling(allDish.Count() / (double)pageSize);
+            ViewData["TotalPages"] = TotalPages;
+            ViewData["CurrentPage"] = pageNumber;
+            ViewData["TongMonAn"] = allDish.Count();
+
+            MonAn = allDish.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            await GenerateQRCode(); 
+            await GetAllBanks(); 
             return Page();
         }
+       
+        //Tạo mã qr
         private async Task<IActionResult> GenerateQRCode()
         {
             try
@@ -66,11 +98,11 @@ namespace DoAnTotNghiep.Pages
                 return Page();
             }
         }
-
-        public async Task<IActionResult> GetAllBanks() // Phương thức này sẽ được gọi khi nhấn nút
+        // Phương thức được gọi khi nhấn nút
+        public async Task<IActionResult> GetAllBanks() 
         {
-            Banks = await GetBanksAsync(); // Gọi phương thức để lấy danh sách ngân hàng
-            return Page(); // Trả về trang để cập nhật danh sách ngân hàng
+            await GetBanksAsync(); 
+            return Page();
         }
 
         private async Task<IList<Bank>> GetBanksAsync()
@@ -83,7 +115,7 @@ namespace DoAnTotNghiep.Pages
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadFromJsonAsync<BankResponse>();
-                    _logger.LogInformation("Kết quả từ API: {@Result}", result);
+                   
                     if (result.Code == "00")
                     {
                         return result.Data; // Trả về danh sách ngân hàng
