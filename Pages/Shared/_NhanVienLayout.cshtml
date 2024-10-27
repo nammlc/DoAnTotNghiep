@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý nhân viên</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/StaffListDisplay.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="~/css/fontawesome-free-6.5.2-web/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+</head>
+
+<body>
+    <header>
+        <div class="header">
+            <div class="logo-container">
+                <a href="http://localhost:5295"><img src="~/css/assets/cukcuk-logo.png" alt="Logo" class="logo"></a>
+
+                <div class="list-branch">
+                    <div class="dropdown">
+                        <a class="btn dropdown-toggle branch-btn" href="#" role="button" id="dropdownMenuLink"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            style="border: none; color: black;">
+                            Chọn chi nhánh
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" href="#">Chi nhánh TP Hồ Chí Minh</a>
+                            <a class="dropdown-item" href="#">Chi nhánh Hà Nội</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="avatar-container">
+                <img src="~/css/assets/icon/avatar-default.png" alt="Avatar" class="avatar">
+                <div class="avatar-name">Lê Công Nam</div>
+                <div class="avatar-option">
+                    <img src="~/css/assets/icon/option.png" alt="">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="nam_container">
+        <div class="sidebar">
+            <ul>
+                <li>
+                    <img src="~/css/assets/icon/dashboard.png" alt="">
+                    <a href="http://localhost:5295/Views/NhanVien">Trang chủ</a>
+                </li>
+                <li>
+                    <img src="~/css/assets/icon/report.png" alt="">
+                    <a href="#">Báo cáo</a>
+                </li>
+                <li>
+                    <img src="~/css/assets/icon/dic-employee.png" alt="">
+                    <a href="#">Nhân viên</a>
+                </li>
+                <li>
+                    <img src="~/css/assets/icon/setting.png" alt="">
+                    <a href="#">Cài đặt</a>
+                </li>
+            </ul>
+            <div class="end-sidebar" id="toggleSidebar">
+                <i class="fa fa-chevron-left" style="padding-right: 10px;"></i> Thu gọn
+            </div>
+        </div>
+            @RenderBody()
+        
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

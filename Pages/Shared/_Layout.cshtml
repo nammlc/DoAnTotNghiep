@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DoAnTotNghiep</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/DoAnTotNghiep.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/fontawesome-free-6.5.2-web/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="headerr">
+            <div class="left-section">
+                <button href="#" class="btn_header" style="background-color: #efc8e7; border: none; color: #000;">Home</button>
+                <button href="#" class="btn_header" style="background-color: #efc8e7; border: none; color: #000;">Order</button>
+                <button href="#" class="btn_header" style="background-color: #efc8e7; border: none; color: #000;">Sơ đồ</button>
+            </div>
+            <div class="employee-info">
+                <span><strong>Nguyễn Văn A</strong></span>
+                <img src="https://via.placeholder.com/40" class="employee-avatar" alt="Avatar">
+                <i class="fa-solid fa-ellipsis" style="padding-left: 5px;"></i>
+            </div>
+        </div>
+    </header>
+    <div class="container" style="box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); padding-top: 15px; ">
+        <main role="main" class="pb-3" >
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - Đồ Án Tốt Nghiệp - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>
