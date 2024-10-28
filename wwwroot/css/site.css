@@ -85,6 +85,8 @@ body {
   padding: 20px;
   border-radius: 10px;
   min-height: 820px;
+  max-height: 900px;
+  overflow-y: scroll;
 }
 
 .order-summary h4 {
@@ -119,4 +121,33 @@ body {
   height: 40px;
   border-radius: 50%;
   margin-left: 10px;
+}
+
+
+.choose-dish{
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.choose-dish button{
+  border-radius: 20px;
+  background-color: #f9f9f9;
+  margin-right: 5px;
+  border: none;
+}
+
+.choose-dish select{
+  border-radius: 20px;
+  border: none;
+}
+
+.select-all-choose #select-all{
+  margin-right: 5px;
+  
+}
+
+.select-all-choose button{
+  margin-bottom: 5px;
+  font-size: 12px;
+  padding: 5px 10px;
 }

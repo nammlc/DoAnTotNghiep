@@ -51,7 +51,7 @@
                 int currentPage = (int)(ViewData["CurrentPage"] ?? 1);
                 int pageSize = 10;
                 int stt = (currentPage - 1) * pageSize + 1;
-                
+
 
                 foreach (var nhanVien in Model.NhanViens)
                 {
@@ -89,28 +89,32 @@
 
     @if (Model != null && Model.NhanViens != null && Model.NhanViens.Any())
     {
-        int currentPage = (int)(ViewData["CurrentPage"] ?? 1) ;
+        int currentPage = (int)(ViewData["CurrentPage"] ?? 1);
         int totalPages = (int)(ViewData["TotalPages"] ?? 0);
         int TotalStaff = (int)(ViewData["TotalStaff"]);
         <nav aria-label="Page navigation example" class="pagination-container">
             <div class="" style="padding-top: 8px;">Có @TotalStaff nhân viên</div>
-             <ul class="pagination">
-            <li class="page-item @(currentPage > 1 ? "" : "disabled")">
-                <a class="page-link" href="@Url.Page("NhanVien", new { page = 1, searchQuery = ViewData["SearchQuery"] })">«</a>
-            </li>
-            <li class="page-item @(currentPage > 1 ? "" : "disabled")">
-                <a class="page-link" href="@Url.Page("NhanVien", new { page = currentPage - 1, searchQuery = ViewData["SearchQuery"] })">‹</a>
-            </li>
-            <li class="page-item active">
-                <span class="page-link">@currentPage</span>
-            </li>
-            <li class="page-item @(currentPage < totalPages ? "" : "disabled")">
-                <a class="page-link" href="@Url.Page("NhanVien", new { page = currentPage + 1, searchQuery = ViewData["SearchQuery"] })">›</a>
-            </li>
-            <li class="page-item @(currentPage < totalPages ? "" : "disabled")">
-                <a class="page-link" href="@Url.Page("NhanVien", new { page = totalPages, searchQuery = ViewData["SearchQuery"] })">»</a>
-            </li>
-        </ul>
+            <ul class="pagination">
+                <li class="page-item @(currentPage > 1 ? "" : "disabled")">
+                    <a class="page-link"
+                        href="@Url.Page("NhanVien", new { page = 1, searchQuery = ViewData["SearchQuery"] })">«</a>
+                </li>
+                <li class="page-item @(currentPage > 1 ? "" : "disabled")">
+                    <a class="page-link"
+                        href="@Url.Page("NhanVien", new { page = currentPage - 1, searchQuery = ViewData["SearchQuery"] })">‹</a>
+                </li>
+                <li class="page-item active">
+                    <span class="page-link">@currentPage</span>
+                </li>
+                <li class="page-item @(currentPage < totalPages ? "" : "disabled")">
+                    <a class="page-link"
+                        href="@Url.Page("NhanVien", new { page = currentPage + 1, searchQuery = ViewData["SearchQuery"] })">›</a>
+                </li>
+                <li class="page-item @(currentPage < totalPages ? "" : "disabled")">
+                    <a class="page-link"
+                        href="@Url.Page("NhanVien", new { page = totalPages, searchQuery = ViewData["SearchQuery"] })">»</a>
+                </li>
+            </ul>
             <div class="pagination-info" style="padding: 8px;">
                 <span>Tổng số trang: @Model.TotalPages</span>
             </div>
@@ -128,7 +132,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addNewStaffModalLabel">Thêm mới nhân viên</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close-btn">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -246,8 +250,8 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col text-end">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary"
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-btn2">Hủy</button>
+                            <button type="submit" class="btn btn-primary" 
                                 style="background-color: rgb(13, 179, 13);">Lưu</button>
                         </div>
                     </div>
@@ -271,22 +275,56 @@
                 Bạn có chắc chắn muốn xóa nhân viên <strong id="employeeCode"></strong>?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" >Hủy</button>
                 <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
             </div>
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var toggleSidebar = document.getElementById("toggleSidebar");
+        var sidebar = document.querySelector(".sidebar");
+        var mainContent = document.querySelector(".main-content");
 
-<script src="~/js/shrink.js"></script>
+        toggleSidebar.addEventListener("click", function () {
+            if (sidebar.style.width === "55px") {
+                sidebar.style.width = "200px";
+                mainContent.style.paddingLeft = "23px";
+                toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-left" style="padding-right : 10px "></i> Thu gọn';
+            } else {
+                sidebar.style.width = "55px";
+                mainContent.style.paddingLeft = "30px";
+                toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+            }
+        });
+    });
+</script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelector(".main-content_header button").addEventListener("click", function () {
+
             var myModal = new bootstrap.Modal(document.getElementById('addNewStaffModal'), {
                 keyboard: false
             });
             myModal.show();
         });
+        document.getElementById("close-btn").addEventListener("click", function () {
+            console.log("tắt modal");
+            var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewStaffModal'));
+            if (myModal) {
+                myModal.hide(); 
+            }
+        });
+        document.getElementById("close-btn2").addEventListener("click", function () {
+            console.log("tắt hộ cái");
+            var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewStaffModal'));
+            if (myModal) {
+                myModal.hide(); 
+            }
+        });
+
 
         document.querySelectorAll(".edit-btn").forEach(function (div) {
             div.addEventListener("click", function () {
@@ -342,12 +380,6 @@
             }
         });
 
-        document.querySelectorAll('.close, .btn-secondary').forEach(function (element) {
-            element.addEventListener('click', function () {
-                console.log("click")
-                $('#confirmDeleteModal').modal('hide');
-            });
-        });
 
     });
     document.getElementById("reloadBtn").addEventListener("click", function () {

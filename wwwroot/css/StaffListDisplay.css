@@ -296,3 +296,9 @@ tbody tr:hover .hide-icon_form{
     width: 950px;
     margin: auto;
 }
+
+#ThanhToan{
+    height: 300px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+}

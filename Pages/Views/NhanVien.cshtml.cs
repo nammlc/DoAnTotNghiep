@@ -47,7 +47,7 @@ namespace DoAnTotNghiep.Pages
             {
                 allEmployees = allEmployees.Where(e => e.ten_nhan_vien.Contains(searchQuery) || e.ma_nhan_vien.Contains(SearchQuery));
             }
-
+            allEmployees = allEmployees.OrderBy(m => m.ten_nhan_vien); 
             int pageSize = 10;
             int pageNumber = page ?? 1;
 

@@ -59,9 +59,7 @@ C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\staticwebassets\msbuild.build.DoAn
 C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.DoAnTotNghiep.props
 C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.DoAnTotNghiep.props
 C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\staticwebassets.pack.json
-C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\scopedcss\Pages\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\scopedcss\bundle\DoAnTotNghiep.styles.css
-C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\scopedcss\projectbundle\DoAnTotNghiep.bundle.scp.css
 C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\DoAnTotN.C4588582.Up2Date
 C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\DoAnTotNghiep.dll
 C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\refint\DoAnTotNghiep.dll

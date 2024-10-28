@@ -13,10 +13,10 @@ namespace DoAnTotNghiep.Pages
 {
     public class IndexModel : PageModel
     {
-        public  string SearchQuery{get; set ;}
-        public int TotalPages{get; set;}
+        public string SearchQuery { get; set; }
+        public int TotalPages { get; set; }
         private readonly ILogger<IndexModel> _logger;
-        private readonly MyDbContext _context ;
+        private readonly MyDbContext _context;
         private readonly string _connectionString;
 
         public IndexModel(ILogger<IndexModel> logger, MyDbContext context, IConfiguration configuration)
@@ -25,12 +25,9 @@ namespace DoAnTotNghiep.Pages
             _context = context;
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
-        public IList<MonAn> MonAn {get;set;} = new List<MonAn>(); // Danh sách món ăn
+        public IList<MonAn> MonAn { get; set; } = new List<MonAn>(); // Danh sách món ăn
         public IList<Bank> Banks { get; set; } = new List<Bank>(); // Danh sách ngân hàng
         public QRCodeViewModel QRCodeModel { get; set; } = new QRCodeViewModel();
-
-
-        //Lấy danh sách món ăn, khởi tạo dự án
 
         public async Task<IActionResult> OnGet(int? page, string searchQuery)
         {
@@ -42,7 +39,7 @@ namespace DoAnTotNghiep.Pages
             {
                 allDish = allDish.Where(e => e.ten_mon_an.Contains(searchQuery) || e.phan_loai_thuc_an.Contains(SearchQuery) || e.loai_mon_an.Contains(searchQuery));
             }
-
+            allDish = allDish.OrderBy(m => m.ten_mon_an);
             int pageSize = 12;
             int pageNumber = page ?? 1;
 
@@ -51,14 +48,17 @@ namespace DoAnTotNghiep.Pages
             ViewData["CurrentPage"] = pageNumber;
             ViewData["TongMonAn"] = allDish.Count();
 
-            MonAn = allDish.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-            await GenerateQRCode(); 
-            await GetAllBanks(); 
+            MonAn = allDish.ToList();
+            // await GetAllBanks(); 
             return Page();
         }
-       
+
+
         //Tạo mã qr
-        private async Task<IActionResult> GenerateQRCode()
+        [BindProperty]
+        public string QRCodeUrl { get; set; } // Lưu trữ URL QR code
+
+        public async Task<IActionResult> OnGetGenerateQRCode(decimal amount)
         {
             try
             {
@@ -66,42 +66,30 @@ namespace DoAnTotNghiep.Pages
                 string bankId = "TPBANK"; // Mã ngân hàng
                 string accountNumber = "00003800981"; // Số tài khoản
                 string template = "print"; // Mẫu
-                string amount = "500000"; // Số tiền
-                string description = "Tra tien cho ta"; // Nội dung chuyển khoản
+                string description = "Thanh Toan Hoa Don"; // Nội dung chuyển khoản
                 string accountName = "LE CONG NAM"; // Tên người nhận
 
                 // Tạo URL QuickLink
                 string qrCodeUrl = $"https://img.vietqr.io/image/{bankId}-{accountNumber}-{template}.png?amount={amount}&addInfo={description}&accountName={accountName}";
 
-                // Log giá trị hiện tại của QRCodeModel.QRCodeUrl trước khi cập nhật
-                if (!string.IsNullOrEmpty(QRCodeModel.QRCodeUrl))
-                {
-                    _logger.LogInformation("Giá trị QRCodeModel trước khi cập nhật: {QRCodeUrl}", QRCodeModel.QRCodeUrl);
-                }
-                else
-                {
-                    _logger.LogInformation("QRCodeModel.QRCodeUrl hiện tại là rỗng.");
-                }
-
-                // Cập nhật giá trị mới
+                // Cập nhật giá trị QRCodeModel
                 QRCodeModel.QRCodeUrl = qrCodeUrl;
 
-                // Log giá trị mới đã được cập nhật
-                _logger.LogInformation("Giá trị QRCodeModel đã được cập nhật: {QRCodeUrl}", QRCodeModel.QRCodeUrl);
-
-                return Page(); // Trả về trang hiện tại
+                // Trả về JSON chứa QRCodeUrl
+                return new JsonResult(new { QRCodeUrl = QRCodeModel.QRCodeUrl });
             }
             catch (Exception ex)
             {
                 // Xử lý lỗi nếu có
-                ModelState.AddModelError(string.Empty, "Không thể tạo mã QR: " + ex.Message);
-                return Page();
+                return new JsonResult(new { error = "Không thể tạo mã QR: " + ex.Message });
             }
         }
-        // Phương thức được gọi khi nhấn nút
-        public async Task<IActionResult> GetAllBanks() 
+
+
+
+        public async Task<IActionResult> GetAllBanks()
         {
-            await GetBanksAsync(); 
+            Banks = await GetBanksAsync();
             return Page();
         }
 
@@ -115,7 +103,7 @@ namespace DoAnTotNghiep.Pages
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadFromJsonAsync<BankResponse>();
-                   
+
                     if (result.Code == "00")
                     {
                         return result.Data; // Trả về danh sách ngân hàng
