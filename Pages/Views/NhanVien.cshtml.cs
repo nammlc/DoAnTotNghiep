@@ -56,7 +56,7 @@ namespace DoAnTotNghiep.Pages
             ViewData["CurrentPage"] = pageNumber;
             ViewData["ToTalStaff"] = allEmployees.Count();
 
-            NhanViens = allEmployees.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            NhanViens = allEmployees.ToList();
 
             return Page();
         }

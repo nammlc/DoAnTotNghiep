@@ -16,12 +16,8 @@
     </div>
     <div class="search-container">
         <div class="search-container_left">
-            <form method="get" action="@Url.Action("/Views/NhanVien")">
-                <input type="text" id="searchInput" name="searchQuery" value="@ViewBag.SearchQuery"
-                    placeholder="Tìm kiếm theo mã, họ tên..." class="form-control">
-
-
-            </form>
+            <input type="text" id="searchInput" name="searchQuery" value="@ViewBag.SearchQuery"
+                placeholder="Tìm kiếm theo mã, họ tên..." class="form-control">
         </div>
         <div class="search-container_right">
             <div class="excel">
@@ -55,10 +51,10 @@
 
                 foreach (var nhanVien in Model.NhanViens)
                 {
-                    <tr>
+                    <tr class="all-staff">
                         <td>@stt</td>
-                        <td>@nhanVien.ma_nhan_vien</td>
-                        <td>@nhanVien.ten_nhan_vien</td>
+                        <td data-code="@nhanVien.ma_nhan_vien">@nhanVien.ma_nhan_vien</td>
+                        <td data-type="@nhanVien.ten_nhan_vien">@nhanVien.ten_nhan_vien</td>
                         <td>@nhanVien.gioi_tinh</td>
                         <td>@nhanVien.dia_chi</td>
                         <td>@nhanVien.ngay_sinh.ToString("dd/MM/yyyy")</td>
@@ -87,39 +83,12 @@
         </tbody>
     </table>
 
-    @if (Model != null && Model.NhanViens != null && Model.NhanViens.Any())
-    {
-        int currentPage = (int)(ViewData["CurrentPage"] ?? 1);
-        int totalPages = (int)(ViewData["TotalPages"] ?? 0);
-        int TotalStaff = (int)(ViewData["TotalStaff"]);
-        <nav aria-label="Page navigation example" class="pagination-container">
-            <div class="" style="padding-top: 8px;">Có @TotalStaff nhân viên</div>
-            <ul class="pagination">
-                <li class="page-item @(currentPage > 1 ? "" : "disabled")">
-                    <a class="page-link"
-                        href="@Url.Page("NhanVien", new { page = 1, searchQuery = ViewData["SearchQuery"] })">«</a>
-                </li>
-                <li class="page-item @(currentPage > 1 ? "" : "disabled")">
-                    <a class="page-link"
-                        href="@Url.Page("NhanVien", new { page = currentPage - 1, searchQuery = ViewData["SearchQuery"] })">‹</a>
-                </li>
-                <li class="page-item active">
-                    <span class="page-link">@currentPage</span>
-                </li>
-                <li class="page-item @(currentPage < totalPages ? "" : "disabled")">
-                    <a class="page-link"
-                        href="@Url.Page("NhanVien", new { page = currentPage + 1, searchQuery = ViewData["SearchQuery"] })">›</a>
-                </li>
-                <li class="page-item @(currentPage < totalPages ? "" : "disabled")">
-                    <a class="page-link"
-                        href="@Url.Page("NhanVien", new { page = totalPages, searchQuery = ViewData["SearchQuery"] })">»</a>
-                </li>
-            </ul>
-            <div class="pagination-info" style="padding: 8px;">
-                <span>Tổng số trang: @Model.TotalPages</span>
-            </div>
-        </nav>
-    }
+    <!-- Pagination -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <!-- Pagination will be dynamically generated here -->
+        </ul>
+    </nav>
 
 
 
@@ -250,8 +219,9 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col text-end">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-btn2">Hủy</button>
-                            <button type="submit" class="btn btn-primary" 
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                id="close-btn2">Hủy</button>
+                            <button type="submit" class="btn btn-primary"
                                 style="background-color: rgb(13, 179, 13);">Lưu</button>
                         </div>
                     </div>
@@ -275,7 +245,7 @@
                 Bạn có chắc chắn muốn xóa nhân viên <strong id="employeeCode"></strong>?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" >Hủy</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                 <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
             </div>
         </div>
@@ -314,14 +284,14 @@
             console.log("tắt modal");
             var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewStaffModal'));
             if (myModal) {
-                myModal.hide(); 
+                myModal.hide();
             }
         });
         document.getElementById("close-btn2").addEventListener("click", function () {
             console.log("tắt hộ cái");
             var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewStaffModal'));
             if (myModal) {
-                myModal.hide(); 
+                myModal.hide();
             }
         });
 
@@ -389,3 +359,82 @@
 
 
 </script>
+<script>
+    const staffsPerPage = 10; // Số nhân viên mỗi trang
+    let currentPage = 1; // Trang hiện tại
+    let staffs = document.querySelectorAll('.all-staff'); // Tất cả nhân viên
+
+    function filterStaffs(searchQuery) {
+        const filteredStaffs = [];
+        staffs.forEach(staff => {
+            const name = staff.querySelector('[data-type]')?.textContent.toLowerCase() || ''; 
+            const code = staff.querySelector('[data-code]')?.textContent.toLowerCase() || '';
+            if (name.includes(searchQuery) || code.includes(searchQuery)) {
+                filteredStaffs.push(staff); // Thêm nhân viên vào danh sách đã lọc
+            } 
+        });
+        return filteredStaffs; // Trả về danh sách nhân viên đã lọc
+    }
+
+    function showPage(page, filteredStaffs) {
+        const start = (page - 1) * staffsPerPage;
+        const end = start + staffsPerPage;
+
+        // Ẩn tất cả nhân viên
+        staffs.forEach(staff => {
+            staff.style.display = "none"; // Ẩn tất cả
+        });
+
+        // Hiển thị nhân viên theo trang trong danh sách đã lọc
+        filteredStaffs.forEach((staff, index) => {
+            if (index >= start && index < end) {
+                staff.style.display = "table-row"; // Hiển thị nhân viên nếu nằm trong khoảng
+            }
+        });
+
+        // Cập nhật trạng thái phân trang
+        updatePagination(page, filteredStaffs.length);
+    }
+
+    function updatePagination(page, totalFilteredStaffs) {
+        const pagination = document.querySelector('.pagination');
+        const totalPages = Math.ceil(totalFilteredStaffs / staffsPerPage); // Tính tổng số trang
+        pagination.innerHTML = ''; // Xóa danh sách phân trang hiện tại
+
+        // Thêm nút trước
+        if (page > 1) {
+            pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page - 1})">«</a></li>`;
+        }
+
+        // Thêm các nút trang
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === page) {
+                pagination.innerHTML += `<li class="page-item active"><a class="page-link" href="#">${i}</a></li>`;
+            } else {
+                pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${i})">${i}</a></li>`;
+            }
+        }
+
+        // Thêm nút sau
+        if (page < totalPages) {
+            pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page + 1})">»</a></li>`;
+        }
+    }
+
+    function changePage(page) {
+        currentPage = page; // Cập nhật trang hiện tại
+        const filteredStaffs = filterStaffs(document.getElementById('searchInput').value.toLowerCase());
+        showPage(currentPage, filteredStaffs); // Hiển thị trang
+    }
+
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const searchQuery = this.value.toLowerCase();
+        const filteredStaffs = filterStaffs(searchQuery);
+        currentPage = 1; // Reset trang về 1 khi tìm kiếm
+        showPage(currentPage, filteredStaffs); // Hiển thị lại trang với nhân viên đã lọc
+    });
+
+    // Khởi động hiển thị trang đầu tiên
+    showPage(currentPage, staffs);
+</script>
+

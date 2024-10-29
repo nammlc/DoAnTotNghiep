@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using DoAnTotNghiep.Models;
 using DoAnTotNghiep.Data;
+using System.Data.SqlTypes;
 
 namespace DoAnTotNghiep.Pages
 {
@@ -14,11 +15,11 @@ namespace DoAnTotNghiep.Pages
     {
         public int TotalPages { get; set; }
         public int CurrentPage { get; set; }
-        public bool HasPreviousPage => CurrentPage > 1; 
+        public bool HasPreviousPage => CurrentPage > 1;
         public bool HasNextPage => CurrentPage < TotalPages;
-        public int PageSize { get; set; } 
+        public int PageSize { get; set; }
         public int TotalCount { get; set; }
-        public int ToTalStaff {get; set ;}
+        public int ToTalStaff { get; set; }
         private readonly string _connectionString;
         private readonly MyDbContext _context;
         private readonly ILogger<IndexModel> _logger;
@@ -45,9 +46,9 @@ namespace DoAnTotNghiep.Pages
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                allStocks = allStocks.Where(e => e.ten_nguyen_lieu.Contains(searchQuery) || e.nha_cung_cap.Contains(SearchQuery));
+                allStocks = allStocks.Where(e => e.ten_nguyen_lieu.Contains(searchQuery) || e.nha_cung_cap.Contains(SearchQuery)|| e.don_vi.Contains(SearchQuery));
             }
-            allStocks = allStocks.OrderBy(m => m.ten_nguyen_lieu); 
+            allStocks = allStocks.OrderBy(m => m.ten_nguyen_lieu);
             int pageSize = 10;
             int pageNumber = page ?? 1;
 
@@ -56,11 +57,23 @@ namespace DoAnTotNghiep.Pages
             ViewData["CurrentPage"] = pageNumber;
             ViewData["ToTalStaff"] = allStocks.Count();
 
-            NhaKhos = allStocks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            NhaKhos = allStocks.ToList();
+            foreach(var item in NhaKhos){
+                item.gia_nguyen_lieu = formatPrice(item.gia_nguyen_lieu);
+            }
 
             return Page();
         }
 
+        public string formatPrice(string gia_nguyen_lieu)
+        {
+            if (decimal.TryParse(gia_nguyen_lieu, out decimal parsedValue))
+            {
+                // Định dạng số với dấu phẩy
+                return parsedValue.ToString("#,##0");
+            }
+            return gia_nguyen_lieu; 
+        }
 
         // Hiển thị form thêm nguyên liệu
         public IActionResult OnGetCreate()

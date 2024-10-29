@@ -108,11 +108,7 @@ body {
 }
 
 .sidebar li:hover {
-    background-color: #ddd;
-}
-
-.sidebar li:hover a {
-    color: #000;
+    background-color: #a42d2d;
 }
 
 .end-sidebar {

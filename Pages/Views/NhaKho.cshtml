@@ -59,7 +59,7 @@
                         <td>@stt</td>
                         <td>@nhaKho.ten_nguyen_lieu</td>
                         <td>@nhaKho.so_luong_trong_kho</td>
-                        <td>@nhaKho.gia_nguyen_lieu</td>
+                        <td>@nhaKho.gia_nguyen_lieu VNĐ</td>
                         <td>@nhaKho.don_vi</td>
                         <td>@nhaKho.chu_thich</td>
                         <td style="display: flex; justify-content: space-between;">
@@ -140,118 +140,74 @@
                 <form id="employeeForm" method="post">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="ma_nhan_vien" class="form-label">Mã Nguyên Liệu:</label>
-                            <input type="text" class="form-control" id="ma_nhan_vien" name="ma_nhan_vien" required
+                            <label for="ma_nguyen_lieu" class="form-label">Mã Nguyên Liệu:</label>
+                            <input type="text" class="form-control" id="ma_nguyen_lieu" name="ma_nguyen_lieu" required
                                 value="Create Automatically" readonly />
                         </div>
                         <div class="col-md-6">
-                            <label for="ten_nhan_vien" class="form-label">Họ và tên:</label>
-                            <input type="text" class="form-control" id="ten_nhan_vien" name="ten_nhan_vien" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="ngay_sinh" class="form-label">Ngày sinh:</label>
-                            <input type="date" class="form-control" id="ngay_sinh" name="ngay_sinh" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label d-block">Giới tính:</label>
-                            <div class="choose_gender" style="display: flex;">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="gioi_tinh" id="gioiTinhNam"
-                                        value="Nam" required>
-                                    <label class="form-check-label" for="gioiTinhNam">Nam</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="gioi_tinh" id="gioiTinhNu"
-                                        value="Nữ">
-                                    <label class="form-check-label" for="gioiTinhNu">Nữ</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="gioi_tinh" id="gioiTinhKhac"
-                                        value="Khác">
-                                    <label class="form-check-label" for="gioiTinhKhac">Khác</label>
-                                </div>
-                            </div>
-                        </div>
+                            <label for="ten_nguyen_lieu" class="form-label">Tên nguyên liệu:</label>
+                            <input type="text" class="form-control" id="ten_nguyen_lieu" name="ten_nguyen_lieu" required>
+                        </div>                      
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <label for="vi_tri" class="form-label">Vị trí</label>
-                            <select id="vi_tri" name="vi_tri" class="form-control">
-                                <option value="">Chọn vị trí</option>
-                                <option value="Nguyên Liệu">Nguyên Liệu</option>
-                                <option value="Quản lý">Quản lý</option>
-                                <option value="Giám đốc">Giám đốc</option>
-                                <!-- Thêm các tùy chọn khác nếu cần -->
+                            <label for="don_vi" class="form-label">Đơn vị tính</label>
+                            <select id="don_vi" name="don_vi" class="form-control">
+                                <option value="">Chọn đơn vị</option>
+                                <option value="kg">Kg</option>
+                                <option value="Gói">Gói</option>
+                                <option value="Quả">Quả</option>
+                                <option value="Chai">Chai</option>
+                                <option value="Lít">Lít</option>
+                                <option value="Hộp">Hộp</option>                             
                                 <option value="Khác">Khác</option>
                             </select>
-                            <input type="text" id="vi_tri_other" name="vi_tri_other" class="form-control mt-2 d-none"
-                                placeholder="Nhập vị trí khác" />
+                            <input type="text" id="don_vi_other" name="don_vi_other" class="form-control mt-2 d-none"
+                                placeholder="Nhập đơn vị khác" />
                         </div>
                         <div class="col-md-4">
-                            <label for="so_cmnd" class="form-label">Số CMND:</label>
-                            <input type="text" class="form-control" id="so_cmnd" name="so_cmnd" required>
+                            <label for="gia_nguyen_lieu" class="form-label">Giá nhập nguyên liệu:</label>
+                            <input type="text" class="form-control" id="gia_nguyen_lieu" name="gia_nguyen_lieu" required>
                         </div>
                         <div class="col-md-4">
-                            <label for="ngay_cap_cmnd" class="form-label">Ngày cấp CMND:</label>
-                            <input type="date" class="form-control" id="ngay_cap_cmnd" name="ngay_cap_cmnd" required>
+                            <label for="nha_cung_cap" class="form-label">Chọn nhà cung cấp</label>
+                            <select id="nha_cung_cap" name="nha_cung_cap" class="form-control">
+                                <option value="">Chọn nhà cung cấp</option>
+                                <option value="Mật ong Đà Lạt">Mật ong Đà Lạt</option>
+                                <option value="Đường Thành Côngi">Đường Thành Công</option>
+                                <option value="Vinamilk">Vinamilk</option>
+                                <option value="Bột Cacao Đà Lạt">Bột Cacao Đà Lạt</option>
+                                <option value="Đá Long Biên">Đá Long Biên</option>
+                                <option value="Syrup Phúc Long">Syrup Phúc Long</option>                             
+                                <option value="Bột mì Hà Nội">Bột mì Hà Nội</option>
+                                <option value="Bột nở Việt Mỹ">Bột nở Việt Mỹ</option>
+                                <option value="Trứng gà Đồng Nai">Trứng gà Đồng Nai</option>
+                                <option value="Nestle">Nestle</option>
+                                <option value="Syrup Phúc Long">Syrup Phúc Long</option>
+                                <option value="Yến mạch Quảng Ninh">Yến mạch Quảng Ninh</option>
+                                <option value="Nước suối Đà Lạt">Nước suối Đà Lạt</option>
+                                <option value="Gelatin Đà Lạt">Gelatin Đà Lạt</option>
+                                <option value="Dừa Bến Tre">Dừa Bến Tre</option>
+                                <option value="Vườn chanh Cần Thơ">Vườn chanh Cần Thơ</option>
+                            </select>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-12">
-                            <label for="noi_cap_cmnd" class="form-label">Nơi cấp CMND:</label>
-                            <input type="text" class="form-control" id="noi_cap_cmnd" name="noi_cap_cmnd" required>
+                            <label for="so_luong_trong_kho" class="form-label">Số lượng nhập ban đầu:</label>
+                            <input type="text" class="form-control" id="so_luong_trong_kho" name="so_luong_trong_kho" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-12">
-                            <label for="dia_chi" class="form-label">Địa chỉ:</label>
-                            <input type="text" class="form-control" id="dia_chi" name="dia_chi" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="so_dien_thoai" class="form-label">Điện thoại di động:</label>
-                            <input type="tel" class="form-control" id="so_dien_thoai" name="so_dien_thoai" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="so_dien_thoai_co_dinh" class="form-label">Điện thoại cố định:</label>
-                            <input type="tel" class="form-control" id="so_dien_thoai_co_dinh"
-                                name="so_dien_thoai_co_dinh">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="email" class="form-label">Email:</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="so_tai_khoan_ngan_hang" class="form-label">Tài khoản ngân hàng:</label>
-                            <input type="text" class="form-control" id="so_tai_khoan_ngan_hang"
-                                name="so_tai_khoan_ngan_hang" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="ten_ngan_hang" class="form-label">Tên ngân hàng</label>
-                            <select id="ten_ngan_hang" name="ten_ngan_hang" class="form-control">
-                                <option value="">Chọn ngân hàng</option>
-                                <option value="Ngân hàng A">Ngân hàng A</option>
-                                <option value="Ngân hàng B">Ngân hàng B</option>
-                                <option value="Ngân hàng C">Ngân hàng C</option>
-                                <!-- Thêm các tùy chọn khác nếu cần -->
-                                <option value="Khác">Khác</option>
-                            </select>
-                            <input type="text" id="ten_ngan_hang_other" name="ten_ngan_hang_other"
-                                class="form-control mt-2 d-none" placeholder="Nhập tên ngân hàng khác" />
-                        </div>
-                        <div class="col-md-4">
-                            <label for="chi_nhanh_ngan_hang" class="form-label">Chi nhánh ngân hàng:</label>
-                            <input type="text" class="form-control" id="chi_nhanh_ngan_hang" name="chi_nhanh_ngan_hang"
-                                required>
+                            <label for="chu_thich" class="form-label">Chú thích:</label>
+                            <input type="text" class="form-control" id="chu_thich" name="chu_thich" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col text-end">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-btn2">Hủy</button>
-                            <button type="submit" class="btn btn-primary"
+                            <button type="submit" class="btn btn-primary" 
                                 style="background-color: rgb(13, 179, 13);">Lưu</button>
                         </div>
                     </div>
@@ -393,4 +349,114 @@
 
 
 
+</script>
+<script>
+    const dishesPerPage = 12; // Số món ăn mỗi trang
+    let currentPage = 1; // Trang hiện tại
+    let dishes = document.querySelectorAll('.dish-item'); // Tất cả món ăn
+
+    function filterDishes(searchQuery) {
+        const filteredDishes = [];
+        dishes.forEach(dish => {
+            const name = dish.querySelector('.name_dish').textContent.toLowerCase();
+            const type = dish.getAttribute('data-type') ? dish.getAttribute('data-type').toLowerCase() : '';
+            const choose = dish.getAttribute('data-choose') ? dish.getAttribute('data-choose').toLowerCase() : '';
+            if (name.includes(searchQuery) || type.includes(searchQuery) || choose.includes(searchQuery)) {
+                dish.style.display = "block"; // Hiển thị món ăn nếu phù hợp
+                filteredDishes.push(dish); // Thêm món ăn vào danh sách đã lọc
+            } else {
+                dish.style.display = "none"; // Ẩn món ăn nếu không phù hợp
+            }
+        });
+        return filteredDishes; // Trả về danh sách món ăn đã lọc
+    }
+
+    function showPage(page, filteredDishes) {
+        const start = (page - 1) * dishesPerPage;
+        const end = start + dishesPerPage;
+
+        // Ẩn tất cả món ăn
+        dishes.forEach(dish => {
+            dish.style.display = "none"; // Ẩn tất cả
+        });
+
+        // Hiển thị món ăn theo trang trong danh sách đã lọc
+        filteredDishes.forEach((dish, index) => {
+            if (index >= start && index < end) {
+                dish.style.display = "block"; // Hiển thị món ăn nếu nằm trong khoảng
+            }
+        });
+
+        // Cập nhật trạng thái phân trang
+        updatePagination(page, filteredDishes.length);
+    }
+
+    function updatePagination(page, totalDishes) {
+        const pagination = document.querySelector('.pagination');
+        const totalPages = Math.ceil(totalDishes / dishesPerPage); // Tính tổng số trang
+        pagination.innerHTML = ''; // Xóa danh sách phân trang hiện tại
+
+        // Thêm nút trước
+        if (page > 1) {
+            pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page - 1}, ${totalDishes})">«</a></li>`;
+        }
+
+        // Thêm các nút trang
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === page) {
+                pagination.innerHTML += `<li class="page-item active"><a class="page-link" href="#">${i}</a></li>`;
+            } else {
+                pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${i}, ${totalDishes})">${i}</a></li>`;
+            }
+        }
+
+        // Thêm nút sau
+        if (page < totalPages) {
+            pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page + 1}, ${totalDishes})">»</a></li>`;
+        }
+    }
+
+    function changePage(page, totalDishes) {
+        currentPage = page; // Cập nhật trang hiện tại
+        const filteredDishes = filterDishes(document.getElementById('searchInput').value.toLowerCase());
+        showPage(currentPage, filteredDishes); // Hiển thị trang
+    }
+
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const searchQuery = this.value.toLowerCase();
+        const filteredDishes = filterDishes(searchQuery);
+        currentPage = 1; // Reset trang về 1 khi tìm kiếm
+        showPage(currentPage, filteredDishes); // Hiển thị lại trang với món ăn đã lọc
+    });
+
+    document.getElementById('doUong').addEventListener('click', function () {
+        const searchQuery = this.value.toLowerCase();
+        const filteredDishes = filterDishes(searchQuery);
+        currentPage = 1;
+        showPage(currentPage, filteredDishes);
+    });
+
+    document.getElementById('monAn').addEventListener('click', function () {
+        const searchQuery = this.value.toLowerCase();
+        console.log("click");
+        const filteredDishes = filterDishes(searchQuery);
+        currentPage = 1;
+        showPage(currentPage, filteredDishes);
+    });
+
+    document.getElementById('tatCaMon').addEventListener('click', function () {
+        const searchQuery = this.value.toLowerCase();
+        const filteredDishes = filterDishes(searchQuery);
+        currentPage = 1;
+        showPage(currentPage, filteredDishes);
+    });
+    document.getElementById('select').addEventListener('change', function () {
+        const searchQuery = this.value.toLowerCase();
+        console.log("change");
+        const filteredDishes = filterDishes(searchQuery);
+        currentPage = 1;
+        showPage(currentPage, filteredDishes);
+    });
+    // Khởi động hiển thị trang đầu tiên
+    showPage(currentPage, dishes);
 </script>
