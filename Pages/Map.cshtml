@@ -1,0 +1,175 @@
+@page
+@model DoAnTotNghiep.Pages.MapModel;
+@{
+    Layout = "_layout";
+}
+
+<style>
+    .cafe-map {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        justify-content: center;
+        padding: 20px;
+    }
+    .table-map, .counter, .door {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100px;
+        height: 100px;
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 14px;
+        overflow: hidden;
+    }
+    .table-map {
+        background-color: #ccc; /* Bàn chưa có đơn hàng: màu xám */
+    }
+    .table-assigned {
+        background-color: #4CAF50; /* Bàn có đơn hàng: màu xanh */
+        color: white;
+    }
+    .counter {
+        background-color: #ffe5b4;
+        grid-column: 1 / span 1;
+        grid-row: 4;
+    }
+    .door {
+        background-color: #d1e7dd;
+        grid-column: 2 / span 1;
+        grid-row: 4;
+    }
+    .icon {
+        font-size: 24px;
+    }
+</style>
+
+<div>
+    <h2>Bản Đồ Quán Cafe</h2>
+    
+    <!-- Bản đồ quán cafe với các bàn, quầy pha chế và cửa ra vào -->
+    <div class="cafe-map">
+        @for (int i = 1; i <= 12; i++)
+        {
+            <div class="table-map" id="table-@i" onclick="openTable(@i)">
+                <div class="icon">☕</div> 
+                <div>Bàn @i</div>
+                <div class="order-info" id="assigned-order-@i">Chưa có đơn hàng</div>
+            </div>
+        }
+
+        <!-- Quầy pha chế ở góc dưới bên trái -->
+        <div class="counter">
+            <div class="icon">🍹</div> 
+            <div>Quầy Pha Chế</div>
+        </div>
+
+        <!-- Cửa ra vào ngay cạnh quầy pha chế -->
+        <div class="door">
+            <div class="icon">🚪</div> 
+            <div>Cửa Ra Vào</div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal gán đơn hàng vào bàn -->
+<div id="assignOrderModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.2);">
+    <h3>Gán Đơn Hàng cho Bàn <span id="selectedTable"></span></h3>
+    <select id="orderSelect">
+        <option value="">Chọn đơn hàng</option>
+        @foreach (var hoadon in Model.HoaDons)
+        {
+            <option value="@hoadon.ten_kh">Tên KH: @hoadon.ten_kh ; Tổng hóa đơn: @hoadon.tong_tien.ToString("#,##0") VNĐ ; Thời gian tạo hóa đơn : @hoadon.gio_vao </option>
+        }
+    </select>
+    <div style="margin-top: 10px;">
+        <button onclick="assignOrder()">Xác Nhận</button>
+        <button onclick="closeAssignOrderModal()">Hủy</button>
+    </div>
+</div>
+
+<!-- Modal xem thông tin đơn hàng -->
+<div id="orderInfoModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.2);">
+    <h3>Thông Tin Đơn Hàng Bàn <span id="orderTableNumber"></span></h3>
+    <div id="orderDetails"></div>
+    <div style="margin-top: 10px;">
+        <button onclick="closeOrderInfoModal()">Đóng</button>
+    </div>
+</div>
+
+<script>
+    let selectedTableId;
+    let orderData = {}; // Lưu trữ đơn hàng theo bàn
+
+    // Mở modal gán đơn hàng khi bàn chưa có đơn
+    function openTable(tableNumber) {
+        selectedTableId = tableNumber;
+
+        // Kiểm tra xem bàn đã có đơn hàng chưa
+        if (orderData[selectedTableId]) {
+            // Nếu có đơn, mở modal xem chi tiết đơn hàng
+            openOrderInfoModal();
+        } else {
+            // Nếu chưa có đơn, mở modal gán đơn hàng
+            openAssignOrderModal();
+        }
+    }
+
+    // Mở modal gán đơn hàng
+    function openAssignOrderModal() {
+        document.getElementById("selectedTable").innerText = selectedTableId;
+        document.getElementById("assignOrderModal").style.display = "block";
+    }
+
+    // Đóng modal gán đơn hàng
+    function closeAssignOrderModal() {
+        document.getElementById("assignOrderModal").style.display = "none";
+        document.getElementById("orderSelect").value = ""; // Reset chọn đơn hàng
+    }
+
+    // Xác nhận gán đơn hàng vào bàn
+    function assignOrder() {
+        const selectedOrder = document.getElementById("orderSelect").value;
+        if (!selectedOrder) {
+            alert("Vui lòng chọn đơn hàng.");
+            return;
+        }
+
+        // Lưu thông tin đơn hàng vào bàn
+        orderData[selectedTableId] = {
+            customer: selectedOrder,
+            items: [],
+            totalAmount: 0 // Giả sử ban đầu tổng tiền là 0
+        };
+
+        // Cập nhật giao diện
+        document.getElementById("assigned-order-" + selectedTableId).innerText = "Tên KH: " + selectedOrder;
+        document.getElementById("table-" + selectedTableId).classList.add("table-assigned");
+
+        // Đóng modal
+        closeAssignOrderModal();
+    }
+
+    // Mở modal xem thông tin đơn hàng
+    function openOrderInfoModal() {
+        const order = orderData[selectedTableId];
+        document.getElementById("orderTableNumber").innerText = selectedTableId;
+        document.getElementById("orderDetails").innerHTML = `
+            <p>Tên KH: ${order.customer}</p>
+            <p>Tổng tiền đã thanh toán: ${order.totalAmount} VNĐ</p>
+            <p>Tổng tiền chưa thanh toán: ${order.totalAmount} VNĐ</p>
+            <p>Danh sách món ăn: ${order.items.join(", ") || "Chưa có món"}</p>
+        `;
+        document.getElementById("orderInfoModal").style.display = "block";
+    }
+
+    // Đóng modal xem thông tin đơn hàng
+    function closeOrderInfoModal() {
+        document.getElementById("orderInfoModal").style.display = "none";
+    }
+</script>

@@ -1,0 +1,72 @@
+
+.cafe-map {
+    position: relative;
+    left: 22%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 30px;
+    background-color: #ffffff;
+    border: 2px solid #dcdcdc;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    max-width: 700px;
+    max-height: 700px;
+}
+
+.table-map, .counter, .door {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.table-map {
+    background-color: #80b3ff;
+    height: 80px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.table-map:hover {
+    background-color: #66a3ff;
+    transform: scale(1.05);
+}
+
+.counter {
+    background-color: #ff8c66;
+    grid-column: 1 / 2; /* Quầy ở góc dưới bên trái */
+    grid-row: 4;
+    height: 100px;
+    border-radius: 10px;
+}
+
+.door {
+    background-color: #6ccf79;
+    grid-column: 2 / 3; /* Cửa cạnh quầy pha chế */
+    grid-row: 4;
+    height: 100px;
+    border-radius: 8px;
+}
+
+.label {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+/* Biểu tượng */
+.icon {
+    font-size: 2rem;
+    margin-bottom: 5px;
+}
+
+/* Thêm hình tròn cho bàn VIP */
+.table.vip {
+    background-color: #ffcc66;
+    border: 2px solid #ffaa33;
+}

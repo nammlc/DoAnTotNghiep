@@ -62,6 +62,10 @@ namespace DoAnTotNghiep.Pages
                 item.gia_nguyen_lieu = formatPrice(item.gia_nguyen_lieu);
             }
 
+            foreach(var item in NhaKhos){
+                item.so_luong_trong_kho = formatPrice(item.so_luong_trong_kho);
+            }
+
             return Page();
         }
 

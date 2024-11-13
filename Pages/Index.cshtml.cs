@@ -8,6 +8,11 @@ using Microsoft.Extensions.Logging;
 using DoAnTotNghiep.Models;
 using DoAnTotNghiep.Data;
 using System.Data.SqlClient;
+using System.Text.Json;
+using MySql.Data.MySqlClient;
+using Dapper;
+using Mysqlx;
+
 
 namespace DoAnTotNghiep.Pages
 {
@@ -121,32 +126,106 @@ namespace DoAnTotNghiep.Pages
                 }
             }
         }
+
+        //Tạo đơn hàng 
+        public HoaDon HoaDons { get; set; }
+        [HttpPost]
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (HoaDons == null)
+            {
+                HoaDons = new HoaDon();
+            }
+
+            // Chuyển đổi và gán giá trị cho tong_tien
+            if (long.TryParse(Request.Form["tong_tien"], out long tongTien))
+            {
+                HoaDons.tong_tien =  tongTien;
+            }
+            else
+            {
+                ModelState.AddModelError("tong_tien", "Giá trị 'tong_tien' không hợp lệ.");
+                return Page();
+            }
+
+            HoaDons.gio_vao = DateTime.Now;
+
+            // Kiểm tra và gán giá trị cho gio_ra (nếu có)
+            if (!string.IsNullOrEmpty(Request.Form["gio_ra"]))
+            {
+                if (DateTime.TryParse(Request.Form["gio_ra"], out DateTime gioRa))
+                {
+                    HoaDons.gio_ra = gioRa;
+                }
+                else
+                {
+                    ModelState.AddModelError("gio_ra", "Giá trị 'gio_ra' không hợp lệ.");
+                    return Page();
+                }
+            }
+            else
+            {
+                // Để gio_ra trống hoặc gán giá trị mặc định (null)
+                HoaDons.gio_ra = null; // Giả sử gio_ra là nullable trong mô hình HoaDon
+            }
+
+            // Gán giá trị cho các thuộc tính còn lại
+            HoaDons.list_mon_an = Request.Form["list_mon_an"];
+            HoaDons.ten_ban = Request.Form["ten_ban"];
+
+            using (var db = new MySqlConnection(_connectionString))
+            {
+                string query = @"INSERT INTO hoa_don (tong_tien, gio_vao, gio_ra, list_mon_an, ten_ban, ten_nhan_vien, trang_thai,ten_kh)
+                         VALUES (@tong_tien, @gio_vao, @gio_ra, @list_mon_an, @ten_ban,@ten_nhan_vien, @trang_thai, @ten_kh)";
+
+                await db.ExecuteAsync(query, new HoaDon
+                {
+                    tong_tien = HoaDons.tong_tien,
+                    gio_vao = HoaDons.gio_vao,
+                    gio_ra = HoaDons.gio_ra, 
+                    list_mon_an = HoaDons.list_mon_an,
+                    ten_ban = HoaDons.ten_ban,
+                    ten_nhan_vien = "Lê Công Namm",
+                    trang_thai = "Đang trong ca làm",
+                    ten_kh = "hiện lênnnn",
+                });
+            }
+
+            TempData["SuccessMessage"] = "Thêm hóa đơn thành công!";
+            return RedirectToPage("Index");
+        }
+
+
+
     }
 
-    public class Bank
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string code { get; set; }
-        public string bin { get; set; }
-        public string shortName { get; set; }
-        public string logo { get; set; }
-        public int transferSupported { get; set; }
-        public int lookupSupported { get; set; }
-        public int support { get; set; }
-        public int isTransfer { get; set; }
-        public string swiftCode { get; set; }
-    }
-
-    public class BankResponse
-    {
-        public string Code { get; set; }
-        public string Desc { get; set; }
-        public IList<Bank> Data { get; set; }
-    }
-
-    public class QRCodeViewModel
-    {
-        public string QRCodeUrl { get; set; }
-    }
 }
+
+public class Bank
+{
+    public int id { get; set; }
+    public string name { get; set; }
+    public string code { get; set; }
+    public string bin { get; set; }
+    public string shortName { get; set; }
+    public string logo { get; set; }
+    public int transferSupported { get; set; }
+    public int lookupSupported { get; set; }
+    public int support { get; set; }
+    public int isTransfer { get; set; }
+    public string swiftCode { get; set; }
+}
+
+public class BankResponse
+{
+    public string Code { get; set; }
+    public string Desc { get; set; }
+    public IList<Bank> Data { get; set; }
+}
+
+public class QRCodeViewModel
+{
+    public string QRCodeUrl { get; set; }
+}
+
+

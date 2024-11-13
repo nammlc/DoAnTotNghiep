@@ -1,0 +1,171 @@
+@page
+@model DoAnTotNghiep.Pages.OrderModel
+@{
+    Layout = "_Layout";
+}
+
+<div class="order-header">
+    <div><strong>Danh sách hóa đơn</strong></div>
+    <div><strong>Tổng tiền trong tháng : @ViewData["tongTienTrongCa"] VNĐ</strong></div>
+</div>
+<div class="" style="display: flex; justify-content: space-between;">
+    <input type="text" id="searchInput" name="searchQuery" placeholder="Tìm kiếm theo mã hóa đơn , tên bàn ..."
+        class="form-control" style="width: 25%;">
+    <select name="trang_thai" id="trang_thai" style="border-radius: 10px;">
+        <option value="">Lọc trạng thái đơn</option>
+        <option value="Đang trong ca làm">Trong ca làm</option>
+        <option value="Ngoài ca làm">Ngoài ca làm</option>
+
+    </select>
+</div>
+
+<table class="table table-bordered table-hover" style="margin-top: 10px;">
+    <thead>
+        <tr>
+            <td>STT</td>
+            <td>ID hóa đơn</td>
+            <td>Tên bàn</td>
+            <td>Giờ vào</td>
+            <td>Giờ ra</td>
+            <td>Tổng hóa đơn</td>
+            <td>Danh sách hóa đơn</td>
+            <td>Tên nhân viên</td>
+            <td>Trạng thái</td>
+
+        </tr>
+    </thead>
+    <tbody id="billList">
+        @if (Model != null && Model.HoaDons != null && Model.HoaDons.Any())
+        {
+            int stt = 1;
+            foreach (var hoadon in Model.HoaDons)
+            {
+                <tr class="bill-item">
+                    <td>@stt</td>
+                    <td>@hoadon.id</td>
+                    <td>@hoadon.ten_ban</td>
+                    <td>@hoadon.gio_vao?.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@hoadon.gio_ra?.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@hoadon.tong_tien.ToString("#,##0") VNĐ</td>
+                    <td>Ấn để xem danh sách</td>
+                    <td>@hoadon.ten_nhan_vien</td>
+                    @if (hoadon.trang_thai.Equals("Đang trong ca làm"))
+                    {
+                        <td style="color: green">@hoadon.trang_thai </td>
+                    }
+                    else
+                    {
+                        <td style="color: red;">@hoadon.trang_thai </td>
+                    }
+
+
+                </tr>
+                stt++;
+            }
+        }
+    </tbody>
+</table>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center" id="pagination">
+        
+    </ul>
+</nav>
+
+<script>
+    const billsPerPage = 12; 
+    let currentPage = 1;
+    const bills = document.querySelectorAll('.bill-item'); 
+
+    
+    function filterBills(searchQuery) {
+        const filteredBills = [];
+        bills.forEach(bill => {
+            const name = bill.querySelector('td:nth-child(3)').textContent.toLowerCase(); 
+            const trang_thai = bill.querySelector('td:nth-child(9)').textContent.toLowerCase(); 
+
+            
+            if (name.includes(searchQuery.toLowerCase()) || trang_thai.includes(searchQuery.toLowerCase())) {
+                bill.style.display = "table-row"; 
+                filteredBills.push(bill); 
+            } else {
+                bill.style.display = "none"; 
+            }
+        });
+        return filteredBills; 
+    }
+
+    
+    function showPage(page, filteredBills) {
+        const start = (page - 1) * billsPerPage;
+        const end = start + billsPerPage;
+
+        // Ẩn tất cả hóa đơn
+        bills.forEach(bill => {
+            bill.style.display = "none"; // Ẩn tất cả
+        });
+
+        
+        filteredBills.forEach((bill, index) => {
+            if (index >= start && index < end) {
+                bill.style.display = "table-row"; 
+            }
+        });
+
+        // Cập nhật phân trang
+        updatePagination(page, filteredBills.length);
+    }
+
+    // Cập nhật các nút phân trang
+    function updatePagination(page, totalBills) {
+        const pagination = document.getElementById('pagination');
+        const totalPages = Math.ceil(totalBills / billsPerPage); 
+        pagination.innerHTML = '';
+
+        // Thêm nút "Trước"
+        if (page > 1) {
+            pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page - 1}, ${totalBills})">«</a></li>`;
+        }
+
+        // Thêm các nút trang
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === page) {
+                pagination.innerHTML += `<li class="page-item active"><a class="page-link" href="#">${i}</a></li>`;
+            } else {
+                pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${i}, ${totalBills})">${i}</a></li>`;
+            }
+        }
+
+        // Thêm nút "Sau"
+        if (page < totalPages) {
+            pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page + 1}, ${totalBills})">»</a></li>`;
+        }
+    }
+
+    // Chuyển trang
+    function changePage(page, totalBills) {
+        currentPage = page; 
+        const filteredBills = filterBills(document.getElementById('searchInput').value); 
+        showPage(currentPage, filteredBills); 
+    }
+
+    // Lắng nghe sự kiện tìm kiếm
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const searchQuery = this.value;
+        const filteredBills = filterBills(searchQuery);
+        currentPage = 1; 
+        showPage(currentPage, filteredBills); 
+    });
+
+    
+    document.getElementById('trang_thai').addEventListener('change', function () {
+        const searchQuery = this.value.toLowerCase();
+        const filteredBills = filterBills(searchQuery); 
+        currentPage = 1;
+        showPage(currentPage, filteredBills);
+    });
+
+   
+    const filteredBills = filterBills(document.getElementById('searchInput').value);
+    showPage(currentPage, filteredBills);
+</script>

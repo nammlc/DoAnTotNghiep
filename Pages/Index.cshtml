@@ -3,7 +3,10 @@
 @{
     ViewData["Title"] = "Home page";
 }
-
+@if (TempData["Message"] != null)
+{
+    <div>@TempData["Message"]</div>
+}
 <div class="row">
     <!-- Left Section: Menu -->
     <div class="col-md-8" style="border-right: rgb(195, 194, 191) solid 0.5px;">
@@ -39,8 +42,8 @@
                     {
                         <div class="col-md-3 dish-item" style="text-align: center;" data-type="@monAn.phan_loai_thuc_an"
                             data-choose="@monAn.loai_mon_an">
-                            <div class="menu-item" data-name="@monAn.ten_mon_an" data-price="@monAn.gia_mon_an">
-                                <img src="https://www.highlandscoffee.com.vn/vnt_upload/product/11_2023/3P_COMBO_Freeze_Berry.jpg"
+                            <div class="menu-item" data-name="@monAn.ten_mon_an" data-price="@monAn.gia_mon_an" data-img="@monAn.anh_minh_hoa">
+                                <img src="~/image/270_crop_HLC_New_logo_5.1_Products__BAC_XIU.jpg"
                                     alt="Food Item" style="height: 180px; width: 100%;">
                                 <div class="price"> @monAn.gia_mon_an</div>
                                 <div class="name_dish">@monAn.ten_mon_an</div>
@@ -77,10 +80,7 @@
             </ul>
             <div class="mt-3">
                 <h5>Tổng cộng: <span class="text-primary" id="total-price">0 VND</span></h5>
-                <button type="button" class="btn btn-primary">Tạo đơn hàng </button>
-
                 <button type="submit" class="btn btn-primary" id="openQrModal">Thanh toán</button>
-
             </div>
         </div>
     </div>
@@ -98,7 +98,8 @@
                 <!-- Mã QR bên trái -->
                 <div class="col-md-4 text-center">
                     <h6>Mã QR Thanh Toán</h6>
-                    <img src="@Model.QRCodeModel.QRCodeUrl" alt="QR Code" class="img-fluid" style="max-width: 260px; width: 260px;">
+                    <img src="@Model.QRCodeModel.QRCodeUrl" alt="QR Code" class="img-fluid"
+                        style="max-width: 260px; width: 260px;">
                 </div>
 
                 <!-- Thông tin đơn hàng bên phải -->
@@ -116,7 +117,7 @@
                                 </tr>
                             </thead>
                             <tbody id="orderItems">
-                                <!-- Dữ liệu đơn hàng sẽ được thêm vào đây bằng JavaScript -->
+                                <!-- Dữ liệu đơn hàng được thêm vào đây -->
                             </tbody>
                         </table>
 
@@ -127,15 +128,197 @@
                 <strong>Tổng Số Tiền: <span id="totalAmount">0 VND</span> </strong>
             </div>
             <div class="modal-footer">
-
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary">Xác Nhận Thanh Toán</button>
+                <form method="post">
+                    <input style="display: none;"type="text" name="ten_ban" value="Tên bàn sẽ nhập hoặc lấy từ UI">
+                    <input style="display: none;"type="date" name="gio_vao" value="">
+                    <input style="display: none;"type="date" name="gio_ra" value="">
+                    <input style="display: none;"type="text" name="tong_tien" id="hidden-total-price" value="0">
+                    <input style="display: none;"type="text" name="list_mon_an" id="hidden-mon-an" value="">
+                    <button type="submit" class="btn btn-primary" id="paymentButton">Xác nhận thanh toán</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+    const orderList = document.getElementById('order-list');
+    const totalPriceElement = document.getElementById('total-price');
+    let orderItems = []; // Danh sách món ăn đã chọn
+
+    document.querySelectorAll('.menu-item .add-to-order').forEach(button => {
+        button.addEventListener('click', function () {
+            const itemElement = this.parentElement;
+            const name = itemElement.getAttribute('data-name');
+            const price = parseFloat(itemElement.getAttribute('data-price'));
+            const anh_minh_hoa = itemElement.getAttribute('data-img');
+            // Kiểm tra xem món ăn đã được thêm chưa
+            const existingItem = orderItems.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                orderItems.push({ name, price, quantity: 1 ,anh_minh_hoa});
+            }
+
+            updateOrderSummary();
+        });
+    });
+    // Cập nhật danh sách đơn hàng
+    function updateOrderSummary() {
+        orderList.innerHTML = ''; // Xóa danh sách hiện tại
+        let total = 0;
+
+        orderItems.forEach(item => {
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+            listItem.innerHTML = `
+            <input type="checkbox" class="item-checkbox" data-name="${item.name}">
+            <div style="display: block; width: 45px; overflow-y: hidden;">${item.name}</div>
+            <span class="badge bg-primary rounded-pill" style="padding-right: 5px;">${formatCurrency(item.price * item.quantity)}.000 VNĐ</span>
+            <input type="number" value="${item.quantity}" class="form-control quantity-input" 
+                style="width: 60px;" data-name="${item.name}" min="1"/>
+            <button class="btn btn-danger remove-item" data-name="${item.name}">Xóa</button>
+        `;
+            orderList.appendChild(listItem);
+            total += item.price * item.quantity;
+        });
+
+
+        totalPriceElement.textContent = `${formatCurrency(total)}.000 VNĐ`;
+
+        // Cập nhật sự kiện cho các input số lượng
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            input.addEventListener('change', function () {
+                const name = this.getAttribute('data-name');
+                const quantity = parseInt(this.value);
+                const item = orderItems.find(item => item.name === name);
+                if (item) {
+                    item.quantity = quantity;
+                    updateOrderSummary(); // Cập nhật lại danh sách đơn hàng
+                }
+            });
+        });
+
+        // Cập nhật sự kiện cho nút xóa
+        document.querySelectorAll('.remove-item').forEach(button => {
+            button.addEventListener('click', function () {
+                const name = this.getAttribute('data-name');
+                orderItems = orderItems.filter(item => item.name !== name); // Xóa món ăn khỏi danh sách
+                updateOrderSummary(); // Cập nhật lại danh sách đơn hàng
+            });
+        });
+
+        // Cập nhật hiển thị nếu không có món nào
+        if (orderItems.length === 0) {
+            orderList.innerHTML = '<p class="no-items">Chưa gọi món nào</p>';
+            document.getElementById('select-all').style.display = "none";
+            document.getElementById('delete-selected').style.display = "none";
+        }
+        else {
+            document.getElementById('select-all').style.display = "block";
+            document.getElementById('delete-selected').style.display = "block";
+        }
+
+        document.getElementById('select-all').addEventListener('click', function () {
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true; // Đánh dấu tất cả
+            });
+        });
+
+        // Xóa đã chọn
+        document.getElementById('delete-selected').addEventListener('click', function () {
+            const checkedBoxes = document.querySelectorAll('.item-checkbox:checked');
+            const checkedNames = Array.from(checkedBoxes).map(box => box.getAttribute('data-name'));
+
+            // Lọc ra các món không được chọn
+            orderItems = orderItems.filter(item => !checkedNames.includes(item.name));
+            updateOrderSummary(); // Cập nhật lại danh sách đơn hàng
+        });
+
+    }
+    function validateForm() {
+        console.log("Validate Form called");
+        if (orderItems.length === 0) {
+            alert('Vui lòng thêm món vào đơn hàng trước khi thanh toán.');
+            return false;
+        }
+        return true;
+    }
+    function updateOrderModal() {
+        console.log("click");
+        const orderTableBody = document.getElementById('orderItems');
+        orderTableBody.innerHTML = ''; // Xóa dữ liệu hiện tại
+
+        let totalAmount = 0;
+
+        orderItems.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+            <td>${index + 1}</td> <!-- STT -->
+            <td>${item.name}</td> <!-- Tên Món -->
+            <td><strong>${formatCurrency(item.price)}.000 </strong>VND</td> 
+            <td>${item.quantity}</td> <!-- Số Lượng -->
+            <td><strong>${formatCurrency(item.price * item.quantity)}.000 </strong>VND</td> 
+        `;
+            orderTableBody.appendChild(row);
+            totalAmount += item.price * item.quantity;
+        });
+        document.getElementById("hidden-total-price").value = totalAmount * 1000;
+        const monAnData = orderItems.map(item => ({
+            ten_mon: item.name,
+            gia_tien: item.price * 1000,
+            so_luong: item.quantity,
+            anh_minh_hoa : item.anh_minh_hoa
+        }));
+
+        // Log dữ liệu món ăn để kiểm tra
+        console.log("List of Mon An:", JSON.stringify(monAnData));
+
+        // Gán dữ liệu vào hidden input
+        document.getElementById("hidden-mon-an").value = JSON.stringify(monAnData);
+        // Hiển thị tổng số tiền trong modal
+        document.getElementById('totalAmount').textContent = ` ${formatCurrency(totalAmount)}.000 VND`;
+    }
+
+
+    //cập nhật modal thanh toán 
+
+    function formatCurrency(value) {
+        return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', '').trim();
+    }
+
+    document.getElementById("openQrModal").addEventListener("click", async function () {
+        updateOrderModal();
+        let totalAmount = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) * 1000;
+
+        try {
+            const response = await fetch(`?handler=GenerateQRCode&amount=${totalAmount}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+
+            // Kiểm tra qrCodeUrl 
+            if (data.qrCodeUrl) {
+                document.querySelector('#paymentModal img').src = data.qrCodeUrl;
+            } else {
+                console.error('QRCodeUrl không có trong phản hồi');
+            }
+        } catch (error) {
+            console.error('Lỗi tạo mã QR:', error);
+        }
+
+        var qrModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+        qrModal.show();
+    });
+
+</script>
 
 <script>
     const dishesPerPage = 12; // Số món ăn mỗi trang
@@ -237,6 +420,7 @@
         currentPage = 1;
         showPage(currentPage, filteredDishes);
     });
+    
     document.getElementById('select').addEventListener('change', function () {
         const searchQuery = this.value.toLowerCase();
         console.log("change");
@@ -246,160 +430,4 @@
     });
     // Khởi động hiển thị trang đầu tiên
     showPage(currentPage, dishes);
-</script>
-<script>
-    const orderList = document.getElementById('order-list');
-    const totalPriceElement = document.getElementById('total-price');
-    let orderItems = []; // Danh sách món ăn đã chọn
-
-    document.querySelectorAll('.menu-item .add-to-order').forEach(button => {
-        button.addEventListener('click', function () {
-            const itemElement = this.parentElement;
-            const name = itemElement.getAttribute('data-name');
-            const price = parseFloat(itemElement.getAttribute('data-price'));
-
-            // Kiểm tra xem món ăn đã được thêm chưa
-            const existingItem = orderItems.find(item => item.name === name);
-            if (existingItem) {
-                existingItem.quantity++;
-            } else {
-                orderItems.push({ name, price, quantity: 1 });
-            }
-
-            updateOrderSummary();
-        });
-    });
-    // Cập nhật danh sách đơn hàng
-    function updateOrderSummary() {
-        orderList.innerHTML = ''; // Xóa danh sách hiện tại
-        let total = 0;
-
-        orderItems.forEach(item => {
-            const listItem = document.createElement('li');
-            listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-            listItem.innerHTML = `
-            <input type="checkbox" class="item-checkbox" data-name="${item.name}">
-            <div style="display: block; width: 45px; overflow-y: hidden;">${item.name}</div>
-            <span class="badge bg-primary rounded-pill" style="padding-right: 5px;">${formatCurrency(item.price * item.quantity)}.000 VNĐ</span>
-            <input type="number" value="${item.quantity}" class="form-control quantity-input" 
-                style="width: 60px;" data-name="${item.name}" min="1"/>
-            <button class="btn btn-danger remove-item" data-name="${item.name}">Xóa</button>
-        `;
-            orderList.appendChild(listItem);
-            total += item.price * item.quantity;
-        });
-
-
-        totalPriceElement.textContent = `${formatCurrency(total)}.000 VNĐ`;
-
-        // Cập nhật sự kiện cho các input số lượng
-        document.querySelectorAll('.quantity-input').forEach(input => {
-            input.addEventListener('change', function () {
-                const name = this.getAttribute('data-name');
-                const quantity = parseInt(this.value);
-                const item = orderItems.find(item => item.name === name);
-                if (item) {
-                    item.quantity = quantity;
-                    updateOrderSummary(); // Cập nhật lại danh sách đơn hàng
-                }
-            });
-        });
-
-        // Cập nhật sự kiện cho nút xóa
-        document.querySelectorAll('.remove-item').forEach(button => {
-            button.addEventListener('click', function () {
-                const name = this.getAttribute('data-name');
-                orderItems = orderItems.filter(item => item.name !== name); // Xóa món ăn khỏi danh sách
-                updateOrderSummary(); // Cập nhật lại danh sách đơn hàng
-            });
-        });
-
-        // Cập nhật hiển thị nếu không có món nào
-        if (orderItems.length === 0) {
-            orderList.innerHTML = '<p class="no-items">Chưa gọi món nào</p>';
-            document.getElementById('select-all').style.display = "none";
-            document.getElementById('delete-selected').style.display = "none";
-        }
-        else {
-            document.getElementById('select-all').style.display = "block";
-            document.getElementById('delete-selected').style.display = "block";
-        }
-
-        document.getElementById('select-all').addEventListener('click', function () {
-            const checkboxes = document.querySelectorAll('.item-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = true; // Đánh dấu tất cả
-            });
-        });
-
-        // Xóa đã chọn
-        document.getElementById('delete-selected').addEventListener('click', function () {
-            const checkedBoxes = document.querySelectorAll('.item-checkbox:checked');
-            const checkedNames = Array.from(checkedBoxes).map(box => box.getAttribute('data-name'));
-
-            // Lọc ra các món không được chọn
-            orderItems = orderItems.filter(item => !checkedNames.includes(item.name));
-            updateOrderSummary(); // Cập nhật lại danh sách đơn hàng
-        });
-    }
-
-    function updateOrderModal() {
-        console.log("click");
-        const orderTableBody = document.getElementById('orderItems');
-        orderTableBody.innerHTML = ''; // Xóa dữ liệu hiện tại
-
-        let totalAmount = 0;
-
-        orderItems.forEach((item, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-            <td>${index + 1}</td> <!-- STT -->
-            <td>${item.name}</td> <!-- Tên Món -->
-            <td><strong>${formatCurrency(item.price)}.000 </strong>VND</td> 
-            <td>${item.quantity}</td> <!-- Số Lượng -->
-            <td><strong>${formatCurrency(item.price * item.quantity)}.000 </strong>VND</td> 
-        `;
-            orderTableBody.appendChild(row);
-            totalAmount += item.price * item.quantity;
-        });
-
-        // Hiển thị tổng số tiền trong modal
-        document.getElementById('totalAmount').textContent = ` ${formatCurrency(totalAmount)}.000 VND`;
-    }
-
-
-    //cập nhật modal thanh toán 
-
-    function formatCurrency(value) {
-        return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', '').trim();
-    }
-
-    document.getElementById("openQrModal").addEventListener("click", async function () {
-        updateOrderModal();
-        let totalAmount = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) *1000;
-
-        try {
-            const response = await fetch(`?handler=GenerateQRCode&amount=${totalAmount}`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-
-            // Kiểm tra qrCodeUrl 
-            if (data.qrCodeUrl) {
-                document.querySelector('#paymentModal img').src = data.qrCodeUrl;
-            } else {
-                console.error('QRCodeUrl không có trong phản hồi');
-            }
-        } catch (error) {
-            console.error('Lỗi tạo mã QR:', error);
-        }
-
-        var qrModal = new bootstrap.Modal(document.getElementById('paymentModal'));
-        qrModal.show();
-    });
-
-
-
 </script>

@@ -1,6 +1,14 @@
 {
   "Files": [
     {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\css\\Map.css",
+      "PackagePath": "staticwebassets\\css\\Map.css"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\css\\Order.css",
+      "PackagePath": "staticwebassets\\css\\Order.css"
+    },
+    {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\css\\StaffListDisplay.css",
       "PackagePath": "staticwebassets\\css\\StaffListDisplay.css"
     },
@@ -31259,6 +31267,154 @@
     {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__AMERICANO_NONG.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__AMERICANO_NONG.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__BAC_XIU.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__BAC_XIU.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__CAPPUCINO.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__CAPPUCINO.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__CARAMEL_FREEZE_PHINDI.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__CARAMEL_FREEZE_PHINDI.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__CARAMEL_MACCHIATTO.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__CARAMEL_MACCHIATTO.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__COOKIES_FREEZE.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__COOKIES_FREEZE.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__EXPRESSO.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__EXPRESSO.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__FREEZE_CHOCO.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__FREEZE_CHOCO.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__FREEZE_TRA_XANH.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__FREEZE_TRA_XANH.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__LATTE_1 (1).jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__LATTE_1 (1).jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__LATTE_1.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__LATTE_1.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__MOCHA.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__MOCHA.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__PHINDI_CHOCO.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__PHINDI_CHOCO.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__PHINDI_HANH_NHAN.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__PHINDI_HANH_NHAN.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__PHINDI_KEM_SUA.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__PHINDI_KEM_SUA.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__TRA_SEN_VANG_CU_NANG.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__TRA_SEN_VANG_CU_NANG.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__TRA_TACH_VAI.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__TRA_TACH_VAI.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__TRA_THANH_DAO-08.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__TRA_THANH_DAO-08.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__TRA_THANH_DAO-09.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__TRA_THANH_DAO-09.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__TRA_XANH_DAU_DO.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__TRA_XANH_DAU_DO.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__TSV.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__TSV.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_Phindi_Cassia_Highlands_products_Image1.jpg",
+      "PackagePath": "staticwebassets\\image\\270_crop_Phindi_Cassia_Highlands_products_Image1.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\classic-phin-freeze.html",
+      "PackagePath": "staticwebassets\\image\\classic-phin-freeze.html"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\images (1).jfif",
+      "PackagePath": "staticwebassets\\image\\images (1).jfif"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\images (2).jfif",
+      "PackagePath": "staticwebassets\\image\\images (2).jfif"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\images (3).jfif",
+      "PackagePath": "staticwebassets\\image\\images (3).jfif"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\images (4).jfif",
+      "PackagePath": "staticwebassets\\image\\images (4).jfif"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\images (5).jfif",
+      "PackagePath": "staticwebassets\\image\\images (5).jfif"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\images (6).jfif",
+      "PackagePath": "staticwebassets\\image\\images (6).jfif"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\images.jfif",
+      "PackagePath": "staticwebassets\\image\\images.jfif"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\phindi-cassia-1718358466 (1).html",
+      "PackagePath": "staticwebassets\\image\\phindi-cassia-1718358466 (1).html"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\phindi-cassia-1718358466.html",
+      "PackagePath": "staticwebassets\\image\\phindi-cassia-1718358466.html"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\tải xuống (1).jfif",
+      "PackagePath": "staticwebassets\\image\\tải xuống (1).jfif"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\tải xuống (2).jfif",
+      "PackagePath": "staticwebassets\\image\\tải xuống (2).jfif"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\tải xuống (3).jfif",
+      "PackagePath": "staticwebassets\\image\\tải xuống (3).jfif"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\tải xuống (4).jfif",
+      "PackagePath": "staticwebassets\\image\\tải xuống (4).jfif"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\tải xuống.jfif",
+      "PackagePath": "staticwebassets\\image\\tải xuống.jfif"
     },
     {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\js\\pagination.js",
