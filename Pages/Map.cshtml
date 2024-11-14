@@ -38,11 +38,13 @@
         background-color: #ffe5b4;
         grid-column: 1 / span 1;
         grid-row: 4;
+        color : #333;
     }
     .door {
         background-color: #d1e7dd;
         grid-column: 2 / span 1;
         grid-row: 4;
+        color : #333;
     }
     .icon {
         font-size: 24px;
@@ -84,7 +86,7 @@
         <option value="">Chọn đơn hàng</option>
         @foreach (var hoadon in Model.HoaDons)
         {
-            <option value="@hoadon.ten_kh">Tên KH: @hoadon.ten_kh ; Tổng hóa đơn: @hoadon.tong_tien.ToString("#,##0") VNĐ ; Thời gian tạo hóa đơn : @hoadon.gio_vao </option>
+            <option value="@hoadon.ten_ban">Tên KH: @hoadon.ten_ban ; Tổng hóa đơn: @hoadon.tong_tien.ToString("#,##0") VNĐ ; Thời gian tạo hóa đơn : @hoadon.gio_vao </option>
         }
     </select>
     <div style="margin-top: 10px;">

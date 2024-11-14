@@ -186,8 +186,8 @@ namespace DoAnTotNghiep.Pages
                     list_mon_an = HoaDons.list_mon_an,
                     ten_ban = HoaDons.ten_ban,
                     ten_nhan_vien = "Lê Công Namm",
-                    trang_thai = "Đang trong ca làm",
-                    ten_kh = "hiện lênnnn",
+                    trang_thai = "Chưa hoàn thành",
+                    ten_kh = "Client",
                 });
             }
 

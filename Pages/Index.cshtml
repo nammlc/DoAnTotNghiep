@@ -43,7 +43,7 @@
                         <div class="col-md-3 dish-item" style="text-align: center;" data-type="@monAn.phan_loai_thuc_an"
                             data-choose="@monAn.loai_mon_an">
                             <div class="menu-item" data-name="@monAn.ten_mon_an" data-price="@monAn.gia_mon_an" data-img="@monAn.anh_minh_hoa">
-                                <img src="~/image/270_crop_HLC_New_logo_5.1_Products__BAC_XIU.jpg"
+                                <img src="@monAn.anh_minh_hoa"
                                     alt="Food Item" style="height: 180px; width: 100%;">
                                 <div class="price"> @monAn.gia_mon_an</div>
                                 <div class="name_dish">@monAn.ten_mon_an</div>
@@ -79,7 +79,7 @@
                 <p class="no-items">Chưa gọi món nào</p>
             </ul>
             <div class="mt-3">
-                <h5>Tổng cộng: <span class="text-primary" id="total-price">0 VND</span></h5>
+                <h5>Tổng cộng: <span class="text-primary" id="total-price">0.000 VND</span></h5>
                 <button type="submit" class="btn btn-primary" id="openQrModal">Thanh toán</button>
             </div>
         </div>
@@ -130,7 +130,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                 <form method="post">
-                    <input style="display: none;"type="text" name="ten_ban" value="Tên bàn sẽ nhập hoặc lấy từ UI">
+                    <input type="text" name="ten_ban" placeholder="Nhập tên khách hàng">
                     <input style="display: none;"type="date" name="gio_vao" value="">
                     <input style="display: none;"type="date" name="gio_ra" value="">
                     <input style="display: none;"type="text" name="tong_tien" id="hidden-total-price" value="0">
