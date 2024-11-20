@@ -50,6 +50,7 @@ namespace DoAnTotNghiep.Pages
                     trang_thai = hd.trang_thai ?? "",
                     ten_kh = hd.ten_kh
                 })
+                
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(searchQuery))

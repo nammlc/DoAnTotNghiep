@@ -17,5 +17,10 @@ namespace DoAnTotNghiep.Models
         public string ten_nhan_vien { get; set; }
         public string trang_thai { get; set; }
         public string ten_kh {get;set;}
+
+        public int? ban_an_id { get; set; }
+
+        [ForeignKey("ban_an_id")]
+        public BanAn BanAn { get; set; }
     }
 }

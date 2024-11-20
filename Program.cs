@@ -11,6 +11,11 @@ builder.Services.AddDbContext<MyDbContext>(options =>
     new MySqlServerVersion(new Version(8, 0, 25)))); // Điều chỉnh phiên bản MySQL nếu cần
 builder.Services.AddRazorPages(); // Phải thêm dịch vụ trước khi gọi builder.Build()
 builder.Services.AddHttpClient(); // Thêm các dịch vụ trước khi build ứng dụng
+builder.Services.AddAntiforgery(options =>
+{
+    // Đặt tên cho header chứa token chống CSRF (có thể là XSRF-TOKEN hoặc tên bạn chọn)
+    options.HeaderName = "XSRF-TOKEN";
+});
 
 var app = builder.Build();
 
@@ -40,11 +45,16 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
-
-app.MapRazorPages(); 
+app.MapGet("/", (HttpContext context) =>
+{
+    context.Response.Redirect("/DangNhap");
+    return Task.CompletedTask;
+});
+app.MapRazorPages();
 app.UseEndpoints(endpoints =>
     {
         endpoints.MapRazorPages();
     });
+
 
 app.Run();

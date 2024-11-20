@@ -59,14 +59,10 @@
     color: #333;
 }
 
-/* Biểu tượng */
+
 .icon {
     font-size: 2rem;
     margin-bottom: 5px;
 }
 
-/* Thêm hình tròn cho bàn VIP */
-.table.vip {
-    background-color: #ffcc66;
-    border: 2px solid #ffaa33;
-}
+

@@ -1,6 +1,10 @@
 {
   "Files": [
     {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\css\\DangNhap.css",
+      "PackagePath": "staticwebassets\\css\\DangNhap.css"
+    },
+    {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\css\\Map.css",
       "PackagePath": "staticwebassets\\css\\Map.css"
     },
@@ -31269,6 +31273,42 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\fonts\\material-design-iconic-font\\css\\material-design-iconic-font.css",
+      "PackagePath": "staticwebassets\\fonts\\material-design-iconic-font\\css\\material-design-iconic-font.css"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\fonts\\material-design-iconic-font\\css\\material-design-iconic-font.min.css",
+      "PackagePath": "staticwebassets\\fonts\\material-design-iconic-font\\css\\material-design-iconic-font.min.css"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\fonts\\material-design-iconic-font\\fonts\\Material-Design-Iconic-Font.eot",
+      "PackagePath": "staticwebassets\\fonts\\material-design-iconic-font\\fonts\\Material-Design-Iconic-Font.eot"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\fonts\\material-design-iconic-font\\fonts\\Material-Design-Iconic-Font.svg",
+      "PackagePath": "staticwebassets\\fonts\\material-design-iconic-font\\fonts\\Material-Design-Iconic-Font.svg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\fonts\\material-design-iconic-font\\fonts\\Material-Design-Iconic-Font.ttf",
+      "PackagePath": "staticwebassets\\fonts\\material-design-iconic-font\\fonts\\Material-Design-Iconic-Font.ttf"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\fonts\\material-design-iconic-font\\fonts\\Material-Design-Iconic-Font.woff",
+      "PackagePath": "staticwebassets\\fonts\\material-design-iconic-font\\fonts\\Material-Design-Iconic-Font.woff"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\fonts\\material-design-iconic-font\\fonts\\Material-Design-Iconic-Font.woff2",
+      "PackagePath": "staticwebassets\\fonts\\material-design-iconic-font\\fonts\\Material-Design-Iconic-Font.woff2"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\fonts\\poppins\\Poppins-Regular.ttf",
+      "PackagePath": "staticwebassets\\fonts\\poppins\\Poppins-Regular.ttf"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\fonts\\poppins\\Poppins-SemiBold.ttf",
+      "PackagePath": "staticwebassets\\fonts\\poppins\\Poppins-SemiBold.ttf"
+    },
+    {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\270_crop_HLC_New_logo_5.1_Products__AMERICANO_NONG.jpg",
       "PackagePath": "staticwebassets\\image\\270_crop_HLC_New_logo_5.1_Products__AMERICANO_NONG.jpg"
     },
@@ -31375,6 +31415,14 @@
     {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\baguette_tcm89-24851_w1024_n.jpg",
       "PackagePath": "staticwebassets\\image\\baguette_tcm89-24851_w1024_n.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\bg-login.jpg",
+      "PackagePath": "staticwebassets\\image\\bg-login.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\bg-registration-form-1.jpg",
+      "PackagePath": "staticwebassets\\image\\bg-registration-form-1.jpg"
     },
     {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\blueberry-muffin_tcm89-24806_w1024_n.jpg",
@@ -31509,6 +31557,10 @@
       "PackagePath": "staticwebassets\\image\\java-chip-frappuccino-blended-coffee_tcm89-3771_w1024_n.jpg"
     },
     {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\login.jpg",
+      "PackagePath": "staticwebassets\\image\\login.jpg"
+    },
+    {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\mocha-cake_tcm89-24818_w1024_n.jpg",
       "PackagePath": "staticwebassets\\image\\mocha-cake_tcm89-24818_w1024_n.jpg"
     },
@@ -31547,6 +31599,10 @@
     {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\raison-oatmeal_tcm89-24814_w1024_n.jpg",
       "PackagePath": "staticwebassets\\image\\raison-oatmeal_tcm89-24814_w1024_n.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\registration-form-1.jpg",
+      "PackagePath": "staticwebassets\\image\\registration-form-1.jpg"
     },
     {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\ristretto-bianco_tcm89-24779_w1024_n.jpg",
@@ -31607,6 +31663,10 @@
     {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\vanilla-bean-creme-frappuccino-blended-creme_tcm89-3791_w1024_n.jpg",
       "PackagePath": "staticwebassets\\image\\vanilla-bean-creme-frappuccino-blended-creme_tcm89-3791_w1024_n.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\js\\DangNhap.js",
+      "PackagePath": "staticwebassets\\js\\DangNhap.js"
     },
     {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\js\\pagination.js",

@@ -1,5 +1,12 @@
 @page
-@model DoAnTotNghiep.Pages.MapModel;
+@using Microsoft.AspNetCore.Antiforgery
+@inject IAntiforgery antiforgery
+@{
+    var token = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+}
+
+@Html.AntiForgeryToken()
+@model DoAnTotNghiep.Pages.MapModel
 @{
     Layout = "_layout";
 }
@@ -12,7 +19,10 @@
         justify-content: center;
         padding: 20px;
     }
-    .table-map, .counter, .door {
+
+    .table-map,
+    .counter,
+    .door {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -27,25 +37,32 @@
         font-size: 14px;
         overflow: hidden;
     }
+
     .table-map {
-        background-color: #ccc; /* Bàn chưa có đơn hàng: màu xám */
+        background-color: #ccc;
+        /* Bàn chưa có đơn hàng: màu xám */
     }
+
     .table-assigned {
-        background-color: #4CAF50; /* Bàn có đơn hàng: màu xanh */
+        background-color: #4CAF50;
+        /* Bàn có đơn hàng: màu xanh */
         color: white;
     }
+
     .counter {
         background-color: #ffe5b4;
         grid-column: 1 / span 1;
         grid-row: 4;
-        color : #333;
+        color: #333;
     }
+
     .door {
         background-color: #d1e7dd;
         grid-column: 2 / span 1;
         grid-row: 4;
-        color : #333;
+        color: #333;
     }
+
     .icon {
         font-size: 24px;
     }
@@ -53,40 +70,59 @@
 
 <div>
     <h2>Bản Đồ Quán Cafe</h2>
-    
+
     <!-- Bản đồ quán cafe với các bàn, quầy pha chế và cửa ra vào -->
     <div class="cafe-map">
-        @for (int i = 1; i <= 12; i++)
+        @foreach (var banan in Model.BanAns)
         {
-            <div class="table-map" id="table-@i" onclick="openTable(@i)">
-                <div class="icon">☕</div> 
-                <div>Bàn @i</div>
-                <div class="order-info" id="assigned-order-@i">Chưa có đơn hàng</div>
-            </div>
+            if (banan.hoa_don_id != null)
+            {
+                <div class="table-map" id="table-@banan.id"
+                    onclick="openTable('hóa đơn ' + @banan.hoa_don_id + ' của bàn ' + @banan.id.ToString())"
+                    style="background : #4CAF50 ;">
+                    <div class="icon">☕</div>
+                    <div>Bàn @(banan.id - 1)</div>
+                    <div class="order-info" id="assigned-order-@banan.id">Đơn hàng @banan.hoa_don_id</div>
+                </div>
+            }
+            else
+            {
+                <div class="table-map" id="table-@banan.id" onclick="openTable(@banan.id)" style="color : #000">
+                    <div class="icon">☕</div>
+                    <div>Bàn @(banan.id - 1)</div>
+                    <div class="order-info" id="assigned-order-@banan.id">Chưa có đơn hàng</div>
+                </div>
+            }
         }
+
 
         <!-- Quầy pha chế ở góc dưới bên trái -->
         <div class="counter">
-            <div class="icon">🍹</div> 
+            <div class="icon">🍹</div>
             <div>Quầy Pha Chế</div>
         </div>
 
         <!-- Cửa ra vào ngay cạnh quầy pha chế -->
         <div class="door">
-            <div class="icon">🚪</div> 
+            <div class="icon">🚪</div>
             <div>Cửa Ra Vào</div>
         </div>
     </div>
 </div>
 
 <!-- Modal gán đơn hàng vào bàn -->
-<div id="assignOrderModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.2);">
+<div id="assignOrderModal"
+    style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.2);">
     <h3>Gán Đơn Hàng cho Bàn <span id="selectedTable"></span></h3>
     <select id="orderSelect">
         <option value="">Chọn đơn hàng</option>
         @foreach (var hoadon in Model.HoaDons)
         {
-            <option value="@hoadon.ten_ban">Tên KH: @hoadon.ten_ban ; Tổng hóa đơn: @hoadon.tong_tien.ToString("#,##0") VNĐ ; Thời gian tạo hóa đơn : @hoadon.gio_vao </option>
+            if (hoadon.trang_thai != "Đã hoàn thành")
+            {
+                <option value="@hoadon.id">Tên KH: @hoadon.ten_ban ; Tổng hóa đơn: @hoadon.tong_tien.ToString("#,##0") VNĐ ;
+                    Thời gian tạo hóa đơn : @hoadon.gio_vao </option>
+            }
         }
     </select>
     <div style="margin-top: 10px;">
@@ -96,11 +132,28 @@
 </div>
 
 <!-- Modal xem thông tin đơn hàng -->
-<div id="orderInfoModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.2);">
-    <h3>Thông Tin Đơn Hàng Bàn <span id="orderTableNumber"></span></h3>
-    <div id="orderDetails"></div>
+<div id="orderInfoModal"
+    style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.2);">
+    <h3>Thông Tin Đơn Hàng <span id="orderTableNumber"></span></h3>
+    <div id="orderDetails">
+        <div>
+            Tổng đơn hàng :
+        </div>
+        <div>
+            Danh sách đơn hàng :
+        </div>
+        <div>
+            Tên khách hàng :
+        </div>
+        <div>
+            Thời gian order :
+        </div>
+    </div>
     <div style="margin-top: 10px;">
         <button onclick="closeOrderInfoModal()">Đóng</button>
+    </div>
+    <div style="margin-top: 10px;">
+        <button onclick="finishOrder()">Hoàn thành đơn hàng</button>
     </div>
 </div>
 
@@ -111,13 +164,16 @@
     // Mở modal gán đơn hàng khi bàn chưa có đơn
     function openTable(tableNumber) {
         selectedTableId = tableNumber;
+        console.log(selectedTableId);
 
         // Kiểm tra xem bàn đã có đơn hàng chưa
-        if (orderData[selectedTableId]) {
+        if (typeof selectedTableId === 'string') {
             // Nếu có đơn, mở modal xem chi tiết đơn hàng
+            console.log("click");
             openOrderInfoModal();
         } else {
             // Nếu chưa có đơn, mở modal gán đơn hàng
+            console.log("clickk");
             openAssignOrderModal();
         }
     }
@@ -136,37 +192,85 @@
 
     // Xác nhận gán đơn hàng vào bàn
     function assignOrder() {
-        const selectedOrder = document.getElementById("orderSelect").value;
+        let selectedOrder = document.getElementById("orderSelect").value;
+
         if (!selectedOrder) {
             alert("Vui lòng chọn đơn hàng.");
             return;
         }
 
-        // Lưu thông tin đơn hàng vào bàn
-        orderData[selectedTableId] = {
-            customer: selectedOrder,
-            items: [],
-            totalAmount: 0 // Giả sử ban đầu tổng tiền là 0
-        };
+        // Lấy token chống CSRF
+        const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-        // Cập nhật giao diện
-        document.getElementById("assigned-order-" + selectedTableId).innerText = "Tên KH: " + selectedOrder;
-        document.getElementById("table-" + selectedTableId).classList.add("table-assigned");
+        // Gửi yêu cầu AJAX để gán đơn hàng vào bàn
+        fetch(`/Map?handler=Table`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json", // Đặt loại nội dung là JSON
+                "XSRF-TOKEN": csrfToken // Thêm token vào header
+            },
+            body: JSON.stringify({
+                tableId: selectedTableId,
+                orderId: selectedOrder
+            })
+        })
+            .then(response => {
+                // Kiểm tra phản hồi từ server
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert("Có lỗi xảy ra. Vui lòng thử lại.");
+                }
+            })
+            .catch(error => {
+                console.error("Lỗi khi gán đơn hàng:", error);
+                alert("Có lỗi xảy ra. Vui lòng thử lại.");
+            });
+    }
 
-        // Đóng modal
-        closeAssignOrderModal();
+    // Hoàn thành đơn hàng
+    function finishOrder() {
+        let numberOrderId;
+        let numberTableId;
+        if (typeof selectedTableId === "string") {
+            const numbers = selectedTableId.match(/\d+/g);
+
+            numberOrderId = numbers[0];
+            numberTableId = numbers[1];
+
+            console.log(`Hóa đơn: ${numberOrderId}, Bàn: ${numberTableId}`);
+        }
+        const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        // Gửi yêu cầu AJAX để hoàn thành đơn hàng
+        fetch(`/Map?handler=FinishOrder`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json", // Đặt loại nội dung là JSON
+                "XSRF-TOKEN": csrfToken // Thêm token vào header
+            },
+            body: JSON.stringify({
+                tableId: numberTableId,
+                orderId: numberOrderId,
+                statusTable: "Đã hoàn thành" // Sửa dấu chấm phẩy thành dấu hai chấm
+            })
+        })
+            .then(response => {
+                // Kiểm tra phản hồi từ server
+                if (response.ok) {
+                    alert(`Đã hoàn thành đơn hàng ${numberOrderId}!`);
+                    location.reload();
+                } else {
+                    alert("Có lỗi xảy ra. Vui lòng thử lại.");
+                }
+            })
+            .catch(error => {
+                console.error("Vui lòng thử lại:", error);
+                alert("Có lỗi xảy ra. Vui lòng thử lại.");
+            });
     }
 
     // Mở modal xem thông tin đơn hàng
     function openOrderInfoModal() {
-        const order = orderData[selectedTableId];
-        document.getElementById("orderTableNumber").innerText = selectedTableId;
-        document.getElementById("orderDetails").innerHTML = `
-            <p>Tên KH: ${order.customer}</p>
-            <p>Tổng tiền đã thanh toán: ${order.totalAmount} VNĐ</p>
-            <p>Tổng tiền chưa thanh toán: ${order.totalAmount} VNĐ</p>
-            <p>Danh sách món ăn: ${order.items.join(", ") || "Chưa có món"}</p>
-        `;
         document.getElementById("orderInfoModal").style.display = "block";
     }
 
