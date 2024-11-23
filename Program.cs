@@ -1,21 +1,36 @@
 using MySql.Data.MySqlClient;
 using Microsoft.EntityFrameworkCore;
 using DoAnTotNghiep.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Thêm dịch vụ vào container.
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-    new MySqlServerVersion(new Version(8, 0, 25)))); // Điều chỉnh phiên bản MySQL nếu cần
-builder.Services.AddRazorPages(); // Phải thêm dịch vụ trước khi gọi builder.Build()
-builder.Services.AddHttpClient(); // Thêm các dịch vụ trước khi build ứng dụng
+    new MySqlServerVersion(new Version(8, 0, 25)))); 
+builder.Services.AddRazorPages(); 
+builder.Services.AddHttpClient(); 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddAntiforgery(options =>
 {
-    // Đặt tên cho header chứa token chống CSRF (có thể là XSRF-TOKEN hoặc tên bạn chọn)
     options.HeaderName = "XSRF-TOKEN";
 });
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";  // Đường dẫn đến trang đăng nhập
+        options.LogoutPath = "/Account/Logout";  // Đường dẫn đến trang đăng xuất
+    });
+
 
 var app = builder.Build();
 
@@ -40,11 +55,12 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
-
+app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
+app.UseAuthentication();
 app.MapGet("/", (HttpContext context) =>
 {
     context.Response.Redirect("/DangNhap");
@@ -55,6 +71,7 @@ app.UseEndpoints(endpoints =>
     {
         endpoints.MapRazorPages();
     });
+    
 
 
 app.Run();

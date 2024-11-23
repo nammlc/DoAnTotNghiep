@@ -1,4 +1,5 @@
 @page
+@model DangNhapModel
 @{
     Layout = null;
 }
@@ -24,22 +25,25 @@
             <div class="image-holder">
                 <img src="~/image/login.jpg" alt="">
             </div>
-            <form action="">
+            <form method="post" action="/DangNhap">
                 <h3>Đăng nhập</h3>
-
+                @Html.AntiForgeryToken()
                 <div class="form-wrapper">
-                    <input type="text" placeholder="Tên đăng nhập" class="form-control">
+                    <input type="text" name="ten_dang_nhap" placeholder="Tên đăng nhập" class="form-control" required>
                     <i class="zmdi zmdi-account"></i>
                 </div>
                 <div class="form-wrapper">
-                    <input type="password" placeholder="Mật Khẩu" class="form-control">
+                    <input type="password" name="mat_khau" placeholder="Mật Khẩu" class="form-control" required>
                     <i class="zmdi zmdi-lock"></i>
                 </div>
-                <button>Đăng nhập
+                <button type="submit">Đăng nhập
                     <i class="zmdi zmdi-arrow-right"></i>
                 </button>
-                <div style="padding-top: 10px; position: relative; left : 13.5%">Bạn chưa có tài khoản ? <a href="http://localhost:5295/DangKy"> <i>Đăng ký ngay</i></a></div>
+                <div style="padding-top: 10px; position: relative; left: 13.5%">
+                    Bạn chưa có tài khoản? <a href="/DangKy"><i>Đăng ký ngay</i></a>
+                </div>
             </form>
+
         </div>
     </div>
 

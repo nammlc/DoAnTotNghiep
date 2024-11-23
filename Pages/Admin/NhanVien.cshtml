@@ -106,7 +106,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="employeeForm" method="post">
+                <form id="employeeForm" asp-page-handler="NhanVien" method="post">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="ma_nhan_vien" class="form-label">Mã nhân viên:</label>
@@ -321,11 +321,13 @@
 
         document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
             if (deleteEmployeeId) {
-                fetch(`/Views/NhanVien?handler=Delete&id=${deleteEmployeeId}`, {
+
+                const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                fetch(`/Admin/NhanVien?handler=Delete&id=${deleteEmployeeId}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        "XSRF-TOKEN": csrfToken 
                     }
                 })
                     .then(response => {
@@ -436,4 +438,3 @@
     // Khởi động hiển thị trang đầu tiên
     showPage(currentPage, staffs);
 </script>
-

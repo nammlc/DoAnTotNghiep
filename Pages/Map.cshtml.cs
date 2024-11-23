@@ -1,11 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using DoAnTotNghiep.Models;
 using DoAnTotNghiep.Data;
+using System.Data.SqlClient;
+using System.Text.Json;
 using MySql.Data.MySqlClient;
 using Dapper;
+using Mysqlx;
 using Microsoft.AspNetCore.Antiforgery;
 
 namespace DoAnTotNghiep.Pages
@@ -112,9 +118,10 @@ namespace DoAnTotNghiep.Pages
         }
 
         //kết thúc đơn hàng
+        public HoaDon hoaDon { get; set; }
         public async Task<IActionResult> OnPostFinishOrder([FromBody] AssignOrderRequest request)
         {
-            if (request == null || request.TableId <= 0)
+            if (request == null || request.TableId <= 0 || request.OrderId <= 0)
             {
                 return BadRequest("Thông tin không hợp lệ.");
             }
@@ -129,17 +136,30 @@ namespace DoAnTotNghiep.Pages
                     {
                         // Cập nhật trạng thái bàn
                         var updateTableQuery = @"
-                            UPDATE ban_an 
-                            SET trang_thai = NULL, hoa_don_id = NULL 
-                            WHERE id = @TableId;";
-                        await connection.ExecuteAsync(updateTableQuery, new { request.TableId, request.OrderId }, transaction);
+                    UPDATE ban_an 
+                    SET trang_thai = NULL, hoa_don_id = NULL 
+                    WHERE id = @TableId;";
+                        await connection.ExecuteAsync(updateTableQuery, new { request.TableId }, transaction);
+
+                        // Lấy đối tượng HoaDon
+                        var hoaDon = await connection.QueryFirstOrDefaultAsync<HoaDon>(
+                            "SELECT * FROM hoa_don WHERE id = @OrderId",
+                            new { request.OrderId },
+                            transaction);
+
+                        if (hoaDon == null)
+                        {
+                            return NotFound("Hóa đơn không tồn tại.");
+                        }
+
+                        hoaDon.gio_ra = DateTime.Now;
 
                         // Cập nhật ban_an_id trong hóa đơn
                         var updateOrderQuery = @"
-                            UPDATE hoa_don 
-                            SET ban_an_id = NULL , trang_thai = 'Đã hoàn thành'
-                            WHERE id = @OrderId;";
-                        await connection.ExecuteAsync(updateOrderQuery, new { request.TableId, request.OrderId }, transaction);
+                    UPDATE hoa_don 
+                    SET ban_an_id = NULL , trang_thai = 'Đã hoàn thành', gio_ra = @gio_ra
+                    WHERE id = @OrderId;";
+                        await connection.ExecuteAsync(updateOrderQuery, new { hoaDon.gio_ra, request.OrderId }, transaction);
 
                         // Commit transaction
                         await transaction.CommitAsync();
@@ -154,6 +174,7 @@ namespace DoAnTotNghiep.Pages
 
             return new OkResult();
         }
+
 
     }
     public class AssignOrderRequest

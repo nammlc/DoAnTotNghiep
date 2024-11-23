@@ -18,5 +18,8 @@ namespace DoAnTotNghiep.Models
     public string so_tai_khoan_ngan_hang { get; set; }
     public string ten_ngan_hang { get; set; }
     public string chi_nhanh_ngan_hang { get; set; }
+    public string? ten_dang_nhap{get; set;}
+    public string? mat_khau{get; set;}
+
 }
 }

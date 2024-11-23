@@ -16,7 +16,7 @@
     </div>
     <div class="search-container">
         <div class="search-container_left">
-            <form method="get" action="@Url.Action("/Views/NhaKho")">
+            <form method="get" action="@Url.Action("/Admin/NhaKho")">
                 <input type="text" id="searchInput" name="searchQuery" value="@ViewBag.SearchQuery"
                     placeholder="Tìm kiếm theo tên nguyên liệu..." class="form-control">
 
@@ -137,7 +137,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="employeeForm" method="post">
+                <form id="employeeForm" asp-page-handler="NguyenLieu" method="post">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="ma_nguyen_lieu" class="form-label">Mã Nguyên Liệu:</label>
@@ -307,11 +307,12 @@
 
         document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
             if (deleteEmployeeId) {
-                fetch(`/Views/NhaKho?handler=Delete&id=${deleteEmployeeId}`, {
+                const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                fetch(`/Admin/NhaKho?handler=Delete&id=${deleteEmployeeId}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        "XSRF-TOKEN": csrfToken 
                     }
                 })
                     .then(response => {

@@ -18,6 +18,30 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\lcong\DoAnTotNghiep
 build_property._RazorSourceGeneratorDebug = 
 
+[C:/Users/lcong/DoAnTotNghiep/Pages/Admin/NhaKho.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cTmhhS2hvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lcong/DoAnTotNghiep/Pages/Admin/NhanVien.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cTmhhblZpZW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lcong/DoAnTotNghiep/Pages/Admin/QuanLyHoaDon.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cUXVhbkx5SG9hRG9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lcong/DoAnTotNghiep/Pages/Admin/ThongKe.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cVGhvbmdLZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lcong/DoAnTotNghiep/Pages/Admin/_EditNguyenLieu.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cX0VkaXROZ3V5ZW5MaWV1LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lcong/DoAnTotNghiep/Pages/Admin/_EditNhanVien.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cX0VkaXROaGFuVmllbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/lcong/DoAnTotNghiep/Pages/DangKy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGFuZ0t5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -60,30 +84,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/lcong/DoAnTotNghiep/Pages/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/lcong/DoAnTotNghiep/Pages/Views/NhaKho.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVmlld3NcTmhhS2hvLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/lcong/DoAnTotNghiep/Pages/Views/NhanVien.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVmlld3NcTmhhblZpZW4uY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/lcong/DoAnTotNghiep/Pages/Views/QuanLyHoaDon.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVmlld3NcUXVhbkx5SG9hRG9uLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/lcong/DoAnTotNghiep/Pages/Views/ThongKe.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVmlld3NcVGhvbmdLZS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/lcong/DoAnTotNghiep/Pages/Views/_EditNguyenLieu.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVmlld3NcX0VkaXROZ3V5ZW5MaWV1LmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/lcong/DoAnTotNghiep/Pages/Views/_EditNhanVien.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVmlld3NcX0VkaXROaGFuVmllbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/lcong/DoAnTotNghiep/Pages/_ViewImports.cshtml]

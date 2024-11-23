@@ -90,7 +90,7 @@ namespace DoAnTotNghiep.Pages
 
         //Thêm mới nguyên liệu
         [HttpPost]
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostNguyenLieuAsync()
         {
             if (ModelState.IsValid)
             {
@@ -104,10 +104,10 @@ namespace DoAnTotNghiep.Pages
                 }
 
                 TempData["SuccessMessage"] = "Thêm nguyên liệu thành công!";
-                return RedirectToPage("/Views/NhaKho");
+                return RedirectToPage("/Admin/NhaKho");
             }
             TempData["ErrorMessage"] = "Có lỗi xảy ra khi thêm nguyên liệu.";
-            return RedirectToPage("/Views/NhaKho");
+            return RedirectToPage("/Admin/NhaKho");
         }
 
         //Tạo mã nhân viên
@@ -168,7 +168,7 @@ namespace DoAnTotNghiep.Pages
 
         // Lưu thông tin nguyên liệu
         [HttpPost]
-        public async Task<IActionResult> OnPostEditAsync(int id, NhaKho nhaKho)
+        public async Task<IActionResult> OnPostEditNguyenLieuAsync(int id, NhaKho nhaKho)
         {
             if (id != nhaKho.id)
             {
@@ -188,7 +188,7 @@ namespace DoAnTotNghiep.Pages
                     }
 
                     TempData["SuccessMessage"] = "Cập nhật nguyên liệu thành công!";
-                    return RedirectToPage("/Views/NhaKho");
+                    return RedirectToPage("/Admin/NhaKho");
                 }
             }
             return Page();

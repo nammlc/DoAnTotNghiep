@@ -83,7 +83,40 @@
                     <div class="icon">☕</div>
                     <div>Bàn @(banan.id - 1)</div>
                     <div class="order-info" id="assigned-order-@banan.id">Đơn hàng @banan.hoa_don_id</div>
+                    
                 </div>
+                @foreach (var hoadon in Model.HoaDons)
+                    {
+                        if (hoadon.ban_an_id == banan.id && hoadon.trang_thai != "Đã hoàn thành")
+                        {
+                            <div id="orderInfoModal"
+                                style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.2);">
+                                <h3>Thông Tin Đơn Hàng <span id="orderTableNumber"></span></h3>
+                                <div id="orderDetails">
+                                    <div>
+                                        Tổng đơn hàng : @hoadon.tong_tien.ToString("#,##0") VNĐ
+                                    </div>
+                                    <div>
+                                        Danh sách đơn hàng :
+                                    </div>
+                                    <div>
+                                        Tên khách hàng : @hoadon.ten_ban
+                                    </div>
+                                    <div>
+                                        Thời gian order : @hoadon.gio_vao
+                                    </div>
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <button onclick="closeOrderInfoModal()">Đóng</button>
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <button onclick="finishOrder()">Hoàn thành đơn hàng</button>
+                                </div>
+                            </div>
+
+                        }
+
+                    }
             }
             else
             {
@@ -118,7 +151,7 @@
         <option value="">Chọn đơn hàng</option>
         @foreach (var hoadon in Model.HoaDons)
         {
-            if (hoadon.trang_thai != "Đã hoàn thành")
+            if (hoadon.trang_thai != "Đã hoàn thành" && hoadon.ban_an_id == null)
             {
                 <option value="@hoadon.id">Tên KH: @hoadon.ten_ban ; Tổng hóa đơn: @hoadon.tong_tien.ToString("#,##0") VNĐ ;
                     Thời gian tạo hóa đơn : @hoadon.gio_vao </option>
@@ -132,7 +165,7 @@
 </div>
 
 <!-- Modal xem thông tin đơn hàng -->
-<div id="orderInfoModal"
+@* <div id="orderInfoModal"
     style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.2);">
     <h3>Thông Tin Đơn Hàng <span id="orderTableNumber"></span></h3>
     <div id="orderDetails">
@@ -155,7 +188,7 @@
     <div style="margin-top: 10px;">
         <button onclick="finishOrder()">Hoàn thành đơn hàng</button>
     </div>
-</div>
+</div> *@
 
 <script>
     let selectedTableId;

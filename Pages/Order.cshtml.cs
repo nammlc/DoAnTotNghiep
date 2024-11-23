@@ -71,7 +71,10 @@ namespace DoAnTotNghiep.Pages
             HoaDons = allBill.ToList();
             long tongTienTrongCa = 0;
             foreach(var hoadon in HoaDons){
-                tongTienTrongCa = tongTienTrongCa + hoadon.tong_tien;
+                if(hoadon.ten_nhan_vien == HttpContext.Session.GetString("User"))
+                {
+                    tongTienTrongCa = tongTienTrongCa + hoadon.tong_tien;
+                }
             }
             ViewData["tongTienTrongCa"] = tongTienTrongCa.ToString("#,##0");
             return Page();

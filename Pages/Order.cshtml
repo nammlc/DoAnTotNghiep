@@ -40,6 +40,8 @@
             int stt = 1;
             foreach (var hoadon in Model.HoaDons)
             {
+                if(hoadon.ten_nhan_vien == HttpContext.Session.GetString("User"))
+                {
                 <tr class="bill-item">
                     <td>@stt</td>
                     <td>@hoadon.id</td>
@@ -47,7 +49,7 @@
                     <td>@hoadon.gio_vao?.ToString("yyyy-MM-dd HH:mm:ss")</td>
                     <td>@hoadon.gio_ra?.ToString("yyyy-MM-dd HH:mm:ss")</td>
                     <td>@hoadon.tong_tien.ToString("#,##0") VNĐ</td>
-                    <td class = "detail-info" style = "color : blue">Ấn để xem danh sách</td>
+                    <td class = "detail-info" style = "color : rgb(2, 2, 151)">Ấn để xem danh sách</td>
                     <td>@hoadon.ten_nhan_vien</td>
                     @if (hoadon.trang_thai.Equals("Đã hoàn thành"))
                     {
@@ -60,7 +62,9 @@
 
 
                 </tr>
+
                 stt++;
+                }
             }
         }
     </tbody>

@@ -16,8 +16,6 @@
     <link rel="stylesheet" href="~/css/StaffListDisplay.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/assets/font/fontawesome-free-6.5.2-web/css/all.min.css">
     <title>Chỉnh sửa thông tin nguyên liệu</title>
-    
-        
 </head>
 
 <body style="font-family: Arial, sans-serif">
@@ -52,7 +50,7 @@
             <ul>
                 <li>
                     <i class="fa-solid fa-house" style="font-size: 27px ; color : #fff"></i>
-                    <a href="http://localhost:5295/Views/NhanVien">Trang chủ</a>
+                    <a href="http://localhost:5295/Admin/NhanVien">Trang chủ</a>
                 </li>
                 <li>
                     <i class="fa-solid fa-chart-simple" style="font-size: 33px ; color : #fff"></i>
@@ -64,7 +62,7 @@
                 </li>
                 <li>
                     <i class="fa-solid fa-warehouse" style="font-size: 25px ; color : #fff"></i>
-                    <a href="http://localhost:5295/Views/NhaKho">Nhà kho</a>
+                    <a href="http://localhost:5295/Admin/NhaKho">Nhà kho</a>
                 </li>
                 <li>
                     <i class="fa-solid fa-mug-hot" style="font-size: 30px ; color : #fff"></i>
@@ -106,10 +104,10 @@
                     </div>
                 </div>
             </div>
-            <form id="_EditNguyenLieu" asp-controller="NhaKho" asp-action="Edit" method="post" style="border-top: 0.5px solid gray;">
+            <form id="_EditNguyenLieu" asp-page-handler="EditNguyenLieu" method="post" style="border-top: 0.5px solid gray;">
                 <div class="modal-body">
                     <div class="row mb-3">
-                       <input type="hidden" id="id" name="id" value="@Model.id">
+                       <input type="text" id="id" name="id" value="@Model.id" readonly>
 
                         <div class="col-md-3">
                             <label for="ten_nguyen_lieu" class="form-label">Tên nguyên liệu:</label>

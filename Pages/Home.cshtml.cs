@@ -140,7 +140,7 @@ namespace DoAnTotNghiep.Pages
             // Chuyển đổi và gán giá trị cho tong_tien
             if (long.TryParse(Request.Form["tong_tien"], out long tongTien))
             {
-                HoaDons.tong_tien =  tongTien;
+                HoaDons.tong_tien = tongTien;
             }
             else
             {
@@ -150,7 +150,7 @@ namespace DoAnTotNghiep.Pages
 
             HoaDons.gio_vao = DateTime.Now;
 
-            // Kiểm tra và gán giá trị cho gio_ra (nếu có)
+            
             if (!string.IsNullOrEmpty(Request.Form["gio_ra"]))
             {
                 if (DateTime.TryParse(Request.Form["gio_ra"], out DateTime gioRa))
@@ -182,10 +182,10 @@ namespace DoAnTotNghiep.Pages
                 {
                     tong_tien = HoaDons.tong_tien,
                     gio_vao = HoaDons.gio_vao,
-                    gio_ra = HoaDons.gio_ra, 
+                    gio_ra = HoaDons.gio_ra,
                     list_mon_an = HoaDons.list_mon_an,
                     ten_ban = HoaDons.ten_ban,
-                    ten_nhan_vien = "Lê Công Namm",
+                    ten_nhan_vien = HttpContext.Session.GetString("User"),
                     trang_thai = "Chưa hoàn thành",
                     ten_kh = "Client",
                 });

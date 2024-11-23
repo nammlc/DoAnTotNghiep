@@ -1,6 +1,4 @@
-
 @model DoAnTotNghiep.Models.NhanVien
-
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -16,28 +14,28 @@
     <link rel="stylesheet" href="~/css/StaffListDisplay.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/assets/font/fontawesome-free-6.5.2-web/css/all.min.css">
     <title>Chỉnh sửa thông tin nhân viên</title>
-    
-        
+
+
 </head>
 
 <body style="font-family: Arial, sans-serif">
     <header class="header d-flex justify-content-between align-items-center">
         <div class="logo-container">
             <a href="http://localhost:5295"><img src="~/css/assets/cukcuk-logo.png" alt="Logo" class="logo"></a>
-            
+
             <div class="list-branch">
                 <div class="dropdown">
-                <a class="btn btn-outline-secondary dropdown-toggle branch-btn" href="#" role="button"
-                    id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                    Chọn chi nhánh
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    <li><a class="dropdown-item" href="#">Chi nhánh TP Hồ Chí Minh</a></li>
-                    <li><a class="dropdown-item" href="#">Chi nhánh Hà Nội</a></li>
-                </ul>
+                    <a class="btn btn-outline-secondary dropdown-toggle branch-btn" href="#" role="button"
+                        id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                        Chọn chi nhánh
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <li><a class="dropdown-item" href="#">Chi nhánh TP Hồ Chí Minh</a></li>
+                        <li><a class="dropdown-item" href="#">Chi nhánh Hà Nội</a></li>
+                    </ul>
+                </div>
             </div>
-            </div>
-            
+
         </div>
         <div class="avatar-container">
             <img src="~/css/assets/icon/avatar-default.png" alt="Avatar" class="avatar">
@@ -72,15 +70,16 @@
             </div>
         </nav>
         <main class="main-content">
-            <div class="main-content_header" >
+            <div class="main-content_header">
                 <h1 class="h4">Chỉnh sưa thông tin nhân viên</h1>
             </div>
             <div class="search-container" style="padding-bottom: 10px;">
                 <div class="search-container_left">
                     <form method="get" action="@Url.Action("Index")">
-                        <input type="text" id="searchInput" name="searchQuery" value="@ViewBag.SearchQuery" placeholder="Tìm kiếm theo mã, họ tên..." class="form-control">
-                        
-                        
+                        <input type="text" id="searchInput" name="searchQuery" value="@ViewBag.SearchQuery"
+                            placeholder="Tìm kiếm theo mã, họ tên..." class="form-control">
+
+
                     </form>
                 </div>
                 <div class="search-container_right">
@@ -95,18 +94,22 @@
 
 
 
-            <form id="_EditEmployeeModal" asp-controller="NhanVien" asp-action="Edit" method="post" style="border-top: 0.5px solid gray;">
+            <form id="_EditEmployeeModal" asp-page-handler="EditNhanVien" method="post"
+                style="border-top: 0.5px solid gray;">
                 <div class="modal-body">
                     <div class="row mb-3">
+                        <input type="hidden" id="id" name="id" value="@Model.id" readonly>
+                        <input type="hidden" id="id" name="ten_dang_nhap" value="@Model.ten_dang_nhap" readonly>
+                        <input type="hidden" id="id" name="mat_khau" value="@Model.mat_khau" readonly>
                         <div class="col-md-3">
                             <label for="ma_nhan_vien" class="form-label">Mã nhân viên:</label>
                             <input type="text" class="form-control" id="ma_nhan_vien" name="ma_nhan_vien"
-                                value="@Model.ma_nhan_vien" required readonly/>
+                                value="@Model.ma_nhan_vien" required readonly />
                         </div>
                         <div class="col-md-3">
                             <label for="ten_nhan_vien" class="form-label">Họ và tên:</label>
                             <input type="text" class="form-control" id="ten_nhan_vien" name="ten_nhan_vien"
-                                value="@Model.ten_nhan_vien" required>
+                                value="@Model.ten_nhan_vien" required readonly/>
                         </div>
                         <div class="col-md-3">
                             <label for="ngay_sinh" class="form-label">Ngày sinh:</label>
@@ -117,17 +120,17 @@
                             <label class="form-label d-block">Giới tính:</label>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="gioi_tinh" id="gioiTinhNam"
-                                    value="Nam" @(Model.gioi_tinh=="Nam" ? "checked" : "" ) required>
+                                    value="Nam" @(Model.gioi_tinh == "Nam" ? "checked" : "") required>
                                 <label class="form-check-label" for="gioiTinhNam">Nam</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="gioi_tinh" id="gioiTinhNu" value="Nữ"
-                                    @(Model.gioi_tinh=="Nữ" ? "checked" : "" )>
+                                @(Model.gioi_tinh == "Nữ" ? "checked" : "")>
                                 <label class="form-check-label" for="gioiTinhNu">Nữ</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="gioi_tinh" id="gioiTinhKhac"
-                                    value="Khác" @(Model.gioi_tinh=="Khác" ? "checked" : "" )>
+                                    value="Khác" @(Model.gioi_tinh == "Khác" ? "checked" : "")>
                                 <label class="form-check-label" for="gioiTinhKhac">Khác</label>
                             </div>
                         </div>
@@ -141,7 +144,7 @@
                         <div class="col-md-4">
                             <label for="so_cmnd" class="form-label">Số CMND:</label>
                             <input type="text" class="form-control" id="so_cmnd" name="so_cmnd" value="@Model.so_cmnd"
-                                required>
+                                required readonly />
                         </div>
                         <div class="col-md-4">
                             <label for="ngay_cap_cmnd" class="form-label">Ngày cấp CMND:</label>
@@ -177,7 +180,7 @@
                         <div class="col-md-4">
                             <label for="email" class="form-label">Email:</label>
                             <input type="email" class="form-control" id="email" name="email" value="@Model.email"
-                                required>
+                                required readonly />
                         </div>
                     </div>
                     <div class="row mb-3">

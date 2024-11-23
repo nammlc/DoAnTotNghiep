@@ -5,6 +5,9 @@ using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using System;
+
+using System.Globalization;
 using DoAnTotNghiep.Models;
 using DoAnTotNghiep.Data;
 
@@ -14,11 +17,11 @@ namespace DoAnTotNghiep.Pages
     {
         public int TotalPages { get; set; }
         public int CurrentPage { get; set; }
-        public bool HasPreviousPage => CurrentPage > 1; 
+        public bool HasPreviousPage => CurrentPage > 1;
         public bool HasNextPage => CurrentPage < TotalPages;
-        public int PageSize { get; set; } 
+        public int PageSize { get; set; }
         public int TotalCount { get; set; }
-        public int ToTalStaff {get; set ;}
+        public int ToTalStaff { get; set; }
         private readonly string _connectionString;
         private readonly MyDbContext _context;
         private readonly ILogger<IndexModel> _logger;
@@ -47,7 +50,7 @@ namespace DoAnTotNghiep.Pages
             {
                 allEmployees = allEmployees.Where(e => e.ten_nhan_vien.Contains(searchQuery) || e.ma_nhan_vien.Contains(SearchQuery));
             }
-            allEmployees = allEmployees.OrderBy(m => m.ten_nhan_vien); 
+            allEmployees = allEmployees.OrderBy(m => m.ten_nhan_vien);
             int pageSize = 10;
             int pageNumber = page ?? 1;
 
@@ -73,24 +76,26 @@ namespace DoAnTotNghiep.Pages
 
         //Thêm mới nhân viên
         [HttpPost]
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostNhanVienAsync()
         {
             if (ModelState.IsValid)
             {
+                nhanVien.ten_dang_nhap = await TaoTenDangNhapDuyNhat(nhanVien.ten_nhan_vien);
+                nhanVien.ten_dang_nhap = nhanVien.ten_dang_nhap.ToUpper();
                 nhanVien.ma_nhan_vien = GenerateUniqueEmployeeCode();
-
+                _logger.LogInformation($"Lưu nhân viên có tên đăng nhập: {nhanVien.ten_dang_nhap}");
                 using (var db = new MySqlConnection(_connectionString))
                 {
-                    string query = @"INSERT INTO nhanvien (ten_nhan_vien, ma_nhan_vien, ngay_sinh, gioi_tinh, vi_tri, so_cmnd, ngay_cap_cmnd, noi_cap_cmnd, dia_chi, so_dien_thoai, so_dien_thoai_co_dinh, email, so_tai_khoan_ngan_hang, ten_ngan_hang, chi_nhanh_ngan_hang)
-                             VALUES (@ten_nhan_vien, @ma_nhan_vien, @ngay_sinh, @gioi_tinh, @vi_tri, @so_cmnd, @ngay_cap_cmnd, @noi_cap_cmnd, @dia_chi, @so_dien_thoai, @so_dien_thoai_co_dinh, @email, @so_tai_khoan_ngan_hang, @ten_ngan_hang, @chi_nhanh_ngan_hang)";
+                    string query = @"INSERT INTO nhanvien (ten_nhan_vien, ma_nhan_vien, ngay_sinh, gioi_tinh, vi_tri, so_cmnd, ngay_cap_cmnd, noi_cap_cmnd, dia_chi, so_dien_thoai, so_dien_thoai_co_dinh, email, so_tai_khoan_ngan_hang, ten_ngan_hang, chi_nhanh_ngan_hang,mat_khau, ten_dang_nhap)
+                             VALUES (@ten_nhan_vien, @ma_nhan_vien, @ngay_sinh, @gioi_tinh, @vi_tri, @so_cmnd, @ngay_cap_cmnd, @noi_cap_cmnd, @dia_chi, @so_dien_thoai, @so_dien_thoai_co_dinh, @email, @so_tai_khoan_ngan_hang, @ten_ngan_hang, @chi_nhanh_ngan_hang , 123456, @ten_dang_nhap)";
                     await db.ExecuteAsync(query, nhanVien);
                 }
 
                 TempData["SuccessMessage"] = "Thêm nhân viên thành công!";
-                return RedirectToPage("/Views/NhanVien");
+                return RedirectToPage("/Admin/NhanVien");
             }
             TempData["ErrorMessage"] = "Có lỗi xảy ra khi thêm nhân viên.";
-            return RedirectToPage("/Views/NhanVien");
+            return RedirectToPage("/Admin/NhanVien");
         }
 
         //Tạo mã nhân viên
@@ -110,7 +115,62 @@ namespace DoAnTotNghiep.Pages
                 return "NV" + newCodeNumber.ToString("D3");
             }
         }
+        public static string TaoVietTat(string tenNhanVien)
+        {
+            if (string.IsNullOrEmpty(tenNhanVien))
+                throw new ArgumentNullException("Tên nhân viên không được để trống.");
 
+            // Loại bỏ dấu tiếng Việt
+            string tenKhongDau = tenNhanVien.Trim();
+
+            // Tách tên thành các phần
+            string[] parts = tenKhongDau.Split(' ');
+
+            // Kiểm tra nếu tên không hợp lệ
+            if (parts.Length < 2)
+            {
+                throw new ArgumentException("Tên nhân viên phải có ít nhất họ và tên.");
+            }
+
+            // Lấy chữ cái đầu tiên của mỗi phần (họ và tên đệm)
+            string vietTat = string.Join("", parts.Take(parts.Length - 1).Select(p => p[0].ToString().ToUpper()));
+
+            // Lấy chữ cái đầu tiên của tên cuối cùng
+            vietTat += parts[parts.Length - 1][0].ToString().ToUpper();
+
+            return vietTat;
+        }
+
+        private async Task<string> TaoTenDangNhapDuyNhat(string tenNhanVien)
+        {
+            string tenDangNhap = TaoVietTat(tenNhanVien);
+            using (var db = new MySqlConnection(_connectionString))
+            {
+                // Kiểm tra tên đăng nhập đã tồn tại chưa
+                string query = "SELECT COUNT(*) FROM nhanvien WHERE ten_dang_nhap = @tenDangNhap";
+
+                // Thêm từ khóa await để đợi kết quả trả về từ ExecuteScalarAsync
+                int count = await db.ExecuteScalarAsync<int>(query, new { tenDangNhap });
+
+                if (count > 0)
+                {
+                    int i = 1;
+                    string newTenDangNhap;
+                    do
+                    {
+                        newTenDangNhap = tenDangNhap + i.ToString(); // Thêm số vào tên đăng nhập
+                        i++;
+                        // Thêm từ khóa await để đợi kết quả trả về từ ExecuteScalarAsync
+                        count = await db.ExecuteScalarAsync<int>(query, new { tenDangNhap = newTenDangNhap });
+                    }
+                    while (count > 0);
+
+                    return newTenDangNhap; // Trả về tên đăng nhập duy nhất
+                }
+
+                return tenDangNhap;
+            }
+        }
 
         //Xóa nhân viên
         [HttpDelete]
@@ -151,8 +211,11 @@ namespace DoAnTotNghiep.Pages
 
         // Lưu thông tin nhân viên
         [HttpPost]
-        public async Task<IActionResult> OnPostEditAsync(int id, NhanVien nhanVien)
+        [Route("NhanVien/EditNhanVien")]
+        public async Task<IActionResult> OnPostEditNhanVienAsync(int id, NhanVien nhanVien)
+
         {
+
             if (id != nhanVien.id)
             {
                 return NotFound();
@@ -160,9 +223,10 @@ namespace DoAnTotNghiep.Pages
 
             if (ModelState.IsValid)
             {
+                _logger.LogInformation($"Lưu nhân viên có ID: {id}");
                 using (var db = new MySqlConnection(_connectionString))
                 {
-                    string query = "UPDATE nhanvien SET ten_nhan_vien = @ten_nhan_vien, ma_nhan_vien = @ma_nhan_vien, ngay_sinh = @ngay_sinh, gioi_tinh = @gioi_tinh, vi_tri = @vi_tri, so_cmnd = @so_cmnd, ngay_cap_cmnd = @ngay_cap_cmnd, noi_cap_cmnd = @noi_cap_cmnd, dia_chi = @dia_chi, so_dien_thoai = @so_dien_thoai, so_dien_thoai_co_dinh = @so_dien_thoai_co_dinh, email = @email, so_tai_khoan_ngan_hang = @so_tai_khoan_ngan_hang, ten_ngan_hang = @ten_ngan_hang, chi_nhanh_ngan_hang = @chi_nhanh_ngan_hang WHERE id = @id";
+                    string query = "UPDATE nhanvien SET ten_nhan_vien = @ten_nhan_vien, ma_nhan_vien = @ma_nhan_vien, ngay_sinh = @ngay_sinh, gioi_tinh = @gioi_tinh, vi_tri = @vi_tri, ngay_cap_cmnd = @ngay_cap_cmnd, noi_cap_cmnd = @noi_cap_cmnd, dia_chi = @dia_chi, so_dien_thoai = @so_dien_thoai, so_dien_thoai_co_dinh = @so_dien_thoai_co_dinh,  so_tai_khoan_ngan_hang = @so_tai_khoan_ngan_hang, ten_ngan_hang = @ten_ngan_hang, chi_nhanh_ngan_hang = @chi_nhanh_ngan_hang WHERE id = @id";
                     var affectedRows = await db.ExecuteAsync(query, nhanVien);
 
                     if (affectedRows == 0)
@@ -171,7 +235,7 @@ namespace DoAnTotNghiep.Pages
                     }
 
                     TempData["SuccessMessage"] = "Cập nhật nhân viên thành công!";
-                    return RedirectToPage("/Views/NhanVien");
+                    return RedirectToPage("/Admin/NhanVien");
                 }
             }
             return Page();
