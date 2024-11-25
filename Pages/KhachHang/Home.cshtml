@@ -1,1 +1,194 @@
 @page
+@model DoAnTotNghiep.Pages.HomeModel
+
+@{
+    Layout = "_KhachHangLayout";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<!-- Filter Section -->
+<section class="filter-section">
+    <div class="container">
+        <input type="text" id="searchInput" placeholder="Tìm món ăn..." class="search-input">
+        <select id="categoryFilter" class="category-filter">
+            <option value="">Tất cả</option>
+            <option value="Coffe">Cà phê</option>
+            <option value="Trà sữa hiện đại">Trà sữa</option>
+            <option value="Trà truyền thống">Trà truyền thống</option>
+            <option value="Snack ăn nhẹ">Đồ ăn nhẹ</option>
+            <option value="Bánh ngọt">Bánh ngọt</option>
+            <option value="Sữa chua">Sữa chua</option>
+        </select>
+    </div>
+</section>
+
+<!-- Menu Section -->
+<section class="menu">
+    <div class="container">
+        <div class="menu-grid" id="menuGrid">
+            @foreach (var dish in Model.MonAn)
+            {
+                <div class="menu-item" data-type="@dish.phan_loai_thuc_an" data-choose="@dish.loai_mon_an">
+                    <div class="menu-image"><img src="@dish.anh_minh_hoa" alt=""></div>
+                    <div class="menu-name">@dish.ten_mon_an</div>
+                    <div class="menu-description">@dish.mo_ta</div>
+                    <div class="menu-price">@dish.gia_mon_an</div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+<!-- Modal to show detailed dish information -->
+<div id="dishModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h2 id="dishName"></h2>
+        <img id="dishImage" src="" alt="Dish Image" style="max-width: 100%; height: auto;">
+        <p id="dishDescription"></p>
+        <p><strong>Price:</strong> <span id="dishPrice"></span></p>
+        <p><strong>Category:</strong> <span id="dishCategory"></span></p>
+        <!-- You can add more details here if needed -->
+    </div>
+</div>
+
+
+<!-- Pagination -->
+<div class="pagination">
+    <button id="prevPage" class="btn-pagination" onclick="changePage(currentPage - 1)">Trước</button>
+    <span id="pageIndicator">Trang 1</span>
+    <button id="nextPage" class="btn-pagination" onclick="changePage(currentPage + 1)">Sau</button>
+</div>
+
+<script>
+    const dishesPerPage = 12;
+    let currentPage = 1;
+    let dishes = document.querySelectorAll('.menu-item');
+
+    function removeVietnameseAccents(str) {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function filterDishes(searchQuery) {
+        const filteredDishes = [];
+        dishes.forEach(dish => {
+            const name = dish.querySelector('.menu-name').textContent.toLowerCase();
+            const type = dish.getAttribute('data-type') ? dish.getAttribute('data-type').toLowerCase() : '';
+            const choose = dish.getAttribute('data-choose') ? dish.getAttribute('data-choose').toLowerCase() : '';
+
+            // Kiểm tra điều kiện tìm kiếm theo tên và loại món ăn
+            const categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
+            const matchesCategory = categoryFilter === '' || type.includes(categoryFilter);
+
+            if ((name.includes(searchQuery) || type.includes(searchQuery) || choose.includes(searchQuery)) && matchesCategory) {
+                dish.style.display = "block"; // Hiển thị món ăn nếu phù hợp
+                filteredDishes.push(dish); // Thêm món ăn vào danh sách đã lọc
+            } else {
+                dish.style.display = "none"; // Ẩn món ăn nếu không phù hợp
+            }
+        });
+        return filteredDishes; // Trả về danh sách món ăn đã lọc
+    }
+
+
+    function showPage(page, filteredDishes) {
+        const start = (page - 1) * dishesPerPage;
+        const end = start + dishesPerPage;
+
+        filteredDishes.forEach(dish => dish.style.display = "none");
+        filteredDishes.forEach((dish, index) => {
+            if (index >= start && index < end) {
+                dish.style.display = "block";
+            }
+        });
+
+        updatePagination(page, filteredDishes.length);
+    }
+
+    function updatePagination(page, totalDishes) {
+        const pagination = document.querySelector('.pagination');
+        const totalPages = Math.ceil(totalDishes / dishesPerPage);
+        pagination.innerHTML = '';
+
+        if (page > 1) {
+            pagination.innerHTML += `<button class="btn-pagination" onclick="changePage(${page - 1}, ${totalDishes})">Trước</button>`;
+        }
+
+        for (let i = 1; i <= totalPages; i++) {
+            pagination.innerHTML += i === page ?
+                `<button class="btn-pagination active">${i}</button>` :
+                `<button class="btn-pagination" onclick="changePage(${i}, ${totalDishes})">${i}</button>`;
+        }
+
+        if (page < totalPages) {
+            pagination.innerHTML += `<button class="btn-pagination" onclick="changePage(${page + 1}, ${totalDishes})">Sau</button>`;
+        }
+    }
+
+    function changePage(page, totalDishes) {
+        currentPage = page; // Cập nhật trang hiện tại
+        const filteredDishes = filterDishes(document.getElementById('searchInput').value.toLowerCase());
+        showPage(currentPage, filteredDishes); // Hiển thị trang
+    }
+
+
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const searchQuery = this.value.toLowerCase();
+        const filteredDishes = filterDishes(searchQuery);
+        currentPage = 1; // Reset trang về 1 khi tìm kiếm
+        showPage(currentPage, filteredDishes); // Hiển thị lại trang với món ăn đã lọc
+    });
+
+    document.getElementById('categoryFilter').addEventListener('change', function () {
+        const searchQuery = this.value.toLowerCase();
+        console.log("change");
+        const filteredDishes = filterDishes(searchQuery);
+        currentPage = 1;
+        showPage(currentPage, filteredDishes);
+    });
+    // Khởi động hiển thị trang đầu tiên
+    showPage(currentPage, dishes);
+    const modal = document.getElementById('dishModal');
+    const closeModal = document.getElementById('closeModal');
+
+    // Attach event listeners to all dishes
+    dishes.forEach(dish => {
+        dish.addEventListener('click', function () {
+            const dishName = this.querySelector('.menu-name').textContent;
+            const dishImage = this.querySelector('.menu-image img').src;
+            const dishDescription = this.querySelector('.menu-description').textContent;
+            const dishPrice = this.querySelector('.menu-price').textContent;
+            const dishCategory = this.getAttribute('data-type');
+
+            // Fill modal with dish data
+            document.getElementById('dishName').textContent = dishName;
+            document.getElementById('dishImage').src = dishImage;
+            document.getElementById('dishDescription').textContent = dishDescription;
+            document.getElementById('dishPrice').textContent = dishPrice;
+            document.getElementById('dishCategory').textContent = dishCategory;
+
+            console.log("click")
+            modal.style.display = "block";
+        });
+    });
+
+    // Close the modal when the close button is clicked
+    closeModal.addEventListener('click', function () {
+        modal.style.display = "none";
+    });
+
+    // Close the modal when clicking anywhere outside of it
+    window.addEventListener('click', function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+</script>
+<script>
+    // Get modal elements
+
+
+</script>
+
+</html>

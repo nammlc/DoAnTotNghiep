@@ -5,6 +5,10 @@
       "PackagePath": "staticwebassets\\css\\DangNhap.css"
     },
     {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\css\\KhachHang.css",
+      "PackagePath": "staticwebassets\\css\\KhachHang.css"
+    },
+    {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\css\\Map.css",
       "PackagePath": "staticwebassets\\css\\Map.css"
     },
@@ -31561,6 +31565,14 @@
       "PackagePath": "staticwebassets\\image\\login.jpg"
     },
     {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\logo.jpg",
+      "PackagePath": "staticwebassets\\image\\logo.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\logo.png",
+      "PackagePath": "staticwebassets\\image\\logo.png"
+    },
+    {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\mocha-cake_tcm89-24818_w1024_n.jpg",
       "PackagePath": "staticwebassets\\image\\mocha-cake_tcm89-24818_w1024_n.jpg"
     },
@@ -31667,6 +31679,10 @@
     {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\js\\DangNhap.js",
       "PackagePath": "staticwebassets\\js\\DangNhap.js"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\js\\KhachHang.js",
+      "PackagePath": "staticwebassets\\js\\KhachHang.js"
     },
     {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\js\\pagination.js",

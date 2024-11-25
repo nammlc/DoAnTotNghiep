@@ -1,0 +1,166 @@
+/* Font & Reset */
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* Header */
+.header {
+    background: #8a231e;
+    color: white;
+    padding: 15px 0;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.nav a {
+    margin-left: 20px;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav a.active {
+    color: #ffd700;
+}
+
+.search-input {
+    width: 50%;
+    max-width: 400px;
+    padding: 10px;
+    margin-right: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.filter-section {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.search-input {
+    padding: 10px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.category-filter {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 4 cột trên mỗi hàng */
+    gap: 20px; /* Khoảng cách giữa các món */
+    padding: 20px 0;
+}
+
+.menu-item {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.menu-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.menu-image {
+    border-radius: 10px;
+    margin-bottom: 15px;
+    width: 100%; /* Đảm bảo ảnh phủ đầy container */
+    height: 150px; /* Chiều cao cố định */
+    object-fit: cover; /* Đảm bảo ảnh hiển thị đẹp */
+}
+
+.menu-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #8a231e;
+    margin: 10px 0;
+}
+
+.menu-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.menu-price {
+    font-size: 16px;
+    color: #333;
+}
+
+
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+}
+
+.btn-pagination {
+    padding: 10px 20px;
+    margin: 0 10px;
+    background: #8a231e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-pagination:hover {
+    background: #b53c33;
+}
+
+#pageIndicator {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+/* Footer */
+.footer {
+    background: #8a231e;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 20px;
+}
