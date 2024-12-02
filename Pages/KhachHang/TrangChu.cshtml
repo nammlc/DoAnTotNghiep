@@ -1,0 +1,314 @@
+@page
+@model DoAnTotNghiep.Pages.HomeModel
+
+@{
+    Layout = "_KhachHangLayout";
+}
+<style>
+    .modal {
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+        border-radius: 8px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    #cartItems {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .cart-item {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        align-items: center;
+    }
+
+    .cart-item img {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+    }
+
+    .cart-item .item-info {
+        flex: 1;
+    }
+</style>
+
+<!-- Filter Section -->
+<section class="filter-section">
+    <div class="container" style="position: relative;">
+        <input type="text" id="searchInput" placeholder="Tìm món ăn..." class="search-input">
+        <select id="categoryFilter" class="category-filter">
+            <option value="">Tất cả</option>
+            <option value="Coffe">Cà phê</option>
+            <option value="Trà sữa hiện đại">Trà sữa</option>
+            <option value="Trà truyền thống">Trà truyền thống</option>
+            <option value="Snack ăn nhẹ">Đồ ăn nhẹ</option>
+            <option value="Bánh ngọt">Bánh ngọt</option>
+            <option value="Sữa chua">Sữa chua</option>
+        </select>
+        <div class="don_hang">
+            <img src="~/image/cart.png" alt="" width="55px" style="padding-left : 10px " title="Đơn hàng" id="cart">
+            <span id="totalBills" style="
+                position: absolute;
+                top: -5px;
+                right: 0;
+                background-color: red;
+                color: white;
+                font-size: 14px;
+                font-weight: bold;
+                padding: 2px 6px;
+                border-radius: 50%;
+                min-width: 20px;
+                text-align: center;">
+                @ViewData["TotalBill"]
+            </span>
+        </div>
+
+
+
+    </div>
+</section>
+
+<!-- Menu Section -->
+<section class="menu">
+    <div class="container">
+        <div class="menu-grid" id="menuGrid">
+            @foreach (var dish in Model.MonAn)
+            {
+                <div class="menu-item" data-type="@dish.phan_loai_thuc_an" data-choose="@dish.loai_mon_an"
+                    data-id="@dish.id">
+                    <div class="menu-name">@dish.ten_mon_an</div>
+                    <img src="@dish.anh_minh_hoa" class="img-main">
+                    <div class="menu-price">@dish.gia_mon_an</div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+<!-- Modal to show detailed dish information -->
+<div id="dishModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h2 id="dishName"></h2>
+        <img id="dishImage" src="" alt="Dish Image" style="max-width: 100%; height: auto;">
+        <p id="dishDescription"></p>
+        <p><strong>Price:</strong> <span id="dishPrice"></span></p>
+        <p><strong>Category:</strong> <span id="dishCategory"></span></p>
+        <!-- You can add more details here if needed -->
+    </div>
+</div>
+
+<!-- Modal for displaying cart items -->
+<div id="cartModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" id="closeCartModal">&times;</span>
+        <h2>Danh sách đơn hàng</h2>
+        <div id="cartItems"></div>
+    </div>
+</div>
+
+
+
+<!-- Pagination -->
+<div class="pagination">
+    <button id="prevPage" class="btn-pagination" onclick="changePage(currentPage - 1)">Trước</button>
+    <span id="pageIndicator">Trang 1</span>
+    <button id="nextPage" class="btn-pagination" onclick="changePage(currentPage + 1)">Sau</button>
+</div>
+
+<script>
+    const dishesPerPage = 12;
+    let currentPage = 1;
+    let dishes = document.querySelectorAll('.menu-item');
+
+    function removeVietnameseAccents(str) {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function filterDishes(searchQuery) {
+        const filteredDishes = [];
+        dishes.forEach(dish => {
+            const name = dish.querySelector('.menu-name').textContent.toLowerCase();
+            const type = dish.getAttribute('data-type') ? dish.getAttribute('data-type').toLowerCase() : '';
+            const choose = dish.getAttribute('data-choose') ? dish.getAttribute('data-choose').toLowerCase() : '';
+
+            // Kiểm tra điều kiện tìm kiếm theo tên và loại món ăn
+            const categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
+            const matchesCategory = categoryFilter === '' || type.includes(categoryFilter);
+
+            if ((name.includes(searchQuery) || type.includes(searchQuery) || choose.includes(searchQuery)) && matchesCategory) {
+                dish.style.display = "block"; // Hiển thị món ăn nếu phù hợp
+                filteredDishes.push(dish); // Thêm món ăn vào danh sách đã lọc
+            } else {
+                dish.style.display = "none"; // Ẩn món ăn nếu không phù hợp
+            }
+        });
+        return filteredDishes; // Trả về danh sách món ăn đã lọc
+    }
+
+
+    function showPage(page, filteredDishes) {
+        const start = (page - 1) * dishesPerPage;
+        const end = start + dishesPerPage;
+
+        filteredDishes.forEach(dish => dish.style.display = "none");
+        filteredDishes.forEach((dish, index) => {
+            if (index >= start && index < end) {
+                dish.style.display = "block";
+            }
+        });
+
+        updatePagination(page, filteredDishes.length);
+    }
+
+    function updatePagination(page, totalDishes) {
+        const pagination = document.querySelector('.pagination');
+        const totalPages = Math.ceil(totalDishes / dishesPerPage);
+        pagination.innerHTML = '';
+
+        if (page > 1) {
+            pagination.innerHTML += `<button class="btn-pagination" onclick="changePage(${page - 1}, ${totalDishes})">Trước</button>`;
+        }
+
+        for (let i = 1; i <= totalPages; i++) {
+            pagination.innerHTML += i === page ?
+                `<button class="btn-pagination active">${i}</button>` :
+                `<button class="btn-pagination" onclick="changePage(${i}, ${totalDishes})">${i}</button>`;
+        }
+
+        if (page < totalPages) {
+            pagination.innerHTML += `<button class="btn-pagination" onclick="changePage(${page + 1}, ${totalDishes})">Sau</button>`;
+        }
+    }
+
+    function changePage(page, totalDishes) {
+        currentPage = page; // Cập nhật trang hiện tại
+        const filteredDishes = filterDishes(document.getElementById('searchInput').value.toLowerCase());
+        showPage(currentPage, filteredDishes); // Hiển thị trang
+    }
+
+
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const searchQuery = this.value.toLowerCase();
+        const filteredDishes = filterDishes(searchQuery);
+        currentPage = 1; // Reset trang về 1 khi tìm kiếm
+        showPage(currentPage, filteredDishes); // Hiển thị lại trang với món ăn đã lọc
+    });
+
+    document.getElementById('categoryFilter').addEventListener('change', function () {
+        const searchQuery = this.value.toLowerCase();
+        console.log("change");
+        const filteredDishes = filterDishes(searchQuery);
+        currentPage = 1;
+        showPage(currentPage, filteredDishes);
+    });
+    // Khởi động hiển thị trang đầu tiên
+    showPage(currentPage, dishes);
+    const modal = document.getElementById('dishModal');
+    const closeModal = document.getElementById('closeModal');
+
+    // Attach event listeners to all dishes
+</script>
+<script>
+    document.querySelectorAll(".menu-item").forEach(function (div) {
+        div.addEventListener("click", function () {
+            var id = this.getAttribute('data-id');
+            var editUrl = '@Url.Page("/KhachHang/TrangChu")?handler=edit&&id=__id__'.replace('__id__', id);
+            console.log(editUrl)
+
+            window.location.href = editUrl;
+        });
+    });
+
+
+</script>
+
+<script>
+    const cartData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.HoaDons));
+    let cartDataListMonAn = [];
+
+    cartData.forEach(item => {
+        if (item.list_mon_an && item.ten_nhan_vien == "Client") {
+            try {
+                // JSON.parse để giải mã chuỗi JSON trong `list_mon_an`
+                const decodedList = JSON.parse(item.list_mon_an);
+                cartDataListMonAn = cartDataListMonAn.concat(decodedList);
+            } catch (error) {
+                console.error("JSON parse error:", error, item.list_mon_an);
+            }
+        }
+    });
+
+
+    document.getElementById('cart').addEventListener('click', function () {
+        console.log(cartDataListMonAn.ten_mon);
+
+        const cartItemsContainer = document.getElementById('cartItems');
+        cartItemsContainer.innerHTML = '';
+
+        if (cartDataListMonAn.length > 0) {
+            cartDataListMonAn.forEach(item => {
+                const cartItemDiv = document.createElement('div');
+                cartItemDiv.classList.add('cart-item');
+                cartItemDiv.innerHTML = `
+                    <img src="${item.anh_minh_hoa}" alt="${item.ten_mon}" style="border-radius :5px;">
+                    <div class="item-info">
+                        <p style = "margin-bottom : 3px;"><strong>${item.ten_mon}</strong></p>
+                        <p ><strong>${item.gia_mon_an}</strong></p>
+
+                    </div>
+                `;
+                cartItemsContainer.appendChild(cartItemDiv);
+            });
+        } else {
+            cartItemsContainer.innerHTML = '<p>Chưa có đơn hàng nào!</p>';
+        }
+
+        document.getElementById('cartModal').style.display = 'block';
+    });
+
+    // Đóng modal
+    document.getElementById('closeCartModal').addEventListener('click', function () {
+        document.getElementById('cartModal').style.display = 'none';
+    });
+
+    // Đóng modal khi nhấn ngoài modal
+    window.addEventListener('click', function (event) {
+        const modal = document.getElementById('cartModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+</script>
+
+</html>
+f

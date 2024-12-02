@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "IBoT6b3RDBg=",
+  "dgSpecHash": "l8SDw1hjEw4=",
   "success": true,
   "projectFilePath": "C:\\Users\\lcong\\DoAnTotNghiep\\DoAnTotNghiep.csproj",
   "expectedPackageFiles": [
@@ -48,6 +48,7 @@
     "C:\\Users\\lcong\\.nuget\\packages\\microsoft.win32.systemevents\\8.0.0\\microsoft.win32.systemevents.8.0.0.nupkg.sha512",
     "C:\\Users\\lcong\\.nuget\\packages\\mysql.data\\9.0.0\\mysql.data.9.0.0.nupkg.sha512",
     "C:\\Users\\lcong\\.nuget\\packages\\mysqlconnector\\2.3.7\\mysqlconnector.2.3.7.nupkg.sha512",
+    "C:\\Users\\lcong\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\lcong\\.nuget\\packages\\pomelo.entityframeworkcore.mysql\\8.0.2\\pomelo.entityframeworkcore.mysql.8.0.2.nupkg.sha512",
     "C:\\Users\\lcong\\.nuget\\packages\\qrcode\\2.2.0\\qrcode.2.2.0.nupkg.sha512",
     "C:\\Users\\lcong\\.nuget\\packages\\qrcoder\\1.6.0\\qrcoder.1.6.0.nupkg.sha512",

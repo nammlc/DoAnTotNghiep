@@ -58,8 +58,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSG9tZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/lcong/DoAnTotNghiep/Pages/KhachHang/Home.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcS2hhY2hIYW5nXEhvbWUuY3NodG1s
+[C:/Users/lcong/DoAnTotNghiep/Pages/KhachHang/TrangChu.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcS2hhY2hIYW5nXFRyYW5nQ2h1LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lcong/DoAnTotNghiep/Pages/KhachHang/_ChiTietMonAn.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcS2hhY2hIYW5nXF9DaGlUaWV0TW9uQW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/lcong/DoAnTotNghiep/Pages/Map.cshtml]

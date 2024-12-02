@@ -1,0 +1,64 @@
+@{
+    Layout = "_KhachHangLayout";
+}
+@using System.Text.Json
+@model DoAnTotNghiep.Pages.ChiTietMonAnViewModel
+<div class="container">
+    <div class="main_detail-dish">
+        <div class="img_dish">
+            <img src="@Model.MonAnChinh.anh_minh_hoa" alt="Món ăn đặc biệt">
+        </div>
+        <div class="infor_dish">
+            <h2 class="menu-name">@Model.MonAnChinh.ten_mon_an</h2>
+            <p class="menu-description">@Model.MonAnChinh.mo_ta</p>
+            <p class="menu-price">@Model.MonAnChinh.gia_mon_an</p>
+            <form method="post" asp-page="/KhachHang/TrangChu" asp-page-handler="CreateBill">
+                <input style="display: none; " type="text" name="ten_ban" placeholder="None">
+                <input style="display: none;" type="text" name="ten_kh" value="Client Order">
+                <input style="display: none;" type="text" name="tong_tien" id="hidden-total-price"
+                    value="@Model.MonAnChinh.gia_mon_an">
+                <input type="hidden" name="list_mon_an" id="hidden-mon-an"
+                    value='[@JsonSerializer.Serialize(new { ten_mon = Model.MonAnChinh.ten_mon_an, anh_minh_hoa = Model.MonAnChinh.anh_minh_hoa , gia_mon_an = Model.MonAnChinh.gia_mon_an}, 
+                     new JsonSerializerOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping })]'>
+
+                <button type="submit" style="width: 200px ; height: 50px; background-color: rgb(179, 34, 8);
+         font-size: 25px; align-items: center; border: none; border-radius: 10px; color: #fff; 
+         box-shadow: 0px 0px 1px 0px;padding-bottom : 5px; font-weight: 500;">Đặt Mua Ngay</button>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Related Dishes -->
+    <div class="relate_dish">
+        <h3 style="margin-bottom: 20px; margin-top: 10px;">Có thể bạn quan tâm</h3>
+        <div class="detail-menu-grid">
+            @foreach (var dish in Model.MonAnLienQuan)
+            {
+
+                <div class="relate-menu-item" data-id="@dish.id">
+                    <div class="menu-item">
+                        <img src="@dish.anh_minh_hoa" alt="@dish.ten_mon_an" class="menu-image"
+                            style="width: 130px; height: 130px;">
+                        <h4 class="menu-name">@dish.ten_mon_an</h4>
+                        <p class="menu-price">@dish.gia_mon_an</p>
+                    </div>
+                </div>
+
+            }
+        </div>
+    </div>
+</div>
+<!-- Detail Dish -->
+
+<script>
+    document.querySelectorAll(".relate-menu-item").forEach(function (div) {
+        div.addEventListener("click", function () {
+            var id = this.getAttribute('data-id');
+            var editUrl = '@Url.Page("/KhachHang/Home")?handler=edit&&id=__id__'.replace('__id__', id);
+            console.log(editUrl)
+
+            window.location.href = editUrl;
+        });
+    });
+</script>

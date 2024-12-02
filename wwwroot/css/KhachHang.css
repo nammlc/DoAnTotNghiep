@@ -23,11 +23,19 @@ img {
     padding: 15px 0;
 }
 
-.container {
+.header-container {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: block;
     justify-content: space-between;
     align-items: center;
 }
@@ -72,59 +80,6 @@ img {
 }
 
 /* Menu Section */
-.menu-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr); /* 6 cột cho màn hình lớn */
-    gap: 20px;
-    padding: 20px 0;
-}
-
-.menu-item {
-    background: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-}
-
-.menu-item:hover {
-    transform: translateY(-5px);
-}
-
-.menu-image {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-.menu-name {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 5px;
-}
-
-.menu-description {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 10px;
-}
-
-.menu-price {
-    font-size: 16px;
-    font-weight: bold;
-    color: #8a231e;
-}
-
-/* Pagination */
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-}
 
 .btn-pagination {
     background: #f8f9fa;
@@ -186,4 +141,171 @@ img {
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+
+.main-content {
+    display: flex;
+    flex-direction: column; 
+    gap: 20px; 
+}
+
+.main_detail-dish {
+    display: flex;
+    flex-direction: row; 
+    gap: 20px;
+    align-items: flex-start;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 50px;
+}
+
+.img_dish img {
+    width: 300px;
+    border-radius: 10px;
+}
+
+.infor_dish {
+    flex: 1;
+}
+
+.menu-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #8a231e;
+    margin-bottom: 10px;
+}
+
+.menu-description {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.menu-price {
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+}
+
+.relate_dish {
+    display: block;
+    margin-top: 20px;
+    padding: 10px;
+    width: 80%; /* Giảm kích thước chiều rộng */
+    margin-left: 0; /* Căn lệch sang trái */
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.relate_dish h3 {
+    font-size: 18px; /* Giảm kích thước tiêu đề */
+    color: #8a231e;
+    margin-bottom: 15px;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px; /* Giảm khoảng cách giữa các mục */
+    
+}
+
+.detail-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px; /* Giảm khoảng cách giữa các mục */
+    height: 260px;
+    overflow-y: scroll;
+}
+
+.menu-item {
+    display: flex;
+    flex-direction: column; /* Để căn giữa dọc */
+    align-items: center;    /* Căn giữa ngang */
+    justify-content: center; /* Căn giữa dọc */
+    text-align: center;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.menu-item .img-main{
+    position: relative;
+    display: flex;
+    left: 28%;
+    text-align: center;
+    align-items: center;
+    width: 130px; /* Tùy chỉnh kích thước */
+    height: 130px;
+    border-radius: 6px;
+}
+.menu-item:hover {
+    transform: translateY(-3px); /* Giảm hiệu ứng hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.menu-image {
+    display: block;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    width: 100px; /* Tùy chỉnh kích thước */
+    height: 100px;
+    object-fit: cover; /* Đảm bảo tỷ lệ ảnh đúng */
+}
+
+.menu-image img{
+    border-radius: 5px;
+}
+.menu-item .menu-image{
+    
+    align-items: center;
+}
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+}
+
+#pageIndicator {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+/* Footer */
+.footer {
+    background: #8a231e;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 20px;
+}
+
+.relate-menu-item:hover{
+    cursor: pointer;
+}
+
+.don_hang{
+    position: absolute;
+    right: 15px;
+    top: 0;
+    display: block;
+}
+
+.don_hang img:hover{
+    cursor: pointer;
+}
+.don_hang ul{
+    list-style: none;
+    padding-left: 0;
+    padding-right: 10px;
 }

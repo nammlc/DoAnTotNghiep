@@ -31453,6 +31453,10 @@
       "PackagePath": "staticwebassets\\image\\caramel-frappuccino-blended-beverage-thumb_tcm89-22140_w1024_n.jpg"
     },
     {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\cart.png",
+      "PackagePath": "staticwebassets\\image\\cart.png"
+    },
+    {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\chocolate-creme-frappuccino-blended-beverage_tcm89-22382_w1024_n.jpg",
       "PackagePath": "staticwebassets\\image\\chocolate-creme-frappuccino-blended-beverage_tcm89-22382_w1024_n.jpg"
     },

@@ -66,3 +66,4 @@ C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\refint\DoAnTotNghiep.dll
 C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\DoAnTotNghiep.pdb
 C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\DoAnTotNghiep.genruntimeconfig.cache
 C:\Users\lcong\DoAnTotNghiep\obj\Debug\net8.0\ref\DoAnTotNghiep.dll
+C:\Users\lcong\DoAnTotNghiep\bin\Debug\net8.0\Newtonsoft.Json.dll

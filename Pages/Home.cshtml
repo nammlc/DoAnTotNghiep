@@ -42,9 +42,9 @@
                     {
                         <div class="col-md-3 dish-item" style="text-align: center;" data-type="@monAn.phan_loai_thuc_an"
                             data-choose="@monAn.loai_mon_an">
-                            <div class="menu-item" data-name="@monAn.ten_mon_an" data-price="@monAn.gia_mon_an" data-img="@monAn.anh_minh_hoa">
-                                <img src="@monAn.anh_minh_hoa"
-                                    alt="Food Item" style="height: 180px; width: 100%;">
+                            <div class="menu-item" data-name="@monAn.ten_mon_an" data-price="@monAn.gia_mon_an"
+                                data-img="@monAn.anh_minh_hoa">
+                                <img src="@monAn.anh_minh_hoa" alt="Food Item" style="height: 180px; width: 100%;">
                                 <div class="price"> @monAn.gia_mon_an</div>
                                 <div class="name_dish">@monAn.ten_mon_an</div>
                                 <button class="btn btn-success add-to-order">Thêm vào đơn hàng</button>
@@ -131,10 +131,10 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                 <form method="post">
                     <input type="text" name="ten_ban" placeholder="Nhập tên khách hàng">
-                    <input style="display: none;"type="date" name="gio_vao" value="">
-                    <input style="display: none;"type="date" name="gio_ra" value="">
-                    <input style="display: none;"type="text" name="tong_tien" id="hidden-total-price" value="0">
-                    <input style="display: none;"type="text" name="list_mon_an" id="hidden-mon-an" value="">
+                    <input style="display: none;" type="date" name="gio_vao" value="">
+                    <input style="display: none;" type="date" name="gio_ra" value="">
+                    <input style="display: none;" type="text" name="tong_tien" id="hidden-total-price" value="0">
+                    <input style="display: none;" type="text" name="list_mon_an" id="hidden-mon-an" value="">
                     <button type="submit" class="btn btn-primary" id="paymentButton">Xác nhận thanh toán</button>
                 </form>
             </div>
@@ -161,7 +161,7 @@
             if (existingItem) {
                 existingItem.quantity++;
             } else {
-                orderItems.push({ name, price, quantity: 1 ,anh_minh_hoa});
+                orderItems.push({ name, price, quantity: 1, anh_minh_hoa });
             }
 
             updateOrderSummary();
@@ -273,7 +273,7 @@
             ten_mon: item.name,
             gia_tien: item.price * 1000,
             so_luong: item.quantity,
-            anh_minh_hoa : item.anh_minh_hoa
+            anh_minh_hoa: item.anh_minh_hoa
         }));
 
         // Log dữ liệu món ăn để kiểm tra
@@ -420,7 +420,7 @@
         currentPage = 1;
         showPage(currentPage, filteredDishes);
     });
-    
+
     document.getElementById('select').addEventListener('change', function () {
         const searchQuery = this.value.toLowerCase();
         console.log("change");

@@ -94,7 +94,7 @@ namespace DoAnTotNghiep.Pages
         {
             if (ModelState.IsValid)
             {
-                // nhaKho.ma_nguyen_lieu = GenerateUniqueIngredientCode();
+                
 
                 using (var db = new MySqlConnection(_connectionString))
                 {
