@@ -1,4 +1,12 @@
 @page
+@using Microsoft.AspNetCore.Antiforgery
+@inject IAntiforgery antiforgery
+@{
+    var token = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+}
+
+@Html.AntiForgeryToken()
+
 @model DoAnTotNghiep.Pages.HomeModel
 
 @{
@@ -44,21 +52,72 @@
         overflow-y: auto;
     }
 
-    .cart-item {
+    .cart-container {
+        max-width: 400px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
         padding: 10px;
-        border-bottom: 1px solid #ddd;
+        background-color: #fff;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+        max-height: 400px;
+    }
+
+    .cart-item {
         display: flex;
         align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        transition: background-color 0.3s;
     }
 
-    .cart-item img {
-        width: 50px;
-        height: 50px;
+    .cart-item:hover {
+        background-color: #f9f9f9;
+    }
+
+    .cart-item-checkbox {
         margin-right: 10px;
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
     }
 
-    .cart-item .item-info {
-        flex: 1;
+    .cart-item-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-right: 15px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .item-info {
+        flex-grow: 1;
+    }
+
+    .item-name {
+        font-size: 16px;
+        margin: 0 0 5px 0;
+        color: #333;
+    }
+
+    .item-price {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .remove-btn {
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .remove-btn:hover {
+        background-color: #ff1a1a;
     }
 </style>
 
@@ -133,7 +192,12 @@
         <span class="close" id="closeCartModal">&times;</span>
         <h2>Danh sách đơn hàng</h2>
         <div id="cartItems"></div>
+        <button type="button" id="totalAmount" class="btn btn-primary" style="margin-top : 10px"
+            onclick="Payment()">Thanh Toán (0
+            VNĐ)</button>
     </div>
+
+</div>
 </div>
 
 
@@ -257,10 +321,15 @@
     let cartDataListMonAn = [];
 
     cartData.forEach(item => {
-        if (item.list_mon_an && item.ten_nhan_vien == "Client") {
+
+        if (item.list_mon_an && item.trang_thai == "On Cart") {
             try {
-                // JSON.parse để giải mã chuỗi JSON trong `list_mon_an`
                 const decodedList = JSON.parse(item.list_mon_an);
+                decodedList.forEach(subItem => {
+
+                    subItem.cartId = item.id;
+                    subItem.tong_tien = item.tong_tien;
+                });
                 cartDataListMonAn = cartDataListMonAn.concat(decodedList);
             } catch (error) {
                 console.error("JSON parse error:", error, item.list_mon_an);
@@ -268,33 +337,174 @@
         }
     });
 
-
     document.getElementById('cart').addEventListener('click', function () {
-        console.log(cartDataListMonAn.ten_mon);
-
         const cartItemsContainer = document.getElementById('cartItems');
         cartItemsContainer.innerHTML = '';
+
+        let totalAmount = 0;
+        let totalItems = 0;
 
         if (cartDataListMonAn.length > 0) {
             cartDataListMonAn.forEach(item => {
                 const cartItemDiv = document.createElement('div');
                 cartItemDiv.classList.add('cart-item');
-                cartItemDiv.innerHTML = `
-                    <img src="${item.anh_minh_hoa}" alt="${item.ten_mon}" style="border-radius :5px;">
-                    <div class="item-info">
-                        <p style = "margin-bottom : 3px;"><strong>${item.ten_mon}</strong></p>
-                        <p ><strong>${item.gia_mon_an}</strong></p>
 
-                    </div>
-                `;
+
+                const itemTotalPrice = item.gia_tien * item.tong_tien;
+
+
+                const formattedItemTotalPrice = itemTotalPrice.toLocaleString('vi-VN'); // Định dạng số theo kiểu Việt Nam (dấu phẩy)
+
+
+                cartItemDiv.innerHTML = `
+                <input type="checkbox" class="cart-item-checkbox" data-id="${item.cartId}" title="Chọn món">
+                <img src="${item.anh_minh_hoa}" alt="${item.ten_mon}" class="cart-item-image">
+                <div class="item-info">
+                    <p class="item-id" style="display : none" data-id ="${item.cartId}";></p>
+                    <p class="item-name"><strong>${item.ten_mon}</strong></p>
+                    <p class="item-price"><strong>${item.gia_tien}</strong></p>
+                    <p class="item-quantity">Số lượng: <input type="number" class="item-quantity-input" value="${item.tong_tien.toLocaleString("vi-VN")}" min="1" max="99" data-id="${item.cartId}"  style = "border : none #333;" readonly/></p>
+                    <p class="item-total-price">Tổng tiền: <strong>${formattedItemTotalPrice} VND</strong></p>
+                </div>
+                <button class="remove-btn" data-id="${item.cartId}" title="Xóa món">Xóa</button>
+            `;
                 cartItemsContainer.appendChild(cartItemDiv);
+                totalItems += item.tong_tien;
+            });
+            updateTotalAmount();
+
+            document.querySelectorAll('.cart-item-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateTotalAmount);
             });
         } else {
             cartItemsContainer.innerHTML = '<p>Chưa có đơn hàng nào!</p>';
         }
 
         document.getElementById('cartModal').style.display = 'block';
+
+
+        function updateTotalAmount() {
+            totalAmount = 0;
+            document.querySelectorAll('.cart-item-checkbox:checked').forEach(checkbox => {
+                const cartItemDiv = checkbox.closest('.cart-item');
+                const itemTotalPrice = parseFloat(cartItemDiv.querySelector('.item-total-price strong').textContent.replace(/[^0-9.-]+/g, ""));
+                totalAmount += itemTotalPrice;
+            });
+
+
+            const totalAmountElement = document.getElementById('totalAmount');
+            if (totalAmountElement) {
+                totalAmountElement.innerText = ` Thanh toán ( ${(totalAmount * 1000).toLocaleString('vi-VN')} VND ) `;
+
+            }
+        }
     });
+
+
+
+    document.getElementById('cartItems').addEventListener('input', function (event) {
+        if (event.target.classList.contains('item-quantity-input')) {
+            const itemId = event.target.getAttribute('data-id');
+            const newQuantity = parseInt(event.target.value, 10);
+
+
+            const item = cartDataListMonAn.find(item => item.id === itemId);
+            if (item) {
+                item.so_luong = newQuantity;
+                item.tong_tien = item.gia_tien * item.so_luong;
+            }
+
+
+            let totalAmount = 0;
+            let totalItems = 0;
+            cartDataListMonAn.forEach(item => {
+                totalAmount += item.tong_tien;
+                totalItems += item.tong_tien;
+            });
+
+
+            if (totalAmountElement) {
+                totalAmountElement.innerText = `Thanh toán ( ${(totalAmount * 1000).toLocaleString('vi-VN')} VND ) `;
+            }
+        }
+    });
+
+
+    function Payment() {
+        const selectedItems = [];
+        const checkboxes = document.querySelectorAll('.cart-item-checkbox:checked');
+
+        checkboxes.forEach(checkbox => {
+            const cartItem = checkbox.closest('.cart-item');
+            const itemId = cartItem.querySelector('.remove-btn').getAttribute('data-id');
+            const itemName = cartItem.querySelector('.item-name').textContent;
+            const itemPrice = parseFloat(cartItem.querySelector('.item-price').textContent.replace(' VNĐ', '').trim());
+            const itemQuantityElement = cartItem.querySelector('.item-quantity-input').value;
+            const itemImage = cartItem.querySelector('.cart-item-image').getAttribute('src');
+            
+            selectedItems.push({
+                id: itemId,
+                name: itemName,
+                price: itemPrice ,
+                quantity: itemQuantityElement,
+                image : itemImage
+            });
+            console.log(selectedItems.id);
+        });
+
+        const selectedDishes = selectedItems.map(item => ({
+            ten_mon: item.name,
+            gia_tien: item.price,
+            so_luong: item.quantity,
+            anh_minh_hoa: item.image || '' 
+        }));
+
+        
+        const totalAmount = selectedDishes.reduce((total, dish) => {
+            return total + dish.gia_tien * dish.so_luong ;
+        }, 0);
+        const jsonArrayToDelete = selectedItems.map(item => item.id);
+        const orderData = {
+            tong_tien: totalAmount,
+            gio_vao: new Date().toISOString(), 
+            list_mon_an: selectedDishes,
+            idsToDelete: jsonArrayToDelete.map(item => parseInt(item, 10))
+        };
+        console.log(orderData.idsToDelete);
+
+        // Gửi dữ liệu đơn hàng qua API
+        fetch(`/KhachHang/TrangChu?handler=CreateBill`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "XSRF-TOKEN": csrfToken
+            },
+            body: JSON.stringify(orderData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert("Mua hàng thành công!");
+                    location.reload();
+                } else {
+                    throw new Error("Đã xảy ra lỗi khi thanh toán.");
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert("Không thể thanh toán. Vui lòng thử lại.");
+            });
+    }
+
+    function formatCurrencyToNumber(currencyString) {
+        if (!currencyString) return 0;
+
+        // Loại bỏ 'Vnđ', dấu chấm và khoảng trắng
+        let cleanString = currencyString.replace("VNĐ", "").replace(/\./g, "").trim();
+
+        // Chuyển chuỗi thành số
+        return parseFloat(cleanString) || 0;
+    }
+
 
     // Đóng modal
     document.getElementById('closeCartModal').addEventListener('click', function () {
@@ -309,6 +519,62 @@
         }
     });
 </script>
+<script>
+    const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+    document.addEventListener('click', (event) => {
+        if (event.target.classList.contains('remove-btn')) {
+
+            const itemId = event.target.getAttribute('data-id');
+            console.log(itemId);
+
+            fetch(`/KhachHang/TrangChu?handler=Delete&id=${itemId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "XSRF-TOKEN": csrfToken
+                }
+            })
+                .then(response => {
+                    console.log(response.status)
+                    if (response.ok) {
+                        alert("Xóa thành công");
+
+                    } else {
+                        return response.text().then(text => {
+                            alert("Xóa không thành công: " + text);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Có lỗi xảy ra:', error);
+                    alert("Có lỗi xảy ra khi xóa.");
+                })
+                .finally(() => {
+                    $('#confirmDeleteModal').modal('hide');
+                });
+            removeItemFromCart(itemId); // Hàm xử lý xóa món khỏi giỏ hàng
+            event.target.closest('.cart-item').remove(); // Xóa món khỏi giao diện
+        }
+    });
+
+    function removeItemFromCart(itemId) {
+        // Thực hiện logic xóa món khỏi mảng hoặc server
+        console.log(`Món với ID ${itemId} đã bị xóa.`);
+    }
+    document.addEventListener('change', (event) => {
+        if (event.target.classList.contains('cart-item-checkbox')) {
+            const itemId = event.target.getAttribute('data-id');
+            if (event.target.checked) {
+                console.log(`Món với ID ${itemId} được chọn.`);
+                // Thực hiện logic khi món được chọn
+            } else {
+                console.log(`Món với ID ${itemId} bị bỏ chọn.`);
+                // Thực hiện logic khi món bị bỏ chọn
+            }
+        }
+    });
+
+
+</script>
 
 </html>
-f

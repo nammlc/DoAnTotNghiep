@@ -3,6 +3,64 @@
 }
 @using System.Text.Json
 @model DoAnTotNghiep.Pages.ChiTietMonAnViewModel
+<style>
+    /* Định dạng cho thẻ bao bọc */
+    .quantity-input {
+        display: flex;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    /* Định dạng cho nhãn */
+    .quantity-input label {
+        margin-right: 10px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    /* Định dạng cho ô nhập */
+    .quantity-input input[type="number"] {
+        width: 80px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        color: #333;
+        text-align: center;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    /* Hiệu ứng khi hover */
+    .quantity-input input[type="number"]:hover {
+        border-color: #888;
+    }
+
+    /* Hiệu ứng khi focus */
+    .quantity-input input[type="number"]:focus {
+        outline: none;
+        border-color: #4caf50;
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    }
+
+    /* Định dạng placeholder */
+    .quantity-input input[type="number"]::placeholder {
+        color: #aaa;
+        font-style: italic;
+    }
+
+    /* Định dạng khi giá trị không hợp lệ */
+    .quantity-input input[type="number"]:invalid {
+        border-color: #ff4d4d;
+    }
+
+    /* Định dạng khi giá trị hợp lệ */
+    .quantity-input input[type="number"]:valid {
+        border-color: #4caf50;
+    }
+</style>
 <div class="container">
     <div class="main_detail-dish">
         <div class="img_dish">
@@ -12,18 +70,36 @@
             <h2 class="menu-name">@Model.MonAnChinh.ten_mon_an</h2>
             <p class="menu-description">@Model.MonAnChinh.mo_ta</p>
             <p class="menu-price">@Model.MonAnChinh.gia_mon_an</p>
-            <form method="post" asp-page="/KhachHang/TrangChu" asp-page-handler="CreateBill">
+            <form method="post" asp-page="/KhachHang/TrangChu" asp-page-handler="CreateCartItem">
+                <div class="quantity-input">
+                    <label for="so_luong">Số lượng:</label>
+                    <input type="number" id="so_luong" name="so_luong" placeholder="Chọn số lượng" min="1" max="99"
+                        value="1">
+                </div>
                 <input style="display: none; " type="text" name="ten_ban" placeholder="None">
                 <input style="display: none;" type="text" name="ten_kh" value="Client Order">
                 <input style="display: none;" type="text" name="tong_tien" id="hidden-total-price"
                     value="@Model.MonAnChinh.gia_mon_an">
-                <input type="hidden" name="list_mon_an" id="hidden-mon-an"
-                    value='[@JsonSerializer.Serialize(new { ten_mon = Model.MonAnChinh.ten_mon_an, anh_minh_hoa = Model.MonAnChinh.anh_minh_hoa , gia_mon_an = Model.MonAnChinh.gia_mon_an}, 
-                     new JsonSerializerOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping })]'>
 
-                <button type="submit" style="width: 200px ; height: 50px; background-color: rgb(179, 34, 8);
+                @{
+
+                    var giaTienString = Model.MonAnChinh.gia_mon_an;
+                    var giaTien = giaTienString
+                    .Replace(",", "")
+                    .Replace("VND", "")
+                    .Trim();
+
+
+                    var giaTienInt = int.Parse(giaTien);
+
+
+                    <input type="hidden" name="list_mon_an" id="hidden-mon-an"
+                        value='[@JsonSerializer.Serialize(new { ten_mon = Model.MonAnChinh.ten_mon_an, gia_tien = giaTienInt , so_luong = 1 ,anh_minh_hoa = Model.MonAnChinh.anh_minh_hoa }, 
+                     new JsonSerializerOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping })]'>
+                }
+                <button type="submit" style="width: 200px ; height: 80px; background-color: rgb(179, 34, 8);
          font-size: 25px; align-items: center; border: none; border-radius: 10px; color: #fff; 
-         box-shadow: 0px 0px 1px 0px;padding-bottom : 5px; font-weight: 500;">Đặt Mua Ngay</button>
+         box-shadow: 0px 0px 1px 0px;padding-bottom : 5px; font-weight: 500;">Thêm vào giỏ hàng</button>
             </form>
 
         </div>
