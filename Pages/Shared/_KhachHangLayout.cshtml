@@ -1,3 +1,6 @@
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -31,8 +34,33 @@
             <nav class="nav">
                 <a href="#">Trang chủ</a>
                 <a href="#">Giới thiệu</a>
-                <a href="#" class="active">Thực đơn</a>
+                <a href="/KhachHang/TrangChu" >Thực đơn</a>
                 <a href="#">Liên hệ</a>
+                @{
+                    var userName = HttpContextAccessor.HttpContext?.Session.GetString("User");
+                    if (userName != null)
+                    {
+
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                data-toggle="dropdown" aria-expanded="false"
+                                style="border: none ; background-color: #cc1308; color: #fff; padding-left: 20px ; padding-top : 0">
+                                Xin chào , @userName !
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" href="/KhachHang/TrangCaNhan" style="margin-left : 0 ; color : #000">Xem đơn hàng đã mua</a></li>
+                                <form method="post" asp-page="/KhachHang/KHDangNhap" asp-page-handler="Logout">
+                                    <button type="submit" class="dropdown-item">Đăng xuất</button>
+                                </form>
+
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <a href="/KhachHang/KHDangNhap" style="text-decoration: none;color :#fff "> <strong>Đăng nhập </strong></a>
+                    }
+                }
             </nav>
         </div>
     </header>
@@ -47,7 +75,15 @@
         </div>
     </footer>
 
-    @* <script src="~/js/KhachHang.js"></script> *@
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        $('.dropdown').click(function () {
+
+            $('.dropdown-menu').toggleClass('show');
+
+        });
+    </script>
 </body>
 
 </html>

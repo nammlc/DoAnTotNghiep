@@ -22,6 +22,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
@@ -29,7 +30,8 @@
     <header>
         <div class="header">
             <div class="logo-container">
-                <a href="http://localhost:5295"><img src="~/image/logo.png" alt="Logo" class="logo" style="width: 80px;"></a>
+                <a href="http://localhost:5295"><img src="~/image/logo.png" alt="Logo" class="logo"
+                        style="width: 80px;"></a>
             </div>
             <div class="avatar-container">
                 @{
@@ -45,7 +47,7 @@
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li><a class="dropdown-item" href="#">Xem tiến độ công việc</a></li>
-                               <form method="post" asp-page="/DangNhap" asp-page-handler="Logout">
+                                <form method="post" asp-page="/DangNhap" asp-page-handler="Logout">
                                     <button type="submit" class="dropdown-item">Đăng xuất</button>
                                 </form>
                             </ul>
@@ -69,7 +71,7 @@
                 </li>
                 <li>
                     <i class="fa-solid fa-chart-simple" style="font-size: 33px ; color : #fff"></i>
-                    <a href="#">Thống kê</a>
+                    <a href="/admin/thongke">Thống kê</a>
                 </li>
                 <li>
                     <i class="fa-solid fa-users" style="font-size: 25px ; color : #fff"></i>
@@ -110,7 +112,7 @@
 
         });
     </script>
-    
+
 </body>
 
 </html>

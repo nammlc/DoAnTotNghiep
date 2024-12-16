@@ -1,0 +1,220 @@
+@page
+@model DoAnTotNghiep.Pages.TrangCaNhanModel
+@using Microsoft.AspNetCore.Antiforgery
+@using System.Text.Json
+@inject IAntiforgery antiforgery
+@{
+    var token = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+}
+@{
+    Layout = "_KhachHangLayout";
+}
+
+<div class="container mt-4">
+    <!-- Thông tin cá nhân -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4>Thông Tin Cá Nhân</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="hoTen" class="form-label">Họ Tên:</label>
+                        <input type="text" class="form-control" id="hoTen" name="hoTen" value="@Model.HoTen" readonly />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="so_dien_thoai" class="form-label">Số Điện Thoại:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="so_dien_thoai" name="so_dien_thoai"
+                                value="@Model.SoDienThoai" />
+                            <span class="input-group-text">
+                                <i class="fa-solid fa-pencil"></i>
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label for="dia_chi" class="form-label">Nơi Ở Hiện Tại:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="dia_chi" name="dia_chi" value="@Model.DiaChi" />
+                            <span class="input-group-text">
+                                <i class="fa-solid fa-pencil"></i>
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+                <button type="button" id="btnUpdate" class="btn btn-primary">Cập nhật thông tin</button>
+            </form>
+        </div>
+    </div>
+    <div id="messageBox" class="alert d-none"></div>
+
+    <!-- Danh sách đơn hàng -->
+    <div class="card mt-4">
+        <div class="card-header bg-info text-white">
+            <h4>Danh Sách Đơn Hàng</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID hóa đơn</th>
+                        <th>Thời gian đặt hàng</th>
+                        <th>Tổng tiền</th>
+                        <th>Món ăn</th>
+                        <th>Địa chỉ giao hàng</th>
+                        <th>Số điện Thoại giao hàng</th>
+                        <th>Trạng Thái Đơn Hàng</i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.HoaDons == null || !Model.HoaDons.Any())
+                    {
+                        <p> Bạn chưa mua hàng</p>
+                    }
+                    else
+                    {
+
+
+                        @foreach (var order in Model.HoaDons)
+                        {
+                            <tr>
+                                <td>@order.id</td>
+                                <td>@order.gio_vao</td>
+                                <td><strong>@order.tong_tien.ToString("#,##0")</strong> VNĐ</td>
+                                <td style="color: rgb(20, 20, 238);" class="detail-info">Xem danh sách món ăn</td>
+                                <td>@order.ten_ban</td>
+                                <td>@order.ten_nhan_vien</td>
+                                @if(order.trang_thai == "Đã hoàn thành"){
+                                <td style="color: #527818;">@order.trang_thai</td>
+                                    
+                                }
+                                else if(order.trang_thai == "Đã bị từ chối"){
+                                    <td style="color: rgb(206, 9, 9);">@order.trang_thai</td>
+                                }
+                                else{
+                                    <td style="color: rgb(21, 64, 236);">@order.trang_thai</td>
+
+                                }
+                            </tr>
+                        }}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailsModalLabel">Chi tiết đơn hàng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close-btn1">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="max-height : 400px; overflow : scroll">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Ảnh</th>
+                            <th>Tên món</th>
+                            <th>Giá</th>
+                            <th>Số lượng</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderItemsTable">
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-btn2">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const hoaDons = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.HoaDons));
+
+    document.querySelectorAll('.detail-info').forEach((cell, index) => {
+        cell.style.cursor = "pointer";
+
+        cell.addEventListener('click', function () {
+            const hoadon = hoaDons[index];
+            const listMonAn = JSON.parse(hoadon.list_mon_an);
+
+            const orderItemsTable = document.getElementById("orderItemsTable");
+            orderItemsTable.innerHTML = '';
+
+            listMonAn.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="${item.anh_minh_hoa}" alt="Ảnh món" style="width: 50px; height: auto;"></td>
+                    <td>${item.ten_mon}</td>
+                    <td>${item.gia_tien.toLocaleString()} VNĐ</td>
+                    <td>${item.so_luong}</td>
+                `;
+                orderItemsTable.appendChild(row);
+            });
+            $('#orderDetailsModal').modal('show');
+        });
+    });
+    document.getElementById("close-btn2").addEventListener("click", function () {
+        var myModal = bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal'));
+        if (myModal) {
+            myModal.hide();
+        }
+    });
+    document.getElementById("close-btn1").addEventListener("click", function () {
+
+        var myModal = bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal'));
+        if (myModal) {
+            myModal.hide();
+        }
+    });
+</script>
+<script>
+    const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+    const btnUpdate = document.getElementById('btnUpdate');
+    btnUpdate.addEventListener('click', async () => {
+        const formData = {
+            ho_ten: document.getElementById('hoTen').value,
+            so_dien_thoai: document.getElementById('so_dien_thoai').value,
+            dia_chi: document.getElementById('dia_chi').value
+        };
+        console.log(formData.ho_ten + formData.so_dien_thoai + formData.dia_chi)
+
+        const response = await fetch('/KhachHang/TrangCaNhan?handler=UpdateInfo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'XSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            const messageBox = document.getElementById('messageBox');
+            messageBox.classList.remove('d-none', 'alert-danger', 'alert-success');
+            if (result.success) {
+                messageBox.classList.add('alert-success');
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
+            } else {
+                messageBox.classList.add('alert-danger');
+            }
+            messageBox.textContent = result.message;
+        } else {
+            console.error('HTTP error:', response.status);
+        }
+    });
+
+</script>

@@ -9,9 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-    new MySqlServerVersion(new Version(8, 0, 25)))); 
-builder.Services.AddRazorPages(); 
-builder.Services.AddHttpClient(); 
+    new MySqlServerVersion(new Version(8, 0, 25))));
+builder.Services.AddRazorPages();
+builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAntiforgery(options =>
@@ -27,8 +27,8 @@ builder.Services.AddSession(options =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login";  // Đường dẫn đến trang đăng nhập
-        options.LogoutPath = "/Account/Logout";  // Đường dẫn đến trang đăng xuất
+        options.LoginPath = "/DangNhap";  // Đường dẫn đến trang đăng nhập
+        options.LogoutPath = "/DangXuat";  // Đường dẫn đến trang đăng xuất
     });
 
 
@@ -71,7 +71,7 @@ app.UseEndpoints(endpoints =>
     {
         endpoints.MapRazorPages();
     });
-    
+
 
 
 app.Run();

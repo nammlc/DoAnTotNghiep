@@ -151,3 +151,27 @@ body {
   font-size: 12px;
   padding: 5px 10px;
 }
+
+.hidden-details {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1000;
+  max-width: 300px;
+}
+
+.detail-info:hover .hidden-details {
+  display: block;
+}
+
+.hidden-details {
+  transition: opacity 0.2s ease-in-out;
+  opacity: 0;
+}
+
+.detail-info:hover .hidden-details {
+  opacity: 1;
+}

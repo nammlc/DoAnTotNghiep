@@ -151,7 +151,7 @@
         <option value="">Chọn đơn hàng</option>
         @foreach (var hoadon in Model.HoaDons)
         {
-            if (hoadon.trang_thai != "Đã hoàn thành" && hoadon.ban_an_id == null)
+            if (hoadon.trang_thai != "Đã hoàn thành" && hoadon.ban_an_id == null && hoadon.trang_thai != "On Cart" && hoadon.ten_kh == "Client" && hoadon.ten_nhan_vien!="Client")
             {
                 <option value="@hoadon.id">Tên KH: @hoadon.ten_ban ; Tổng hóa đơn: @hoadon.tong_tien.ToString("#,##0") VNĐ ;
                     Thời gian tạo hóa đơn : @hoadon.gio_vao </option>

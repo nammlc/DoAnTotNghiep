@@ -1,0 +1,52 @@
+@page 
+@{
+    Layout = "_NhanVienLayout";
+}
+@model DoAnTotNghiep.Pages.LuongChiTietModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center">Lương Chi Tiết Nhân Viên - Tháng @Model.SelectedMonth/2024</h2>
+
+        @if (Model.EmployeeSalaries.Any())
+        {
+            <!-- Bảng lương chi tiết -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã NV</th>
+                        <th>Họ Tên</th>
+                        <th>Chức Vụ</th>
+                        <th>Lương (VNĐ)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.EmployeeSalaries.Count; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>@Model.EmployeeSalaries[i].EmployeeCode</td>
+                            <td>@Model.EmployeeSalaries[i].EmployeeName</td>
+                            <td>@Model.EmployeeSalaries[i].Position</td>
+                            <td>@Model.EmployeeSalaries[i].TotalSalary.ToString("N0") VNĐ</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-center text-danger">Không có dữ liệu lương trong tháng này.</p>
+        }
+    </div>
+</body>
+</html>

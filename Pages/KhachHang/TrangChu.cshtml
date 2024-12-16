@@ -1,5 +1,7 @@
 @page
+@using System.Web
 @using Microsoft.AspNetCore.Antiforgery
+@using System.Text.Json
 @inject IAntiforgery antiforgery
 @{
     var token = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
@@ -133,6 +135,7 @@
             <option value="Snack ăn nhẹ">Đồ ăn nhẹ</option>
             <option value="Bánh ngọt">Bánh ngọt</option>
             <option value="Sữa chua">Sữa chua</option>
+
         </select>
         <div class="don_hang">
             <img src="~/image/cart.png" alt="" width="55px" style="padding-left : 10px " title="Đơn hàng" id="cart">
@@ -190,391 +193,460 @@
 <div id="cartModal" class="modal" style="display: none;">
     <div class="modal-content">
         <span class="close" id="closeCartModal">&times;</span>
-        <h2>Danh sách đơn hàng</h2>
+        <h2>Giỏ Hàng</h2>
         <div id="cartItems"></div>
         <button type="button" id="totalAmount" class="btn btn-primary" style="margin-top : 10px"
             onclick="Payment()">Thanh Toán (0
             VNĐ)</button>
     </div>
 
-</div>
-</div>
 
 
 
-<!-- Pagination -->
-<div class="pagination">
-    <button id="prevPage" class="btn-pagination" onclick="changePage(currentPage - 1)">Trước</button>
-    <span id="pageIndicator">Trang 1</span>
-    <button id="nextPage" class="btn-pagination" onclick="changePage(currentPage + 1)">Sau</button>
-</div>
 
-<script>
-    const dishesPerPage = 12;
-    let currentPage = 1;
-    let dishes = document.querySelectorAll('.menu-item');
+    <!-- Pagination -->
+    <div class="pagination">
+        <button id="prevPage" class="btn-pagination" onclick="changePage(currentPage - 1)">Trước</button>
+        <span id="pageIndicator">Trang 1</span>
+        <button id="nextPage" class="btn-pagination" onclick="changePage(currentPage + 1)">Sau</button>
+    </div>
 
-    function removeVietnameseAccents(str) {
-        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-    }
+    <script>
+        const dishesPerPage = 12;
+        let currentPage = 1;
+        let dishes = document.querySelectorAll('.menu-item');
 
-    function filterDishes(searchQuery) {
-        const filteredDishes = [];
-        dishes.forEach(dish => {
-            const name = dish.querySelector('.menu-name').textContent.toLowerCase();
-            const type = dish.getAttribute('data-type') ? dish.getAttribute('data-type').toLowerCase() : '';
-            const choose = dish.getAttribute('data-choose') ? dish.getAttribute('data-choose').toLowerCase() : '';
+        function removeVietnameseAccents(str) {
+            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        }
 
-            // Kiểm tra điều kiện tìm kiếm theo tên và loại món ăn
-            const categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
-            const matchesCategory = categoryFilter === '' || type.includes(categoryFilter);
+        function filterDishes(searchQuery) {
+            const filteredDishes = [];
+            dishes.forEach(dish => {
+                const name = dish.querySelector('.menu-name').textContent.toLowerCase();
+                const type = dish.getAttribute('data-type') ? dish.getAttribute('data-type').toLowerCase() : '';
+                const choose = dish.getAttribute('data-choose') ? dish.getAttribute('data-choose').toLowerCase() : '';
 
-            if ((name.includes(searchQuery) || type.includes(searchQuery) || choose.includes(searchQuery)) && matchesCategory) {
-                dish.style.display = "block"; // Hiển thị món ăn nếu phù hợp
-                filteredDishes.push(dish); // Thêm món ăn vào danh sách đã lọc
-            } else {
-                dish.style.display = "none"; // Ẩn món ăn nếu không phù hợp
+                // Kiểm tra điều kiện tìm kiếm theo tên và loại món ăn
+                const categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
+                const matchesCategory = categoryFilter === '' || type.includes(categoryFilter);
+
+                if ((name.includes(searchQuery) || type.includes(searchQuery) || choose.includes(searchQuery)) && matchesCategory) {
+                    dish.style.display = "block"; // Hiển thị món ăn nếu phù hợp
+                    filteredDishes.push(dish); // Thêm món ăn vào danh sách đã lọc
+                } else {
+                    dish.style.display = "none"; // Ẩn món ăn nếu không phù hợp
+                }
+            });
+            return filteredDishes; // Trả về danh sách món ăn đã lọc
+        }
+
+
+        function showPage(page, filteredDishes) {
+            const start = (page - 1) * dishesPerPage;
+            const end = start + dishesPerPage;
+
+            filteredDishes.forEach(dish => dish.style.display = "none");
+            filteredDishes.forEach((dish, index) => {
+                if (index >= start && index < end) {
+                    dish.style.display = "block";
+                }
+            });
+
+            updatePagination(page, filteredDishes.length);
+        }
+
+        function updatePagination(page, totalDishes) {
+            const pagination = document.querySelector('.pagination');
+            const totalPages = Math.ceil(totalDishes / dishesPerPage);
+            pagination.innerHTML = '';
+
+            if (page > 1) {
+                pagination.innerHTML += `<button class="btn-pagination" onclick="changePage(${page - 1}, ${totalDishes})">Trước</button>`;
             }
-        });
-        return filteredDishes; // Trả về danh sách món ăn đã lọc
-    }
 
-
-    function showPage(page, filteredDishes) {
-        const start = (page - 1) * dishesPerPage;
-        const end = start + dishesPerPage;
-
-        filteredDishes.forEach(dish => dish.style.display = "none");
-        filteredDishes.forEach((dish, index) => {
-            if (index >= start && index < end) {
-                dish.style.display = "block";
+            for (let i = 1; i <= totalPages; i++) {
+                pagination.innerHTML += i === page ?
+                    `<button class="btn-pagination active">${i}</button>` :
+                    `<button class="btn-pagination" onclick="changePage(${i}, ${totalDishes})">${i}</button>`;
             }
-        });
 
-        updatePagination(page, filteredDishes.length);
-    }
-
-    function updatePagination(page, totalDishes) {
-        const pagination = document.querySelector('.pagination');
-        const totalPages = Math.ceil(totalDishes / dishesPerPage);
-        pagination.innerHTML = '';
-
-        if (page > 1) {
-            pagination.innerHTML += `<button class="btn-pagination" onclick="changePage(${page - 1}, ${totalDishes})">Trước</button>`;
-        }
-
-        for (let i = 1; i <= totalPages; i++) {
-            pagination.innerHTML += i === page ?
-                `<button class="btn-pagination active">${i}</button>` :
-                `<button class="btn-pagination" onclick="changePage(${i}, ${totalDishes})">${i}</button>`;
-        }
-
-        if (page < totalPages) {
-            pagination.innerHTML += `<button class="btn-pagination" onclick="changePage(${page + 1}, ${totalDishes})">Sau</button>`;
-        }
-    }
-
-    function changePage(page, totalDishes) {
-        currentPage = page; // Cập nhật trang hiện tại
-        const filteredDishes = filterDishes(document.getElementById('searchInput').value.toLowerCase());
-        showPage(currentPage, filteredDishes); // Hiển thị trang
-    }
-
-
-    document.getElementById('searchInput').addEventListener('input', function () {
-        const searchQuery = this.value.toLowerCase();
-        const filteredDishes = filterDishes(searchQuery);
-        currentPage = 1; // Reset trang về 1 khi tìm kiếm
-        showPage(currentPage, filteredDishes); // Hiển thị lại trang với món ăn đã lọc
-    });
-
-    document.getElementById('categoryFilter').addEventListener('change', function () {
-        const searchQuery = this.value.toLowerCase();
-        console.log("change");
-        const filteredDishes = filterDishes(searchQuery);
-        currentPage = 1;
-        showPage(currentPage, filteredDishes);
-    });
-    // Khởi động hiển thị trang đầu tiên
-    showPage(currentPage, dishes);
-    const modal = document.getElementById('dishModal');
-    const closeModal = document.getElementById('closeModal');
-
-    // Attach event listeners to all dishes
-</script>
-<script>
-    document.querySelectorAll(".menu-item").forEach(function (div) {
-        div.addEventListener("click", function () {
-            var id = this.getAttribute('data-id');
-            var editUrl = '@Url.Page("/KhachHang/TrangChu")?handler=edit&&id=__id__'.replace('__id__', id);
-            console.log(editUrl)
-
-            window.location.href = editUrl;
-        });
-    });
-
-
-</script>
-
-<script>
-    const cartData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.HoaDons));
-    let cartDataListMonAn = [];
-
-    cartData.forEach(item => {
-
-        if (item.list_mon_an && item.trang_thai == "On Cart") {
-            try {
-                const decodedList = JSON.parse(item.list_mon_an);
-                decodedList.forEach(subItem => {
-
-                    subItem.cartId = item.id;
-                    subItem.tong_tien = item.tong_tien;
-                });
-                cartDataListMonAn = cartDataListMonAn.concat(decodedList);
-            } catch (error) {
-                console.error("JSON parse error:", error, item.list_mon_an);
+            if (page < totalPages) {
+                pagination.innerHTML += `<button class="btn-pagination" onclick="changePage(${page + 1}, ${totalDishes})">Sau</button>`;
             }
         }
-    });
 
-    document.getElementById('cart').addEventListener('click', function () {
-        const cartItemsContainer = document.getElementById('cartItems');
-        cartItemsContainer.innerHTML = '';
-
-        let totalAmount = 0;
-        let totalItems = 0;
-
-        if (cartDataListMonAn.length > 0) {
-            cartDataListMonAn.forEach(item => {
-                const cartItemDiv = document.createElement('div');
-                cartItemDiv.classList.add('cart-item');
+        function changePage(page, totalDishes) {
+            currentPage = page; // Cập nhật trang hiện tại
+            const filteredDishes = filterDishes(document.getElementById('searchInput').value.toLowerCase());
+            showPage(currentPage, filteredDishes); // Hiển thị trang
+        }
 
 
-                const itemTotalPrice = item.gia_tien * item.tong_tien;
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const searchQuery = this.value.toLowerCase();
+            const filteredDishes = filterDishes(searchQuery);
+            currentPage = 1; // Reset trang về 1 khi tìm kiếm
+            showPage(currentPage, filteredDishes); // Hiển thị lại trang với món ăn đã lọc
+        });
+
+        document.getElementById('categoryFilter').addEventListener('change', function () {
+            const searchQuery = this.value.toLowerCase();
+            console.log("change");
+            const filteredDishes = filterDishes(searchQuery);
+            currentPage = 1;
+            showPage(currentPage, filteredDishes);
+        });
+        // Khởi động hiển thị trang đầu tiên
+        showPage(currentPage, dishes);
+        const modal = document.getElementById('dishModal');
+        const closeModal = document.getElementById('closeModal');
+
+        // Attach event listeners to all dishes
+    </script>
+    <script>
+        document.querySelectorAll(".menu-item").forEach(function (div) {
+            div.addEventListener("click", function () {
+                var id = this.getAttribute('data-id');
+                var editUrl = '@Url.Page("/KhachHang/TrangChu")?handler=edit&&id=__id__'.replace('__id__', id);
+                console.log(editUrl)
+
+                window.location.href = editUrl;
+            });
+        });
 
 
-                const formattedItemTotalPrice = itemTotalPrice.toLocaleString('vi-VN'); // Định dạng số theo kiểu Việt Nam (dấu phẩy)
+    </script>
+
+    <script>
+        const cartData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.HoaDons));
+        let cartDataListMonAn = [];
+
+        cartData.forEach(item => {
+
+            if (item.list_mon_an && item.trang_thai == "On Cart") {
+                try {
+                    const decodedList = JSON.parse(item.list_mon_an);
+                    decodedList.forEach(subItem => {
+
+                        subItem.cartId = item.id;
+                        subItem.tong_tien = item.tong_tien;
+                        subItem.ten_kh = item.ten_kh;
+                    });
+                    cartDataListMonAn = cartDataListMonAn.concat(decodedList);
+                } catch (error) {
+                    console.error("JSON parse error:", error, item.list_mon_an);
+                }
+            }
+        });
+
+        document.getElementById('cart').addEventListener('click', function () {
+            const cartItemsContainer = document.getElementById('cartItems');
+            cartItemsContainer.innerHTML = '';
+
+            let totalAmount = 0;
+            let totalItems = 0;
+            const userName = "@Html.Raw(HttpContext.Session.GetString("User"))";
+            console.log(userName);
+
+            const filteredItems = cartDataListMonAn.filter(item => item.ten_kh === userName);
+
+            if (filteredItems.length > 0) {
+                filteredItems.forEach(item => {
+                    const cartItemDiv = document.createElement('div');
+                    cartItemDiv.classList.add('cart-item');
 
 
-                cartItemDiv.innerHTML = `
+                    const itemTotalPrice = item.gia_tien * item.tong_tien;
+
+
+                    const formattedItemTotalPrice = itemTotalPrice.toLocaleString('vi-VN');
+
+
+                    cartItemDiv.innerHTML = `
                 <input type="checkbox" class="cart-item-checkbox" data-id="${item.cartId}" title="Chọn món">
                 <img src="${item.anh_minh_hoa}" alt="${item.ten_mon}" class="cart-item-image">
                 <div class="item-info">
                     <p class="item-id" style="display : none" data-id ="${item.cartId}";></p>
                     <p class="item-name"><strong>${item.ten_mon}</strong></p>
-                    <p class="item-price"><strong>${item.gia_tien}</strong></p>
+                    <p class="item-price"><strong>${item.gia_tien.toLocaleString('vi-VN')} VNĐ</strong></p>
                     <p class="item-quantity">Số lượng: <input type="number" class="item-quantity-input" value="${item.tong_tien.toLocaleString("vi-VN")}" min="1" max="99" data-id="${item.cartId}"  style = "border : none #333;" readonly/></p>
                     <p class="item-total-price">Tổng tiền: <strong>${formattedItemTotalPrice} VND</strong></p>
                 </div>
                 <button class="remove-btn" data-id="${item.cartId}" title="Xóa món">Xóa</button>
             `;
-                cartItemsContainer.appendChild(cartItemDiv);
-                totalItems += item.tong_tien;
-            });
-            updateTotalAmount();
+                    cartItemsContainer.appendChild(cartItemDiv);
+                    totalItems += item.tong_tien;
+                });
+                updateTotalAmount();
 
-            document.querySelectorAll('.cart-item-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', updateTotalAmount);
-            });
-        } else {
-            cartItemsContainer.innerHTML = '<p>Chưa có đơn hàng nào!</p>';
-        }
-
-        document.getElementById('cartModal').style.display = 'block';
-
-
-        function updateTotalAmount() {
-            totalAmount = 0;
-            document.querySelectorAll('.cart-item-checkbox:checked').forEach(checkbox => {
-                const cartItemDiv = checkbox.closest('.cart-item');
-                const itemTotalPrice = parseFloat(cartItemDiv.querySelector('.item-total-price strong').textContent.replace(/[^0-9.-]+/g, ""));
-                totalAmount += itemTotalPrice;
-            });
-
-
-            const totalAmountElement = document.getElementById('totalAmount');
-            if (totalAmountElement) {
-                totalAmountElement.innerText = ` Thanh toán ( ${(totalAmount * 1000).toLocaleString('vi-VN')} VND ) `;
-
-            }
-        }
-    });
-
-
-
-    document.getElementById('cartItems').addEventListener('input', function (event) {
-        if (event.target.classList.contains('item-quantity-input')) {
-            const itemId = event.target.getAttribute('data-id');
-            const newQuantity = parseInt(event.target.value, 10);
-
-
-            const item = cartDataListMonAn.find(item => item.id === itemId);
-            if (item) {
-                item.so_luong = newQuantity;
-                item.tong_tien = item.gia_tien * item.so_luong;
+                document.querySelectorAll('.cart-item-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', updateTotalAmount);
+                });
+            } else {
+                cartItemsContainer.innerHTML = '<p>Bạn chưa có gì trong giỏ hàng !</p>';
             }
 
-
-            let totalAmount = 0;
-            let totalItems = 0;
-            cartDataListMonAn.forEach(item => {
-                totalAmount += item.tong_tien;
-                totalItems += item.tong_tien;
-            });
+            document.getElementById('cartModal').style.display = 'block';
 
 
-            if (totalAmountElement) {
-                totalAmountElement.innerText = `Thanh toán ( ${(totalAmount * 1000).toLocaleString('vi-VN')} VND ) `;
+            function updateTotalAmount() {
+                totalAmount = 0;
+                document.querySelectorAll('.cart-item-checkbox:checked').forEach(checkbox => {
+                    const cartItemDiv = checkbox.closest('.cart-item');
+                    const itemTotalPrice = parseFloat(cartItemDiv.querySelector('.item-total-price strong').textContent.replace(/[^0-9.-]+/g, ""));
+                    totalAmount += itemTotalPrice;
+                });
+
+
+                const totalAmountElement = document.getElementById('totalAmount');
+                if (totalAmountElement) {
+                    totalAmountElement.innerText = ` Thanh toán ( ${(totalAmount * 1000).toLocaleString('vi-VN')} VND ) `;
+
+                }
             }
-        }
-    });
-
-
-    function Payment() {
-        const selectedItems = [];
-        const checkboxes = document.querySelectorAll('.cart-item-checkbox:checked');
-
-        checkboxes.forEach(checkbox => {
-            const cartItem = checkbox.closest('.cart-item');
-            const itemId = cartItem.querySelector('.remove-btn').getAttribute('data-id');
-            const itemName = cartItem.querySelector('.item-name').textContent;
-            const itemPrice = parseFloat(cartItem.querySelector('.item-price').textContent.replace(' VNĐ', '').trim());
-            const itemQuantityElement = cartItem.querySelector('.item-quantity-input').value;
-            const itemImage = cartItem.querySelector('.cart-item-image').getAttribute('src');
-            
-            selectedItems.push({
-                id: itemId,
-                name: itemName,
-                price: itemPrice ,
-                quantity: itemQuantityElement,
-                image : itemImage
-            });
-            console.log(selectedItems.id);
         });
 
-        const selectedDishes = selectedItems.map(item => ({
-            ten_mon: item.name,
-            gia_tien: item.price,
-            so_luong: item.quantity,
-            anh_minh_hoa: item.image || '' 
-        }));
 
-        
-        const totalAmount = selectedDishes.reduce((total, dish) => {
-            return total + dish.gia_tien * dish.so_luong ;
-        }, 0);
-        const jsonArrayToDelete = selectedItems.map(item => item.id);
-        const orderData = {
-            tong_tien: totalAmount,
-            gio_vao: new Date().toISOString(), 
-            list_mon_an: selectedDishes,
-            idsToDelete: jsonArrayToDelete.map(item => parseInt(item, 10))
-        };
-        console.log(orderData.idsToDelete);
 
-        // Gửi dữ liệu đơn hàng qua API
-        fetch(`/KhachHang/TrangChu?handler=CreateBill`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                "XSRF-TOKEN": csrfToken
-            },
-            body: JSON.stringify(orderData)
-        })
-            .then(response => {
-                if (response.ok) {
-                    alert("Mua hàng thành công!");
-                    location.reload();
-                } else {
-                    throw new Error("Đã xảy ra lỗi khi thanh toán.");
+        document.getElementById('cartItems').addEventListener('input', function (event) {
+            if (event.target.classList.contains('item-quantity-input')) {
+                const itemId = event.target.getAttribute('data-id');
+                const newQuantity = parseInt(event.target.value, 10);
+
+
+                const item = cartDataListMonAn.find(item => item.id === itemId);
+                if (item) {
+                    item.so_luong = newQuantity;
+                    item.tong_tien = item.gia_tien * item.so_luong;
                 }
-            })
-            .catch(error => {
-                console.error(error);
-                alert("Không thể thanh toán. Vui lòng thử lại.");
+
+
+                let totalAmount = 0;
+                let totalItems = 0;
+                cartDataListMonAn.forEach(item => {
+                    totalAmount += item.tong_tien;
+                    totalItems += item.tong_tien;
+                });
+
+
+                if (totalAmountElement) {
+                    totalAmountElement.innerText = `Thanh toán ( ${(totalAmount * 1000).toLocaleString('vi-VN')} VND ) `;
+                }
+            }
+        });
+
+        const userPhoneData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SoDienThoai));
+        const userAddressData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DiaChi));
+
+        async function Payment() {
+            const selectedItems = [];
+            const checkboxes = document.querySelectorAll('.cart-item-checkbox:checked');
+
+            checkboxes.forEach(checkbox => {
+                const cartItem = checkbox.closest('.cart-item');
+                const itemId = cartItem.querySelector('.remove-btn').getAttribute('data-id');
+                const itemName = cartItem.querySelector('.item-name').textContent;
+                const itemPrice = parseFloat(cartItem.querySelector('.item-price').textContent.replace(' VNĐ', '').trim());
+                const itemQuantityElement = cartItem.querySelector('.item-quantity-input').value;
+                const itemImage = cartItem.querySelector('.cart-item-image').getAttribute('src');
+
+                selectedItems.push({
+                    id: itemId,
+                    name: itemName,
+                    price: itemPrice,
+                    quantity: itemQuantityElement,
+                    image: itemImage
+                });
             });
-    }
 
-    function formatCurrencyToNumber(currencyString) {
-        if (!currencyString) return 0;
+            const selectedDishes = selectedItems.map(item => ({
+                ten_mon: item.name,
+                gia_tien: item.price,
+                so_luong: item.quantity,
+                anh_minh_hoa: item.image || ''
+            }));
 
-        // Loại bỏ 'Vnđ', dấu chấm và khoảng trắng
-        let cleanString = currencyString.replace("VNĐ", "").replace(/\./g, "").trim();
+            const totalAmount = selectedDishes.reduce((total, dish) => {
+                return total + dish.gia_tien * dish.so_luong;
+            }, 0);
 
-        // Chuyển chuỗi thành số
-        return parseFloat(cleanString) || 0;
-    }
+            const deliveryAddress = prompt("Địa chỉ giao hàng:", userAddressData);
+            if (!deliveryAddress) {
+                alert("Bạn chưa nhập địa chỉ giao hàng. Thanh toán bị hủy.");
+                return;
+            }
 
+            const phoneNumber = prompt("Số điện thoại:", userPhoneData);
+            if (!phoneNumber) {
+                alert("Bạn chưa nhập số điện thoại. Thanh toán bị hủy.");
+                return;
+            }
 
-    // Đóng modal
-    document.getElementById('closeCartModal').addEventListener('click', function () {
-        document.getElementById('cartModal').style.display = 'none';
-    });
+            const paymentMethod = confirm("Bạn có muốn thanh toán bằng tiền mặt không? (OK: Tiền mặt, Cancel: Thẻ)")
+                ? "cash"
+                : "card";
 
-    // Đóng modal khi nhấn ngoài modal
-    window.addEventListener('click', function (event) {
-        const modal = document.getElementById('cartModal');
-        if (event.target === modal) {
-            modal.style.display = 'none';
+            const orderData = {
+                tong_tien: totalAmount,
+                gio_vao: new Date().toISOString(),
+                list_mon_an: selectedDishes,
+                dia_chi_giao_hang: deliveryAddress,
+                so_dien_thoai_giao_hang: phoneNumber,
+                pt_thanh_toan: paymentMethod,
+                idsToDelete: selectedItems.map(item => parseInt(item.id, 10))
+            };
+
+            console.log("Dữ liệu đơn hàng:", orderData);
+
+            if (paymentMethod === "card") {
+                try {
+                    const response = await fetch(`/KhachHang/TrangChu?handler=GenerateQRCode&amount=${totalAmount}`);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const qrCodeUrl = await response.text();  // Lấy dữ liệu trả về dưới dạng chuỗi
+                    console.log("Mã QR Code: ", qrCodeUrl);
+
+                    // Kiểm tra mã QR và hiển thị nó
+                    if (qrCodeUrl) {
+                        console.log("Tạo mã QR");
+
+                        // Hiển thị mã QR trong popup
+                        const qrWindow = window.open("", "QR Code", "width=400,height=400");
+                        qrWindow.document.write(`
+                            <div style="text-align:center;">
+                                <h3>Quét mã QR để thanh toán</h3>
+                                <img src="${qrCodeUrl}" alt="QR Code" style="width:100%; max-width:300px;"/>
+                                <button onclick="try { window.opener.confirmPayment(${JSON.stringify(orderData)}); window.close(); } catch (error) { console.error('Lỗi khi gọi confirmPayment:', error); }" style="margin-top:20px;">Xác nhận đã thanh toán</button>
+
+                            </div>
+                        `);
+                    } else {
+                        alert("Không thể tạo mã QR. Vui lòng thử lại.");
+                    }
+
+                } catch (error) {
+                    console.error('Lỗi tạo mã QR:', error);
+                    alert("Không thể tạo mã. Vui lòng thử lại.");
+                }
+            } else {
+                createBill(orderData);
+            }
         }
-    });
-</script>
-<script>
-    const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
-    document.addEventListener('click', (event) => {
-        if (event.target.classList.contains('remove-btn')) {
 
-            const itemId = event.target.getAttribute('data-id');
-            console.log(itemId);
-
-            fetch(`/KhachHang/TrangChu?handler=Delete&id=${itemId}`, {
-                method: 'DELETE',
+        // Hàm xử lý tạo đơn hàng
+        function createBill(orderData) {
+            fetch(`/KhachHang/TrangChu?handler=CreateBill`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     "XSRF-TOKEN": csrfToken
-                }
+                },
+                body: JSON.stringify(orderData)
             })
                 .then(response => {
-                    console.log(response.status)
                     if (response.ok) {
-                        alert("Xóa thành công");
-
+                        alert("Mua hàng thành công!");
+                        location.reload();
                     } else {
-                        return response.text().then(text => {
-                            alert("Xóa không thành công: " + text);
-                        });
+                        throw new Error("Đã xảy ra lỗi khi thanh toán.");
                     }
                 })
                 .catch(error => {
-                    console.error('Có lỗi xảy ra:', error);
-                    alert("Có lỗi xảy ra khi xóa.");
-                })
-                .finally(() => {
-                    $('#confirmDeleteModal').modal('hide');
+                    console.error(error);
+                    alert("Không thể thanh toán. Vui lòng thử lại.");
                 });
-            removeItemFromCart(itemId); // Hàm xử lý xóa món khỏi giỏ hàng
-            event.target.closest('.cart-item').remove(); // Xóa món khỏi giao diện
         }
-    });
 
-    function removeItemFromCart(itemId) {
-        // Thực hiện logic xóa món khỏi mảng hoặc server
-        console.log(`Món với ID ${itemId} đã bị xóa.`);
-    }
-    document.addEventListener('change', (event) => {
-        if (event.target.classList.contains('cart-item-checkbox')) {
-            const itemId = event.target.getAttribute('data-id');
-            if (event.target.checked) {
-                console.log(`Món với ID ${itemId} được chọn.`);
-                // Thực hiện logic khi món được chọn
-            } else {
-                console.log(`Món với ID ${itemId} bị bỏ chọn.`);
-                // Thực hiện logic khi món bị bỏ chọn
+        // Hàm xác nhận thanh toán qua mã QR
+        function confirmPayment(orderData) {
+            console.log('Confirm Payment called');
+            alert("Thanh toán qua mã QR thành công!");
+            createBill(orderData);
+        }
+
+        function formatCurrencyToNumber(currencyString) {
+            if (!currencyString) return 0;
+
+
+            let cleanString = currencyString.replace("VNĐ", "").replace(/\./g, "").trim();
+
+
+            return parseFloat(cleanString) || 0;
+        }
+
+
+
+        document.getElementById('closeCartModal').addEventListener('click', function () {
+            document.getElementById('cartModal').style.display = 'none';
+        });
+
+        // Đóng modal 
+        window.addEventListener('click', function (event) {
+            const modal = document.getElementById('cartModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
             }
+        });
+    </script>
+    <script>
+        const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        document.addEventListener('click', (event) => {
+            if (event.target.classList.contains('remove-btn')) {
+
+                const itemId = event.target.getAttribute('data-id');
+                console.log(itemId);
+
+                fetch(`/KhachHang/TrangChu?handler=Delete&id=${itemId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "XSRF-TOKEN": csrfToken
+                    }
+                })
+                    .then(response => {
+                        console.log(response.status)
+                        if (response.ok) {
+                            alert("Xóa thành công");
+
+                        } else {
+                            return response.text().then(text => {
+                                alert("Xóa không thành công: " + text);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Có lỗi xảy ra:', error);
+                        alert("Có lỗi xảy ra khi xóa.");
+                    })
+                    .finally(() => {
+                        $('#confirmDeleteModal').modal('hide');
+                    });
+                removeItemFromCart(itemId); // Hàm xử lý xóa món khỏi giỏ hàng
+                event.target.closest('.cart-item').remove(); // Xóa món khỏi giao diện
+            }
+        });
+
+        function removeItemFromCart(itemId) {
+            // Thực hiện logic xóa món khỏi mảng hoặc server
+            console.log(`Món với ID ${itemId} đã bị xóa.`);
         }
-    });
+        document.addEventListener('change', (event) => {
+            if (event.target.classList.contains('cart-item-checkbox')) {
+                const itemId = event.target.getAttribute('data-id');
+                if (event.target.checked) {
+                    console.log(`Món với ID ${itemId} được chọn.`);
+                    // Thực hiện logic khi món được chọn
+                } else {
+                    console.log(`Món với ID ${itemId} bị bỏ chọn.`);
+                    // Thực hiện logic khi món bị bỏ chọn
+                }
+            }
+        });
 
 
-</script>
+    </script>
 
-</html>
+    </html>

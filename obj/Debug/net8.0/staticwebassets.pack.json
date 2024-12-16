@@ -31481,6 +31481,10 @@
       "PackagePath": "staticwebassets\\image\\double-chocolate_tcm89-24813_w1024_n.jpg"
     },
     {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\download.png",
+      "PackagePath": "staticwebassets\\image\\download.png"
+    },
+    {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\drinks-earl-gray-brewed-tea-menu-asset_tcm89-9939_w1024_n.jpg",
       "PackagePath": "staticwebassets\\image\\drinks-earl-gray-brewed-tea-menu-asset_tcm89-9939_w1024_n.jpg"
     },
@@ -31579,6 +31583,10 @@
     {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\mocha-cake_tcm89-24818_w1024_n.jpg",
       "PackagePath": "staticwebassets\\image\\mocha-cake_tcm89-24818_w1024_n.jpg"
+    },
+    {
+      "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\order_online.png",
+      "PackagePath": "staticwebassets\\image\\order_online.png"
     },
     {
       "Id": "C:\\Users\\lcong\\DoAnTotNghiep\\wwwroot\\image\\parisian-baguette_tcm89-24852_w1024_n.jpg",

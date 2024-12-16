@@ -1,0 +1,52 @@
+@page
+@model DangNhapClientModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Đăng nhập</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- MATERIAL DESIGN ICONIC FONT -->
+    <link rel="stylesheet" href="~/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
+
+    <!-- STYLE CSS -->
+    <link rel="stylesheet" href="~/css/DangNhap.css">
+</head>
+
+<body>
+
+    <div class="wrapper" style="background-image: url('/image/bg-login.jpg');">
+        <div class="inner">
+            <div class="image-holder">
+                <img src="~/image/login.jpg" alt="">
+            </div>
+            <form method="post">
+                <h3>Đăng nhập</h3>
+                @Html.AntiForgeryToken()
+                <div class="form-wrapper">
+                    <input type="text" name="ten_dang_nhap" placeholder="Tên đăng nhập" class="form-control" required>
+                    <i class="zmdi zmdi-account"></i>
+                </div>
+                <div class="form-wrapper">
+                    <input type="password" name="mat_khau" placeholder="Mật Khẩu" class="form-control" required>
+                    <i class="zmdi zmdi-lock"></i>
+                </div>
+                <button type="submit">Đăng nhập
+                    <i class="zmdi zmdi-arrow-right"></i>
+                </button>
+                <div style="padding-top: 10px; position: relative; left: 13.5%">
+                    Bạn chưa có tài khoản? <a href="/KhachHang/KHDangKy"><i>Đăng ký ngay</i></a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+@page
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>đăng ký</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- MATERIAL DESIGN ICONIC FONT -->
+    <link rel="stylesheet" href="~/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
+
+    <!-- STYLE CSS -->
+    <link rel="stylesheet" href="~/css/DangNhap.css">
+</head>
+
+<body>
+
+    <div class="wrapper" style="background-image: url('/image/bg-login.jpg');">
+        <div class="inner">
+            <div class="image-holder">
+                <img src="~/image/login.jpg" alt="">
+            </div>
+            <form method="post" asp-page="/KhachHang/KHDangNhap" asp-page-handler="Register">
+                <h3>Đăng ký</h3>
+                <div class="form-wrapper">
+                    <input type="text" name="ho_ten" placeholder="Họ Tên" class="form-control">
+                </div>
+                <div class="form-wrapper">
+                    <input  type="text" name="ten_dang_nhap" placeholder="Tên đăng nhập" class="form-control" >
+                    <i class="zmdi zmdi-account"></i>
+                </div>
+                <div class="form-wrapper">
+                    <input  type="text" name = "dia_chi" placeholder="Địa chỉ" class="form-control" >
+                    <i class="zmdi zmdi-address"></i>
+                </div>
+                <div class="form-wrapper">
+                    <input  type="text" name = "so_dien_thoai" placeholder="Số điện thoại" class="form-control" >
+                    <i class="zmdi zmdi-phone"></i>
+                </div>
+                <div class="form-wrapper">
+                    <select name="gioi_tinh" id="" class="form-control" >
+                        <option value="" disabled selected>Giới Tính</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                    <i class="zmdi zmdi-caret-down" style="font-size: 17px"></i>
+                </div>
+                <div class="form-wrapper">
+                    <input  type="password" name="mat_khau" placeholder="Mật Khẩu" class="form-control" >
+                    <i class="zmdi zmdi-lock"></i>
+                </div>
+                <div class="form-wrapper">
+                    <input  type="password" placeholder="Xác nhận mật khẩu" class="form-control" >
+                    <i class="zmdi zmdi-lock"></i>
+                </div>
+                <button type="submit">Đăng Ký
+                    <i class="zmdi zmdi-arrow-right"></i>
+                </button>
+                <div style="padding-top: 10px; position: relative; left : 13.5%">Bạn đã có tài khoản ? <a href="/KhachHang/KHDangNhap"><i>Đăng nhập tại đây</a></div>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

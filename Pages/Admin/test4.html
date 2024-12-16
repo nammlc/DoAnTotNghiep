@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lương Chi Tiết Nhân Viên</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center">Lương Chi Tiết Nhân Viên - Tháng <span id="monthTitle"></span>/2024</h2>
+
+        <!-- Nút quay lại -->
+        <a href="BangLuongNhanVien.html" class="btn btn-primary mb-3">Quay lại</a>
+
+        <!-- Bảng lương chi tiết -->
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Họ Tên</th>
+                    <th>Chức Vụ</th>
+                    <th>Lương (VNĐ)</th>
+                </tr>
+            </thead>
+            <tbody id="employeeSalaryDetails">
+                <!-- Dữ liệu lương chi tiết sẽ được thêm vào đây -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Dữ liệu lương nhân viên theo tháng (Dữ liệu ví dụ)
+        const salaryDetails = {
+            "1": [
+                { HoTen: "Lê Công Nam", ChucVu: "Quản Lý", Luong: 10000000 },
+                { HoTen: "Nguyễn Văn A", ChucVu: "Nhân Viên", Luong: 8000000 },
+                { HoTen: "Trần Thị B", ChucVu: "Nhân Viên", Luong: 7500000 }
+            ],
+            "2": [
+                { HoTen: "Lê Công Nam", ChucVu: "Quản Lý", Luong: 11000000 },
+                { HoTen: "Nguyễn Văn A", ChucVu: "Nhân Viên", Luong: 8500000 },
+                { HoTen: "Trần Thị B", ChucVu: "Nhân Viên", Luong: 7800000 }
+            ]
+        };
+
+        // Lấy tháng từ URL (Giả sử URL sẽ có dạng: LuongChiTiet.html?month=1)
+        const urlParams = new URLSearchParams(window.location.search);
+        const month = urlParams.get('month') || 1;
+
+        // Cập nhật tiêu đề trang
+        document.getElementById('monthTitle').innerText = month;
+
+        // Lấy dữ liệu lương theo tháng từ đối tượng dữ liệu
+        const data = salaryDetails[month] || [];
+
+        // Hiển thị dữ liệu vào bảng
+        const employeeSalaryDetails = document.getElementById('employeeSalaryDetails');
+        employeeSalaryDetails.innerHTML = '';
+
+        data.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${item.HoTen}</td>
+                <td>${item.ChucVu}</td>
+                <td>${item.Luong.toLocaleString('vi-VN')} VNĐ</td>
+            `;
+            employeeSalaryDetails.appendChild(row);
+        });
+    </script>
+</body>
+</html>

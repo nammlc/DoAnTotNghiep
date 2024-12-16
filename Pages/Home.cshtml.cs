@@ -32,6 +32,7 @@ namespace DoAnTotNghiep.Pages
         }
         public IList<MonAn> MonAn { get; set; } = new List<MonAn>(); // Danh sách món ăn
         public IList<Bank> Banks { get; set; } = new List<Bank>(); // Danh sách ngân hàng
+        public IList<HoaDon> ListHoaDons { get; set; } = new List<HoaDon>();
         public QRCodeViewModel QRCodeModel { get; set; } = new QRCodeViewModel();
 
         public async Task<IActionResult> OnGet(int? page, string searchQuery)
@@ -54,7 +55,27 @@ namespace DoAnTotNghiep.Pages
             ViewData["TongMonAn"] = allDish.Count();
 
             MonAn = allDish.ToList();
-            // await GetAllBanks(); 
+
+            var allBill = _context.HoaDon.AsQueryable();
+
+            allBill = allBill.OrderByDescending(m => m.gio_vao);
+            int count = 0;
+            foreach (var hoadon in allBill)
+            {
+
+                string[] parts = hoadon.trang_thai.Split('-');
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    parts[i] = parts[i].Trim();
+                }
+
+                if (hoadon.ten_kh != "Client" && (parts[0] == "Đang chờ xét duyệt"||parts[0] == "Đã duyệt"))
+                    count++;
+
+            }
+            ViewData["TotalBill"] = count;
+            ListHoaDons = allBill.ToList();
+
             return Page();
         }
 
@@ -150,7 +171,7 @@ namespace DoAnTotNghiep.Pages
 
             HoaDons.gio_vao = DateTime.Now;
 
-            
+
             if (!string.IsNullOrEmpty(Request.Form["gio_ra"]))
             {
                 if (DateTime.TryParse(Request.Form["gio_ra"], out DateTime gioRa))
@@ -194,6 +215,69 @@ namespace DoAnTotNghiep.Pages
             TempData["SuccessMessage"] = "Thêm hóa đơn thành công!";
             return RedirectToPage("/Home");
         }
+        //Duyệt đơn hàng
+        public IActionResult OnPostApproveOrder(int Id)
+        {
+            
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                string query = "UPDATE hoa_don SET trang_thai = 'Đã duyệt' WHERE id = @id";
+                var parameters = new { id = Id };
+
+                int rowsAffected = connection.Execute(query, parameters);
+                if (rowsAffected > 0)
+                {
+                    return new JsonResult(new { success = true, message = "Đơn hàng đã được duyệt." });
+                }
+                else
+                {
+                    return new JsonResult(new { success = false, message = "Không tìm thấy đơn hàng hoặc không thể cập nhật." });
+                }
+            }
+        }
+
+        //Từ chối đơn hàng
+        public IActionResult OnPostRejectOrder(int Id)
+        {
+            
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                string query = "UPDATE hoa_don SET trang_thai = 'Đã bị từ chối' WHERE id = @id";
+                var parameters = new { id = Id };
+
+                int rowsAffected = connection.Execute(query, parameters);
+                if (rowsAffected > 0)
+                {
+                    return new JsonResult(new { success = true, message = "Đơn hàng đã bị từ chối." });
+                }
+                else
+                {
+                    return new JsonResult(new { success = false, message = "Không tìm thấy đơn hàng hoặc không thể cập nhật." });
+                }
+            }
+        }
+
+        //Hoàn thiện đơn của khách hàng 
+        public IActionResult OnPostCompleteOrder(int Id)
+        {
+            
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                string query = "UPDATE hoa_don SET trang_thai = 'Đã hoàn thành' WHERE id = @id";
+                var parameters = new { id = Id };
+
+                int rowsAffected = connection.Execute(query, parameters);
+                if (rowsAffected > 0)
+                {
+                    return new JsonResult(new { success = true, message = "Đơn hàng đã được hoàn thành." });
+                }
+                else
+                {
+                    return new JsonResult(new { success = false, message = "Không tìm thấy đơn hàng hoặc không thể cập nhật." });
+                }
+            }
+        }
+
 
 
 

@@ -128,7 +128,7 @@ namespace DoAnTotNghiep.Pages
                     ten_ban = "Client",
                     ten_nhan_vien = "Client",
                     trang_thai = "On Cart",
-                    ten_kh = "Clientttt",
+                    ten_kh = HttpContext.Session.GetString("User"),
                 });
             }
 
@@ -140,71 +140,111 @@ namespace DoAnTotNghiep.Pages
         //Tạo hóa đơn 
 
         public async Task<IActionResult> OnPostCreateBill()
-{
-    using (var reader = new StreamReader(Request.Body))
-    {
-        var body = await reader.ReadToEndAsync();
-
-        // Cấu hình JsonSerializerOptions
-        var jsonOptions = new JsonSerializerOptions
         {
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            PropertyNameCaseInsensitive = true
-        };
-
-        // Giải mã dữ liệu JSON
-        var orderData = JsonSerializer.Deserialize<OrderData>(body, jsonOptions);
-
-        var hoaDon = new HoaDon
-        {
-            tong_tien = orderData.tong_tien,
-            gio_vao = orderData.gio_vao,
-            gio_ra = DateTime.Now,
-            list_mon_an = JsonSerializer.Serialize(orderData.list_mon_an, jsonOptions), // Duy trì định dạng UTF-8
-            ten_ban = "Client",
-            ten_nhan_vien = "Client",
-            trang_thai = "Chưa hoàn thành",
-            ten_kh = "Client"
-        };
-
-        using (var db = new MySqlConnection(_connectionString))
-        {
-            await db.OpenAsync();
-            using (var transaction = await db.BeginTransactionAsync())
+            using (var reader = new StreamReader(Request.Body))
             {
-                try
-                {
-                    // Thêm hóa đơn
-                    string insertBillQuery = @"INSERT INTO hoa_don (tong_tien, gio_vao, gio_ra, list_mon_an, ten_ban, ten_nhan_vien, trang_thai, ten_kh)
-                                           VALUES (@tong_tien, @gio_vao, @gio_ra, @list_mon_an, @ten_ban, @ten_nhan_vien, @trang_thai, @ten_kh)";
-                    await db.ExecuteAsync(insertBillQuery, hoaDon, transaction);
+                var body = await reader.ReadToEndAsync();
 
-                    // Xóa hóa đơn cũ theo ID
-                    if (orderData.idsToDelete != null && orderData.idsToDelete.Any())
+                // Cấu hình JsonSerializerOptions
+                var jsonOptions = new JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                    PropertyNameCaseInsensitive = true
+                };
+
+                // Giải mã dữ liệu JSON
+                var orderData = JsonSerializer.Deserialize<OrderData>(body, jsonOptions);
+                string pt_thanh_toan;
+                if (orderData.pt_thanh_toan == "cash")
+                {
+                    pt_thanh_toan = "Đang chờ xét duyệt - Chưa thanh toán";
+                }
+                else
+                {
+                    pt_thanh_toan = "Đang chờ xét duyệt - Đã thanh toán";
+
+                }
+
+                var hoaDon = new HoaDon
+                {
+                    tong_tien = orderData.tong_tien *1000,
+                    gio_vao = DateTime.Now,
+                    gio_ra = DateTime.Now,
+                    list_mon_an = JsonSerializer.Serialize(orderData.list_mon_an, jsonOptions),
+                    ten_ban = orderData.dia_chi_giao_hang,
+                    ten_nhan_vien = orderData.so_dien_thoai_giao_hang,
+                    trang_thai = pt_thanh_toan,
+                    ten_kh = HttpContext.Session.GetString("User")
+                };
+
+                using (var db = new MySqlConnection(_connectionString))
+                {
+                    await db.OpenAsync();
+                    using (var transaction = await db.BeginTransactionAsync())
                     {
-                        string deleteQuery = "DELETE FROM hoa_don WHERE id IN @idsToDelete";
-                        await db.ExecuteAsync(deleteQuery, new { idsToDelete = orderData.idsToDelete }, transaction);
-                    }
+                        try
+                        {
+                            // Thêm hóa đơn
+                            string insertBillQuery = @"INSERT INTO hoa_don (tong_tien, gio_vao, gio_ra, list_mon_an, ten_ban, ten_nhan_vien, trang_thai, ten_kh)
+                                           VALUES (@tong_tien, @gio_vao, @gio_ra, @list_mon_an, @ten_ban, @ten_nhan_vien, @trang_thai, @ten_kh)";
+                            await db.ExecuteAsync(insertBillQuery, hoaDon, transaction);
 
-                    await transaction.CommitAsync();
+                            // Xóa hóa đơn cũ theo ID
+                            if (orderData.idsToDelete != null && orderData.idsToDelete.Any())
+                            {
+                                string deleteQuery = "DELETE FROM hoa_don WHERE id IN @idsToDelete";
+                                await db.ExecuteAsync(deleteQuery, new { idsToDelete = orderData.idsToDelete }, transaction);
+                            }
+
+                            await transaction.CommitAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            await transaction.RollbackAsync();
+                            TempData["ErrorMessage"] = $"Lỗi khi thêm hóa đơn: {ex.Message}";
+                            return RedirectToPage("/KhachHang/TrangChu");
+                        }
+                    }
                 }
-                catch (Exception ex)
-                {
-                    await transaction.RollbackAsync();
-                    TempData["ErrorMessage"] = $"Lỗi khi thêm hóa đơn: {ex.Message}";
-                    return RedirectToPage("/KhachHang/TrangChu");
-                }
+
+                TempData["SuccessMessage"] = "Thêm hóa đơn thành công!";
+                return RedirectToPage("/KhachHang/TrangChu");
             }
         }
 
-        TempData["SuccessMessage"] = "Thêm hóa đơn thành công!";
-        return RedirectToPage("/KhachHang/TrangChu");
-    }
-}
+        //Tạo mã qr
+        public QRCodeViewModel QRCodeModel { get; set; } = new QRCodeViewModel();
+
+        public async Task<IActionResult> OnGetGenerateQRCode(decimal amount)
+        {
+            try
+            {
+
+                string bankId = "TPBANK";
+                string accountNumber = "00003800981";
+                string template = "print";
+                string description = "Thanh Toan Hoa Don";
+                string accountName = "LE CONG NAM";
+
+                string qrCodeUrl = $"https://img.vietqr.io/image/{bankId}-{accountNumber}-{template}.png?amount={amount}&addInfo={description}&accountName={accountName}";
+
+                QRCodeModel.QRCodeUrl = qrCodeUrl;
+                return Content(QRCodeModel.QRCodeUrl);
+            }
+            catch (Exception ex)
+            {
+
+                return Content("Không thể tạo mã QR: " + ex.Message);
+            }
+        }
+
+
+
 
         //Danh sách hóa đơn
         public IList<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
-
+        public string DiaChi { get; set; }
+        public string SoDienThoai { get; set; }
         public async Task<IActionResult> OnGet(int? page, string searchQuery)
         {
             SearchQuery = searchQuery;
@@ -239,7 +279,7 @@ namespace DoAnTotNghiep.Pages
             long tongTienTrongCa = 0;
             foreach (var hoadon in HoaDons)
             {
-                if (hoadon.trang_thai == "On Cart")
+                if (hoadon.trang_thai == "On Cart" && hoadon.ten_kh == HttpContext.Session.GetString("User"))
                 {
                     tongTienTrongCa = tongTienTrongCa + hoadon.tong_tien;
                     countt++;
@@ -247,6 +287,24 @@ namespace DoAnTotNghiep.Pages
             }
             ViewData["tongTienTrongCa"] = tongTienTrongCa.ToString("#,##0");
             ViewData["TotalBill"] = countt;
+            var userName = HttpContext.Session.GetString("User");
+
+            if (userName != null)
+            {
+                // Lấy thông tin cá nhân 
+                using (var connection = new MySqlConnection(_connectionString))
+                {
+                    var query = "SELECT * FROM khach_hang WHERE ho_ten = @hoTen";
+                    var user = connection.QueryFirstOrDefault<KhachHangs>(query, new { hoTen = userName });
+
+                    if (user != null)
+                    {
+                        SoDienThoai = user.so_dien_thoai;
+                        DiaChi = user.dia_chi;
+
+                    }
+                }
+            }
             return Page();
         }
 
@@ -289,6 +347,11 @@ namespace DoAnTotNghiep.Pages
         public DateTime gio_vao { get; set; }
         public List<Dish> list_mon_an { get; set; } // Danh sách món ăn
         public List<int> idsToDelete { get; set; }  // Danh sách ID cần xóa
+        public string so_dien_thoai_giao_hang { get; set; }
+        public string dia_chi_giao_hang { get; set; }
+        public string pt_thanh_toan { get; set; }
+
+
     }
 
     public class Dish
@@ -303,6 +366,11 @@ namespace DoAnTotNghiep.Pages
             return int.TryParse(so_luong, out var result) ? result : 0;
         }
     }
+    public class QRCodeViewModel
+    {
+        public string QRCodeUrl { get; set; }
+    }
+
 
 
 }

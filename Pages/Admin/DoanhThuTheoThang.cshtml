@@ -1,0 +1,80 @@
+@page
+@model DoAnTotNghiep.Pages.DoanhThuTheoThangModel
+@{
+    Layout = "_NhanVienLayout";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống Kê Doanh Số Theo Tháng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center">Thống Kê Doanh Số</h2>
+        <div class="text-center mt-3">
+            <label for="selectYear" class="form-label">Chọn Năm:</label>
+            <select id="selectYear" class="form-select w-auto d-inline">
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2025">2025</option>
+            </select>
+        </div>
+        <canvas id="chartDoanhSoTheoThang" class="mt-4" width="600px" height="250px"></canvas>
+    </div>
+
+    <script>
+        const doanhSoTungThang = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueData));
+        console.log(doanhSoTungThang);
+        const monthlyRevenue = Array(12).fill(0);
+
+        for (const [month, revenue] of Object.entries(doanhSoTungThang)) {
+            monthlyRevenue[parseInt(month) - 1] = revenue;
+        }
+
+        console.log("Mảng doanh thu theo tháng:", monthlyRevenue);
+
+        const ctx = document.getElementById('chartDoanhSoTheoThang').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"],
+                datasets: [{
+                    label: 'Doanh Số (VNĐ)',
+                    data: monthlyRevenue,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true },
+                    title: { display: true, text: `Doanh Số Theo Tháng (2023)` }
+                },
+                onClick: function (event, chartElements) {
+                    if (chartElements.length > 0) {
+                        const monthIndex = chartElements[0].index;
+                        const selectedMonth = monthIndex + 1;
+                        window.location.href = `/admin/DoanhThuTheoNgay?month=${selectedMonth}`;
+                    }
+                }
+            }
+        });
+
+        document.getElementById('selectYear').addEventListener('change', (e) => {
+            const selectedYear = e.target.value;
+            const selectedYearData = doanhSoTungThang[selectedYear];
+            window.location.href = `?selectedYear=${selectedYear}`;
+        });
+    </script>
+</body>
+
+</html>

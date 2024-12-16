@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Doanh Thu Theo Ngày</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center">Chi Tiết Doanh Thu Theo Ngày</h2>
+        <h4 id="month-title" class="text-center">Tháng 1 - Năm 2024</h4>
+
+        <!-- Biểu đồ -->
+        <canvas id="chartDoanhThuTheoNgay" class="mt-4"></canvas>
+    </div>
+    <script>
+        // Lấy tháng từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedMonth = urlParams.get('month') || 1;
+
+        // Dữ liệu mẫu (doanh thu từng ngày trong tháng)
+        const daysInMonth = new Date(2024, selectedMonth, 0).getDate();
+        const labels = Array.from({ length: daysInMonth }, (_, i) => `Ngày ${i + 1}`);
+        const values = Array.from({ length: daysInMonth }, () => Math.floor(Math.random() * 5000000 + 10000000)); // Giả sử doanh thu từ 10tr - 15tr/ngày
+
+        // Cập nhật tiêu đề
+        document.getElementById('month-title').innerText = `Tháng ${selectedMonth} - Năm 2024`;
+
+        // Tạo biểu đồ doanh thu theo ngày
+        const ctx = document.getElementById('chartDoanhThuTheoNgay').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Doanh Thu (VNĐ)',
+                    data: values,
+                    backgroundColor: 'rgba(255, 206, 86, 0.6)',
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: `Doanh Thu Theo Ngày - Tháng ${selectedMonth} (2024)` }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

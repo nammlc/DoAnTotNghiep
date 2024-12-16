@@ -61,10 +61,10 @@ public class DangNhapModel : PageModel
             if (user != null)
             {
 
-                HttpContext.Session.SetString("User", user.ten_nhan_vien);
+                HttpContext.Session.SetString("User", user.ma_nhan_vien);
                 HttpContext.User = new System.Security.Claims.ClaimsPrincipal(
                     new System.Security.Claims.ClaimsIdentity(
-                        new[] { new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, user.ten_nhan_vien) },
+                        new[] { new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, user.ma_nhan_vien) },
                         "login"
                     )
                 );

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Lương Nhân Viên</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center">Bảng Lương Nhân Viên - Tháng 1/2024</h2>
+        
+        <!-- Nút chọn tháng và xuất Excel -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <select id="selectMonth" class="form-select w-25">
+                <option value="1">Tháng 1</option>
+                <option value="2">Tháng 2</option>
+                <option value="3">Tháng 3</option>
+                <option value="4">Tháng 4</option>
+                <option value="5">Tháng 5</option>
+                <option value="6">Tháng 6</option>
+                <option value="7">Tháng 7</option>
+                <option value="8">Tháng 8</option>
+                <option value="9">Tháng 9</option>
+                <option value="10">Tháng 10</option>
+                <option value="11">Tháng 11</option>
+                <option value="12">Tháng 12</option>
+            </select>
+            <button id="exportExcel" class="btn btn-success">Xuất Excel</button>
+        </div>
+
+        <!-- Biểu đồ -->
+        <canvas id="chartLuongTheoThang"></canvas>
+    </div>
+
+    <script>
+        // Dữ liệu lương nhân viên theo tháng
+        const dataLuongNhanVien = {
+            "1": [
+                { HoTen: "Lê Công Nam", ChucVu: "Quản Lý", Luong: 10000000 },
+                { HoTen: "Nguyễn Văn A", ChucVu: "Nhân Viên", Luong: 8000000 },
+                { HoTen: "Trần Thị B", ChucVu: "Nhân Viên", Luong: 7500000 }
+            ],
+            "2": [
+                { HoTen: "Lê Công Nam", ChucVu: "Quản Lý", Luong: 11000000 },
+                { HoTen: "Nguyễn Văn A", ChucVu: "Nhân Viên", Luong: 8500000 },
+                { HoTen: "Trần Thị B", ChucVu: "Nhân Viên", Luong: 7800000 }
+            ]
+        };
+
+        // Khởi tạo biểu đồ lương theo tháng
+        const ctx = document.getElementById('chartLuongTheoThang').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"],
+                datasets: [{
+                    label: 'Tổng Lương (VNĐ)',
+                    data: [25500000, 27300000, 28300000, 37300000, 69300000, 54300000, 69300000, 77300000, 47300000, 56300000, 33300000, 42300000], // Tổng lương mỗi tháng
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Tổng Lương Nhân Viên Theo Tháng (2024)' }
+                },
+                onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        const selectedMonth = index + 1;
+                        document.getElementById('selectMonth').value = selectedMonth;
+                        updateChartTitle(selectedMonth);
+                        // Điều hướng đến trang chi tiết lương của tháng đó
+                        window.location.href = `/Pages/Admin/test4.html?month=${selectedMonth}`;
+                    }
+                }
+            }
+        });
+
+        // Cập nhật tiêu đề khi chọn tháng
+        const updateChartTitle = (month) => {
+            const title = `Bảng Lương Nhân Viên - Tháng ${month}/2024`;
+            document.querySelector("h2").innerText = title;
+        };
+
+        // Xử lý xuất Excel
+        document.getElementById('exportExcel').addEventListener('click', () => {
+            const selectedMonth = document.getElementById('selectMonth').value;
+            const data = dataLuongNhanVien[selectedMonth] || [];
+
+            if (data.length === 0) {
+                alert("Không có dữ liệu lương cho tháng này!");
+                return;
+            }
+
+            // Chuẩn bị dữ liệu Excel
+            const excelData = data.map((item, index) => ({
+                STT: index + 1,
+                "Họ Tên": item.HoTen,
+                "Chức Vụ": item.ChucVu,
+                "Lương (VNĐ)": item.Luong.toLocaleString('vi-VN') + " VNĐ"
+            }));
+
+            // Tạo worksheet và workbook
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, `Tháng ${selectedMonth}`);
+
+            // Xuất file Excel
+            XLSX.writeFile(workbook, `Bang_Luong_Thang_${selectedMonth}_2024.xlsx`);
+        });
+
+        // Cập nhật dữ liệu khi chọn tháng
+        document.getElementById('selectMonth').addEventListener('change', (event) => {
+            const selectedMonth = event.target.value;
+            updateChartTitle(selectedMonth);
+        });
+    </script>
+</body>
+</html>
