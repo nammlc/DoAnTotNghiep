@@ -1,0 +1,242 @@
+@page
+@model DoAnTotNghiep.Pages.ThongKeNgayLamModel
+@using System.Text.Json;
+@{
+    Layout = "_Layout";
+}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống Kê Ngày Làm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            margin-top: 30px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            color: #343a40;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-section {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-section label {
+            font-weight: bold;
+        }
+
+        .stats-summary {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .stats-summary h2 {
+            font-size: 1.5rem;
+            color: #495057;
+        }
+
+        .stats-summary p {
+            margin: 5px 0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .pagination {
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .item-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .dish-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dish-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #343a40;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Thống Kê Ngày Làm</h1>
+        </header>
+
+        <!-- Bộ lọc ngày -->
+        <div class="filter-section">
+            <label for="datePicker">Chọn ngày:</label>
+            <input type="date" id="datePicker" class="form-control" />
+            <button id="viewStats" class="btn btn-primary">Xem Thống Kê</button>
+        </div>
+
+        <!-- Thống kê tóm tắt -->
+        <div class="stats-summary">
+            <h2>Thống Kê Ngày: <span id="selectedDate">Hôm Nay</span></h2>
+            <p><strong>Nhân viên:</strong> <span id="employeeName">Không xác định</span></p>
+            <p><strong>Tổng tiền:</strong> <span id="totalRevenue">0</span> VND</p>
+        </div>
+
+        <!-- Bảng chi tiết -->
+        <div class="table-container">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Tên Món</th>
+                        <th>Giá Tiền</th>
+                        <th>Số Lượng</th>
+                        <th>Tổng Tiền</th>
+                    </tr>
+                </thead>
+                <tbody id="statsBody">
+                    <!-- Nội dung sẽ được thêm bằng JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Phân trang -->
+        <nav>
+            <ul class="pagination">
+                <!-- Phân trang sẽ được thêm động -->
+            </ul>
+        </nav>
+    </div>
+
+    <script>
+        let hoaDons = @Html.Raw(Json.Serialize(Model.ListHoaDons));
+        const itemsPerPage = 6;
+        let currentPage = 1;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const datePicker = document.getElementById("datePicker");
+            const statsBody = document.getElementById("statsBody");
+            const totalRevenue = document.getElementById("totalRevenue");
+            const selectedDate = document.getElementById("selectedDate");
+            const employeeName = document.getElementById("employeeName");
+            const pagination = document.querySelector(".pagination");
+
+            employeeName.innerText = hoaDons.length > 0 ? hoaDons[0].ten_nhan_vien : "Không xác định";
+
+            function calculateStatistics(date) {
+                const dailyOrders = hoaDons.filter(hd => {
+                    const orderDate = new Date(hd.gio_vao).toISOString().split("T")[0];
+                    return orderDate === date;
+                });
+
+                const stats = {};
+                let total = 0;
+
+                dailyOrders.forEach(order => {
+                    const items = JSON.parse(order.list_mon_an);
+                    items.forEach(item => {
+                        if (!stats[item.ten_mon]) {
+                            stats[item.ten_mon] = { giaTien: item.gia_tien, soLuong: 0, tongTien: 0, hinhAnh: item.anh_minh_hoa };
+                        }
+                        stats[item.ten_mon].soLuong += item.so_luong;
+                        stats[item.ten_mon].tongTien += item.gia_tien * item.so_luong;
+                        total += item.gia_tien * item.so_luong;
+                    });
+                });
+
+                totalRevenue.innerText = total.toLocaleString();
+                return stats;
+            }
+
+            function renderStatistics(stats) {
+                statsBody.innerHTML = "";
+                if (Object.keys(stats).length === 0) {
+                    statsBody.innerHTML = "<tr><td colspan='4'>Không có dữ liệu cho ngày này.</td></tr>";
+                    return;
+                }
+
+                const statsArray = Object.entries(stats);
+                const totalPages = Math.ceil(statsArray.length / itemsPerPage);
+
+                // Cắt dữ liệu theo trang
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const pagedStats = statsArray.slice(startIndex, endIndex);
+
+                pagedStats.forEach(([tenMon, data]) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>
+                            <div class="dish-info">
+                                <img src="${data.hinhAnh}" class="item-image" alt="${tenMon}" />
+                                <span class="dish-name">${tenMon}</span>
+                            </div>
+                        </td>
+                        <td>${data.giaTien.toLocaleString()} VNĐ</td>
+                        <td>${data.soLuong}</td>
+                        <td>${data.tongTien.toLocaleString()} VNĐ</td>
+                    `;
+                    statsBody.appendChild(row);
+                });
+
+                renderPagination(totalPages);
+            }
+
+            function renderPagination(totalPages) {
+                pagination.innerHTML = "";
+                for (let i = 1; i <= totalPages; i++) {
+                    const li = document.createElement("li");
+                    li.className = "page-item" + (i === currentPage ? " active" : "");
+                    li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                    li.addEventListener("click", () => {
+                        currentPage = i;
+                        const stats = calculateStatistics(datePicker.value);
+                        renderStatistics(stats);
+                    });
+                    pagination.appendChild(li);
+                }
+            }
+
+            document.getElementById("viewStats").addEventListener("click", () => {
+                const date = datePicker.value || new Date().toISOString().split("T")[0];
+                selectedDate.innerText = date;
+                const stats = calculateStatistics(date);
+                renderStatistics(stats);
+            });
+
+            const today = new Date().toISOString().split("T")[0];
+            datePicker.value = today;
+            const stats = calculateStatistics(today);
+            renderStatistics(stats);
+        });
+    </script>
+</body>
+
+</html>

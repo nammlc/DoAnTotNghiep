@@ -1,247 +1,256 @@
 @page
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model DoAnTotNghiep.Pages.ThongKeModel
 @{
     Layout = "_NhanVienLayout";
 }
-@model DoAnTotNghiep.Pages.ThongKeModel
-<!DOCTYPE html>
-<html lang="en">
+@{
+    var userName = HttpContextAccessor.HttpContext?.Session.GetString("User");
+    if (userName != "ADMIN01")
+    {
+        <div style="position: relative; right: -23%; top : 40%"><strong> Bạn không có quyền sử dụng trang web này ! Vui lòng đăng nhập với
+                tài khoản của admin</strong></div>
+    }
+    else
+    {
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thống Kê Doanh Thu</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: Arial, sans-serif;
-        }
+        <!DOCTYPE html>
+        <html lang="en">
 
-        h2 {
-            margin-top: 20px;
-        }
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Thống Kê Doanh Thu</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+            <style>
+                body {
+                    background-color: #f8f9fa;
+                    font-family: Arial, sans-serif;
+                }
 
-        .card {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border: none;
-        }
+                h2 {
+                    margin-top: 20px;
+                }
 
-        .chart-container {
-            width: 100%;
-            height: 400px;
-            margin-top: 20px;
-        }
-    </style>
-</head>
+                .card {
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    border: none;
+                }
 
-<body>
-    <div class="container mt-4">
-        <h2 class="text-center">Thống Kê Doanh Thu Quán Bán Đồ Uống</h2>
+                .chart-container {
+                    width: 100%;
+                    height: 400px;
+                    margin-top: 20px;
+                }
+            </style>
+        </head>
 
-        <!-- Tổng quan doanh thu -->
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="card bg-primary text-white">
-                    <div class="card-body">
-                        <a href="/admin/DoanhThuTheoThang" style="text-decoration: none; color: #f8f9fa;">
-                            <h5 class="card-title" id="thong-tin-nam">Tổng Doanh Thu Năm</h5>
-                            <p id="tong-doanh-thu" class="fs-4">0 VNĐ</p>
-                        </a>
+        <body>
+            <div class="container mt-4">
+                <h2 class="text-center">Thống Kê Doanh Thu Quán Bán Đồ Uống</h2>
 
-                    </div>
-                </div>
-            </div>
+                <!-- Tổng quan doanh thu -->
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <a href="/admin/DoanhThuTheoThang" style="text-decoration: none; color: #f8f9fa;">
+                                    <h5 class="card-title" id="thong-tin-nam">Tổng Doanh Thu Năm</h5>
+                                    <p id="tong-doanh-thu" class="fs-4">0 VNĐ</p>
+                                </a>
 
-            <div class="col-md-4">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                        <h5 class="card-title" id="nam-hien-tai">Tổng Lợi Nhuận</h5>
-                        <p id="tong-loi-nhuan" class="fs-4">0 VNĐ</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card bg-warning text-white">
-                    <a href="/admin/BangLuongNhanVien" style="text-decoration: none; color: #f8f9fa;">
-                        <div class="card-body">
-                            <h5 class="card-title" id="thong-tin-thang">Tổng Lương Nhân Viên Trong Tháng</h5>
-                            <p id="tong-luong-nhan-vien" class="fs-4">0 VNĐ</p>
+                            </div>
                         </div>
-                    </a>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h5 class="card-title" id="nam-hien-tai">Tổng Lợi Nhuận</h5>
+                                <p id="tong-loi-nhuan" class="fs-4">0 VNĐ</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-white">
+                            <a href="/admin/BangLuongNhanVien" style="text-decoration: none; color: #f8f9fa;">
+                                <div class="card-body">
+                                    <h5 class="card-title" id="thong-tin-thang">Tổng Lương Nhân Viên Trong Tháng</h5>
+                                    <p id="tong-luong-nhan-vien" class="fs-4">0 VNĐ</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Biểu đồ -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h5 class="text-center">Doanh Thu Theo Tháng</h5>
+                        <canvas id="doanhThuThoiGian" class="chart-container"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="text-center">Món Bán Chạy</h5>
+                        <canvas id="doanhThuMon" class="chart-container"></canvas>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Biểu đồ -->
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <h5 class="text-center">Doanh Thu Theo Tháng</h5>
-                <canvas id="doanhThuThoiGian" class="chart-container"></canvas>
-            </div>
-            <div class="col-md-6">
-                <h5 class="text-center">Món Bán Chạy</h5>
-                <canvas id="doanhThuMon" class="chart-container"></canvas>
-            </div>
-        </div>
-    </div>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                // Dữ liệu từ Razor Page
+                let hoaDons = @Html.Raw(Json.Serialize(Model.hoaDons));
+                let nhanViens = @Html.Raw(Json.Serialize(Model.nhanViens));
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Dữ liệu từ Razor Page
-        let hoaDons = @Html.Raw(Json.Serialize(Model.hoaDons));
-        let nhanViens = @Html.Raw(Json.Serialize(Model.nhanViens));
+                // Hàm tính toán doanh thu và lợi nhuận
+                let totalRevenue = 0;
+                let totalProfit = 0;
 
-        // Hàm tính toán doanh thu và lợi nhuận
-        let totalRevenue = 0;
-        let totalProfit = 0;
+                hoaDons.forEach(hoaDon => {
+                    if (hoaDon.trang_thai == "Đã hoàn thành") {
+                        totalRevenue += hoaDon.tong_tien;
 
-        hoaDons.forEach(hoaDon => {
-            if (hoaDon.trang_thai == "Đã hoàn thành") {
-                totalRevenue += hoaDon.tong_tien;
-
-                // Giả sử lợi nhuận là 70% doanh thu
-                totalProfit += hoaDon.tong_tien * 0.7;
-            }
-        });
-
-        document.getElementById("tong-doanh-thu").textContent = totalRevenue.toLocaleString() + " VNĐ";
-        document.getElementById("tong-loi-nhuan").textContent = totalProfit.toLocaleString() + " VNĐ";
-
-        let salaryPerDay = 300000;
-        let totalSalary = 0;
-
-        let employeeAppearances = {};
-
-        function getDateFromString(dateString) {
-            let date = new Date(dateString);
-            if (isNaN(date.getTime())) {
-                console.error("Invalid date: ", dateString);
-                return null;
-            }
-            return date.toISOString().split('T')[0];
-        }
-
-        hoaDons.forEach(hoaDon => {
-            let employeeName = hoaDon.ten_kh;
-            let employeeNameReal = hoaDon.ten_nhan_vien;
-
-            if (employeeNameReal && employeeName == "Client") {
-                let employeeDate = getDateFromString(hoaDon.gio_vao);
-
-                if (!employeeDate) return;
-
-                if (!employeeAppearances[employeeNameReal]) {
-                    employeeAppearances[employeeNameReal] = new Set();
-                }
-
-                if (hoaDon.ten_kh === "Client" && hoaDon.trang_thai === "Đã hoàn thành") {
-                    employeeAppearances[employeeNameReal].add(employeeDate);
-                }
-            }
-        });
-        nhanViens.forEach(nhanVien => {
-            
-            if (employeeAppearances[nhanVien.ma_nhan_vien]) {
-                let appearances = employeeAppearances[nhanVien.ma_nhan_vien].size;
-
-                let salary = appearances * salaryPerDay;
-                totalSalary += salary;
-            } else {
-                
-                console.log(`No appearances data for employee with code: ${nhanVien.ma_nhan_vien}`);
-            }
-        });
-
-        document.getElementById("tong-luong-nhan-vien").textContent = totalSalary.toLocaleString() + " VNĐ";
-
-        let revenueData = [];
-        let labels = [];
-        let currentYear = new Date().getFullYear();
-
-        for (let month = 0; month < 12; month++) {
-            let monthlyRevenue = hoaDons
-                .filter(hoaDon =>
-                    new Date(hoaDon.gio_vao).getFullYear() === currentYear &&
-                    new Date(hoaDon.gio_vao).getMonth() === month &&
-                    hoaDon.trang_thai === "Đã hoàn thành"
-                )
-                .reduce((total, hoaDon) => total + hoaDon.tong_tien, 0);
-            revenueData.push(monthlyRevenue);
-            labels.push(`Tháng ${month + 1}`);
-        }
-
-        // Biểu đồ doanh thu theo thời gian
-        new Chart(document.getElementById("doanhThuThoiGian"), {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Doanh Thu',
-                    data: revenueData,
-                    backgroundColor: '#4e73df',
-                    borderColor: '#4e73df',
-                    borderWidth: 1
-                }]
-            }
-        });
-
-        // Tính toán doanh thu theo món
-        let revenueByDish = {};
-
-        hoaDons.forEach(hoaDon => {
-
-            if (hoaDon.trang_thai === "Đã hoàn thành") {
-                const decodedList = JSON.parse(hoaDon.list_mon_an);
-                console.log(decodedList)
-                decodedList.forEach(list => {
-                    const revenueForDish = list.gia_tien * list.so_luong;
-
-                    if (revenueByDish[list.ten_mon]) {
-                        revenueByDish[list.ten_mon] += revenueForDish;
-                    } else {
-                        revenueByDish[list.ten_mon] = revenueForDish;
+                        // Giả sử lợi nhuận là 70% doanh thu
+                        totalProfit += hoaDon.tong_tien * 0.7;
                     }
                 });
 
-            }
-        });
+                document.getElementById("tong-doanh-thu").textContent = totalRevenue.toLocaleString() + " VNĐ";
+                document.getElementById("tong-loi-nhuan").textContent = totalProfit.toLocaleString() + " VNĐ";
 
-        // Lấy 4 món có doanh thu cao nhất
-        const sortedRevenue = Object.entries(revenueByDish)
-            .sort((a, b) => b[1] - a[1]) // Sắp xếp theo doanh thu giảm dần
-            .slice(0, 4); // Lấy 4 món đầu tiên
+                let currentMonth = new Date().getMonth() + 1;
+                let currentYear = new Date().getFullYear();
+                let totalSalary = 0;
+                let salaryPerDay = 300000;
+                let employeeAppearances = {};
+                function getDateFromString(dateString) {
+                    if (!dateString) return null;
+                    return new Date(dateString);
+                }
 
-        const dishLabels = sortedRevenue.map(item => item[0]);
-        const dishData = sortedRevenue.map(item => item[1]);
+                hoaDons.forEach(hoaDon => {
+                    let employeeName = hoaDon.ten_kh;
+                    let employeeNameReal = hoaDon.ten_nhan_vien;
 
-        // Biểu đồ doanh thu theo món
-        new Chart(document.getElementById("doanhThuMon"), {
-            type: 'bar',
-            data: {
-                labels: dishLabels,
-                datasets: [{
-                    label: 'Doanh Thu Theo Món',
-                    data: dishData,
-                    backgroundColor: '#28a745',
-                    borderColor: '#28a745',
-                    borderWidth: 1
-                }]
-            }
-        });
-    </script>
-    <script>
+                    if (employeeNameReal && employeeName === "Client") {
+                        let employeeDate = getDateFromString(hoaDon.gio_vao);
 
-        let currentMonth = new Date().getMonth() + 1;
-        let currentYearr = new Date().getFullYear();
-        console.log(currentYearr);
+                        if (!employeeDate) return;
 
-        document.getElementById("thong-tin-thang").textContent = `Tổng Lương Nhân Viên Trong Tháng ${currentMonth}`;
-        document.getElementById("thong-tin-nam").textContent = `Doanh Thu Trong năm ${currentYearr}`;
-        document.getElementById("nam-hien-tai").textContent = `Lợi Nhuận Trong năm ${currentYearr}`;
+                        // Chỉ tính cho tháng và năm hiện tại
+                        if (
+                            employeeDate.getMonth() + 1 === currentMonth &&
+                            employeeDate.getFullYear() === currentYear
+                        ) {
+                            if (!employeeAppearances[employeeNameReal]) {
+                                employeeAppearances[employeeNameReal] = new Set();
+                            }
 
-    </script>
-</body>
+                            if (hoaDon.ten_kh === "Client" && hoaDon.trang_thai === "Đã hoàn thành") {
+                                employeeAppearances[employeeNameReal].add(employeeDate.toDateString());
+                            }
+                        }
+                    }
+                });
 
-</html>
+                // Tính tổng lương nhân viên
+                nhanViens.forEach(nhanVien => {
+                    if (employeeAppearances[nhanVien.ma_nhan_vien]) {
+                        let appearances = employeeAppearances[nhanVien.ma_nhan_vien].size;
+
+                        let salary = appearances * salaryPerDay;
+                        totalSalary += salary;
+                    } else {
+                        console.log(`No appearances data for employee with code: ${nhanVien.ma_nhan_vien}`);
+                    }
+                });
+
+                // Hiển thị tổng lương nhân viên
+                document.getElementById("tong-luong-nhan-vien").textContent =
+                    totalSalary.toLocaleString() + " VNĐ";
+                let revenueData = [];
+                let labels = [];
+                for (let month = 0; month < 12; month++) {
+                    let monthlyRevenue = hoaDons
+                        .filter(hoaDon =>
+                            new Date(hoaDon.gio_vao).getFullYear() === currentYear &&
+                            new Date(hoaDon.gio_vao).getMonth() === month &&
+                            hoaDon.trang_thai === "Đã hoàn thành"
+                        )
+                        .reduce((total, hoaDon) => total + hoaDon.tong_tien, 0);
+                    revenueData.push(monthlyRevenue);
+                    labels.push(`Tháng ${month + 1}`);
+                }
+
+                // Biểu đồ doanh thu theo thời gian
+                new Chart(document.getElementById("doanhThuThoiGian"), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Doanh Thu',
+                            data: revenueData,
+                            backgroundColor: '#4e73df',
+                            borderColor: '#4e73df',
+                            borderWidth: 1
+                        }]
+                    }
+                });
+
+                // Tính toán doanh thu theo món
+                let revenueByDish = {};
+
+                hoaDons.forEach(hoaDon => {
+
+                    if (hoaDon.trang_thai === "Đã hoàn thành") {
+                        const decodedList = JSON.parse(hoaDon.list_mon_an);
+                        decodedList.forEach(list => {
+                            const revenueForDish = list.gia_tien * list.so_luong;
+
+                            if (revenueByDish[list.ten_mon]) {
+                                revenueByDish[list.ten_mon] += revenueForDish;
+                            } else {
+                                revenueByDish[list.ten_mon] = revenueForDish;
+                            }
+                        });
+
+                    }
+                });
+
+                // Lấy 4 món có doanh thu cao nhất
+                const sortedRevenue = Object.entries(revenueByDish)
+                    .sort((a, b) => b[1] - a[1]) // Sắp xếp theo doanh thu giảm dần
+                    .slice(0, 4); // Lấy 4 món đầu tiên
+
+                const dishLabels = sortedRevenue.map(item => item[0]);
+                const dishData = sortedRevenue.map(item => item[1]);
+
+                // Biểu đồ doanh thu theo món
+                new Chart(document.getElementById("doanhThuMon"), {
+                    type: 'bar',
+                    data: {
+                        labels: dishLabels,
+                        datasets: [{
+                            label: 'Doanh Thu Theo Món',
+                            data: dishData,
+                            backgroundColor: '#28a745',
+                            borderColor: '#28a745',
+                            borderWidth: 1
+                        }]
+                    }
+                });
+            </script>
+            <script>
+                let currentYearr = new Date().getFullYear();
+                document.getElementById("thong-tin-thang").textContent = `Tổng Lương Nhân Viên Trong Tháng ${currentMonth}`;
+                document.getElementById("thong-tin-nam").textContent = `Doanh Thu Trong năm ${currentYearr}`;
+                document.getElementById("nam-hien-tai").textContent = `Lợi Nhuận Trong năm ${currentYearr}`;
+
+            </script>
+        </body>
+
+        </html>
+    }
+}

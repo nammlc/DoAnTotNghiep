@@ -51,7 +51,7 @@ namespace DoAnTotNghiep.Pages
                     };
                 })
                 .Where(es => es.TotalSalary > 0) 
-                .OrderByDescending(es => es.TotalSalary) 
+                .OrderBy(es => es.EmployeeCode) 
                 .ToList();
         }
 

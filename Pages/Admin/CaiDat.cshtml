@@ -1,0 +1,140 @@
+@page
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@using Microsoft.AspNetCore.Antiforgery
+@inject IAntiforgery antiforgery
+@{
+    Layout = "_NhanVienLayout";
+}
+@{
+    var token = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+}
+
+@Html.AntiForgeryToken()
+@model DoAnTotNghiep.Pages.TaiKhoanThanhToanModel;
+@{
+    var userName = HttpContextAccessor.HttpContext?.Session.GetString("User");
+    if (userName != "ADMIN01")
+    {
+        <div style="position: relative; right: -23%; top : 40%"><strong> Bạn không có quyền sử dụng trang web này ! Vui lòng đăng nhập với
+                tài khoản của admin</strong></div>
+    }
+    else
+    {
+
+        <div class="container mt-5">
+            <!-- Hiển thị thông tin tài khoản hiện tại -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="text-center m-0">Thông Tin Tài Khoản Thanh Toán Hiện Tại</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="currentBankName" class="form-label">Tên Ngân Hàng</label>
+                            <input type="text" id="currentBankName" class="form-control"
+                                value="@Model.taiKhoanThanhToan.ten_ngan_hang" readonly />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="currentAccountNumber" class="form-label">Số Tài Khoản</label>
+                            <input type="text" id="currentAccountNumber" class="form-control"
+                                value="@Model.taiKhoanThanhToan.so_tai_khoan" readonly />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="currentAccountHolder" class="form-label">Tên Chủ Tài Khoản</label>
+                            <input type="text" id="currentAccountHolder" class="form-control"
+                                value="@Model.taiKhoanThanhToan.ten_tai_khoan" readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form thay đổi thông tin tài khoản -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="text-center m-0">Thay Đổi Tài Khoản Thanh Toán</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="bankList" class="form-label">Chọn Ngân Hàng</label>
+                                <select id="bankList" name="ten_ngan_hang" class="form-select" onchange="updateSelectedBank()">
+                                    <option value="">-- Chọn ngân hàng --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="accountNumber" class="form-label">Số Tài Khoản</label>
+                                <input type="text" id="accountNumber" name="so_tai_khoan" class="form-control"
+                                    placeholder="Nhập số tài khoản" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="accountHolder" class="form-label">Tên Chủ Tài Khoản</label>
+                                <input type="text" id="accountHolder" name="ten_tai_khoan" class="form-control"
+                                    placeholder="Nhập tên chủ tài khoản" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="bankBranch" class="form-label">Chi Nhánh Ngân Hàng</label>
+                                <input type="text" id="bankBranch" name="chi_nhanh_ngan_hang" class="form-control"
+                                    placeholder="Nhập chi nhánh ngân hàng" />
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success px-4">Lưu Thay Đổi</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                loadBankList();
+            });
+
+            // Gọi API VietQR để lấy danh sách ngân hàng
+            function loadBankList() {
+                fetch('https://api.vietqr.io/v2/banks')
+                    .then(response => response.json())
+                    .then(data => {
+                        const bankList = document.getElementById('bankList');
+                        data.data.forEach(bank => {
+                            const option = document.createElement('option');
+                            option.value = bank.code;
+                            option.textContent = `${bank.shortName} - ${bank.name}`;
+                            bankList.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Lỗi khi tải danh sách ngân hàng:', error));
+            }
+
+            // Cập nhật ngân hàng được chọn
+            function updateSelectedBank() {
+                const selectedBank = document.getElementById('bankList').value;
+                console.log('Ngân hàng đã chọn:', selectedBank);
+            }
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var toggleSidebar = document.getElementById("toggleSidebar");
+                var sidebar = document.querySelector(".sidebar");
+                var mainContent = document.querySelector(".main-content");
+
+                toggleSidebar.addEventListener("click", function () {
+                    console.log("click")
+                    if (sidebar.style.width === "55px") {
+                        sidebar.style.width = "200px";
+                        mainContent.style.paddingLeft = "23px";
+                        toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-left" style="padding-right : 10px "></i> Thu gọn';
+                    } else {
+                        sidebar.style.width = "55px";
+                        mainContent.style.paddingLeft = "30px";
+                        toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+                    }
+                });
+            });
+        </script>
+    }
+}

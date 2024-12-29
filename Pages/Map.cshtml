@@ -66,6 +66,138 @@
     .icon {
         font-size: 24px;
     }
+
+    /* Tổng thể modal */
+    #orderDetailsModal .modal-dialog {
+        max-width: 600px;
+    }
+
+    #orderDetailsModal .modal-header {
+        background-color: #007bff;
+        color: #fff;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    #orderDetailsModal .modal-title {
+        font-size: 18px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    #orderDetailsModal .btn-close {
+        color: #fff;
+        opacity: 1;
+    }
+
+    #orderDetailsModal .modal-body {
+        background-color: #f9f9f9;
+        padding: 20px;
+        font-family: 'Arial', sans-serif;
+        font-size: 14px;
+        color: #333;
+        line-height: 1.6;
+        border-radius: 8px;
+    }
+
+    #orderDetailsContent p {
+        margin: 8px 0;
+        font-size: 14px;
+    }
+
+    #orderDetailsContent strong {
+        color: #007bff;
+        font-weight: bold;
+    }
+
+    #orderDetailsContent h5 {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 15px;
+        margin-bottom: 10px;
+        color: #2c3e50;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 5px;
+    }
+
+    #orderDetailsContent ul {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0;
+    }
+
+    #orderDetailsContent ul li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #ecf0f1;
+        padding: 8px;
+        margin: 5px 0;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    #orderDetailsContent ul li span {
+        font-weight: bold;
+        color: #34495e;
+    }
+
+    #orderDetailsContent ul li span.price {
+        color: #27ae60;
+    }
+
+    #orderDetailsContent ul li span.quantity {
+        color: #e67e22;
+    }
+
+    /* Footer buttons */
+    #orderDetailsModal .modal-footer {
+        background-color: #f1f1f1;
+        border-top: 1px solid #dee2e6;
+    }
+
+    #orderDetailsModal .modal-footer .btn {
+        min-width: 120px;
+        font-size: 14px;
+    }
+
+    .menu-list {
+        display: flex;
+        overflow-x: auto;
+        gap: 20px;
+        white-space: nowrap;
+        
+    }
+
+    .menu-item {
+        position: relative;
+        min-width: 150px;
+        height: 150px;
+        overflow: hidden;
+        flex-shrink: 0;
+       
+    }
+
+    .menu-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .menu-item-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 10px;
+        text-align: center;
+        display: none;
+    }
+
+    .menu-item:hover .menu-item-info {
+        display: block;
+    }
 </style>
 
 <div>
@@ -83,40 +215,21 @@
                     <div class="icon">☕</div>
                     <div>Bàn @(banan.id - 1)</div>
                     <div class="order-info" id="assigned-order-@banan.id">Đơn hàng @banan.hoa_don_id</div>
-                    
+
                 </div>
-                @foreach (var hoadon in Model.HoaDons)
-                    {
-                        if (hoadon.ban_an_id == banan.id && hoadon.trang_thai != "Đã hoàn thành")
-                        {
-                            <div id="orderInfoModal"
-                                style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.2);">
-                                <h3>Thông Tin Đơn Hàng <span id="orderTableNumber"></span></h3>
-                                <div id="orderDetails">
-                                    <div>
-                                        Tổng đơn hàng : @hoadon.tong_tien.ToString("#,##0") VNĐ
-                                    </div>
-                                    <div>
-                                        Danh sách đơn hàng :
-                                    </div>
-                                    <div>
-                                        Tên khách hàng : @hoadon.ten_ban
-                                    </div>
-                                    <div>
-                                        Thời gian order : @hoadon.gio_vao
-                                    </div>
-                                </div>
-                                <div style="margin-top: 10px;">
-                                    <button onclick="closeOrderInfoModal()">Đóng</button>
-                                </div>
-                                <div style="margin-top: 10px;">
-                                    <button onclick="finishOrder()">Hoàn thành đơn hàng</button>
-                                </div>
-                            </div>
-
-                        }
-
-                    }
+                @* <div id="orderInfoModal"
+                    style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.2);">
+                    <h3>Đơn Hàng @banan.hoa_don_id <span id="orderTableNumber"></span></h3>
+                    <div id="orderDetails">
+                        Xem chi tiết đơn hàng
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button onclick="closeOrderInfoModal()">Đóng</button>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button onclick="finishOrder()">Hoàn thành đơn hàng</button>
+                    </div>
+                </div> *@
             }
             else
             {
@@ -127,7 +240,6 @@
                 </div>
             }
         }
-
 
         <!-- Quầy pha chế ở góc dưới bên trái -->
         <div class="counter">
@@ -151,7 +263,8 @@
         <option value="">Chọn đơn hàng</option>
         @foreach (var hoadon in Model.HoaDons)
         {
-            if (hoadon.trang_thai != "Đã hoàn thành" && hoadon.ban_an_id == null && hoadon.trang_thai != "On Cart" && hoadon.ten_kh == "Client" && hoadon.ten_nhan_vien!="Client")
+            if (hoadon.trang_thai != "Đã hoàn thành" && hoadon.ban_an_id == null && hoadon.trang_thai != "On Cart" &&
+            hoadon.ten_kh == "Client" && hoadon.ten_nhan_vien != "Client")
             {
                 <option value="@hoadon.id">Tên KH: @hoadon.ten_ban ; Tổng hóa đơn: @hoadon.tong_tien.ToString("#,##0") VNĐ ;
                     Thời gian tạo hóa đơn : @hoadon.gio_vao </option>
@@ -164,32 +277,29 @@
     </div>
 </div>
 
-<!-- Modal xem thông tin đơn hàng -->
-@* <div id="orderInfoModal"
-    style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.2);">
-    <h3>Thông Tin Đơn Hàng <span id="orderTableNumber"></span></h3>
-    <div id="orderDetails">
-        <div>
-            Tổng đơn hàng :
-        </div>
-        <div>
-            Danh sách đơn hàng :
-        </div>
-        <div>
-            Tên khách hàng :
-        </div>
-        <div>
-            Thời gian order :
-        </div>
-    </div>
-    <div style="margin-top: 10px;">
-        <button onclick="closeOrderInfoModal()">Đóng</button>
-    </div>
-    <div style="margin-top: 10px;">
-        <button onclick="finishOrder()">Hoàn thành đơn hàng</button>
-    </div>
-</div> *@
+@* Chi tiết đơn hàng *@
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailsModalLabel">Chi tiết đơn hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="orderDetailsContent">
+                    <!-- Order details will be dynamically loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
 
+                <button onclick="finishOrder()" class="btn btn-success">Hoàn thành đơn hàng</button>
+
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     let selectedTableId;
     let orderData = {}; // Lưu trữ đơn hàng theo bàn
@@ -203,7 +313,11 @@
         if (typeof selectedTableId === 'string') {
             // Nếu có đơn, mở modal xem chi tiết đơn hàng
             console.log("click");
-            openOrderInfoModal();
+            const numbers = selectedTableId.match(/\d+/g);
+
+            let numberOrderId = numbers[0];
+            let numberTableId = numbers[1];
+            viewOrderDetails(numberTableId);
         } else {
             // Nếu chưa có đơn, mở modal gán đơn hàng
             console.log("clickk");
@@ -310,5 +424,51 @@
     // Đóng modal xem thông tin đơn hàng
     function closeOrderInfoModal() {
         document.getElementById("orderInfoModal").style.display = "none";
+    }
+</script>
+
+
+<script>
+    function viewOrderDetails(tableId) {
+        fetch(`/Map?handler=TableDetail&tableId=${tableId}`)
+            .then(response => response.json())
+            .then(data => {
+                const orderDetailsContent = document.getElementById('orderDetailsContent');
+                const listMonAn = JSON.parse(data.hoaDon.list_mon_an);
+                if (data.success) {
+                    orderDetailsContent.innerHTML = `
+                        <p><strong>Id hóa đơn : </strong> ${data.hoaDon.id}</p>
+                        <p><strong>Tên KH : </strong> ${data.hoaDon.ten_ban}</p>
+                        <p><strong>Ngày đặt hàng :</strong> ${data.hoaDon.gio_vao}</p>
+                        <p><strong>Tổng tiền :</strong> ${data.hoaDon.tong_tien.toLocaleString()} VNĐ</p>
+
+                        <h5>Danh sách món ăn</h5>
+                        <div class="menu-list">
+                        ${
+                        // Kiểm tra xem listMonAn có phải là một mảng không
+                        Array.isArray(listMonAn) && listMonAn.length > 0
+                            ? listMonAn.map(item => `
+                                    <div class="menu-item">
+                                                <img src="${item.anh_minh_hoa}" alt="${item.ten_mon}">
+                                                <div class="menu-item-info">
+                                                    <p><strong style = "color :#fff">${item.ten_mon}</strong></p>
+                                                    <p>Số lượng: ${item.so_luong}</p>
+                                                    <p>Giá tiền: ${item.gia_tien.toLocaleString()} VNĐ</p>
+
+                                                </div>
+                                            </div>
+                                        `).join('')
+                            : '<p>Không có món ăn nào.</p>'  // Nếu không có món ăn, hiển thị thông báo
+                        }
+                                    </div>
+                        `;
+                } else {
+                    orderDetailsContent.innerHTML = '<p>Không tìm thấy thông tin đơn hàng.</p>';
+                }
+                new bootstrap.Modal(document.getElementById('orderDetailsModal')).show();
+            })
+            .catch(error => {
+                console.error('Error fetching order details:', error);
+            });
     }
 </script>

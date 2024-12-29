@@ -27,6 +27,7 @@
 </head>
 
 <body>
+
     <header>
         <div class="header">
             <div class="logo-container">
@@ -75,7 +76,7 @@
                 </li>
                 <li>
                     <i class="fa-solid fa-users" style="font-size: 25px ; color : #fff"></i>
-                    <a href="#">Nhân viên</a>
+                    <a href="/admin/NhanVien">Nhân viên</a>
                 </li>
                 <li>
                     <i class="fa-solid fa-warehouse" style="font-size: 25px ; color : #fff"></i>
@@ -83,18 +84,20 @@
                 </li>
                 <li>
                     <i class="fa-solid fa-mug-hot" style="font-size: 30px ; color : #fff"></i>
-                    <a href="">Món ăn</a>
+                    <a href="/admin/monan">Món ăn</a>
                 </li>
                 <li>
                     <i class="fa-solid fa-gear" style="font-size: 30px ; color : #fff"></i>
-                    <a href="#">Cài đặt</a>
+                    <a href="/admin/CaiDat">Cài đặt</a>
                 </li>
             </ul>
             <div class="end-sidebar" id="toggleSidebar">
                 <i class="fa fa-chevron-left" style="padding-right: 10px;"></i> Thu gọn
             </div>
         </div>
+
         @RenderBody()
+
 
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using DoAnTotNghiep.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -24,12 +25,14 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.LoginPath = "/DangNhap";  // Đường dẫn đến trang đăng nhập
         options.LogoutPath = "/DangXuat";  // Đường dẫn đến trang đăng xuất
     });
+
 
 
 var app = builder.Build();
@@ -67,6 +70,7 @@ app.MapGet("/", (HttpContext context) =>
     return Task.CompletedTask;
 });
 app.MapRazorPages();
+
 app.UseEndpoints(endpoints =>
     {
         endpoints.MapRazorPages();

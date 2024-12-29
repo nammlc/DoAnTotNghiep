@@ -12,6 +12,7 @@ using System.Text.Json;
 using MySql.Data.MySqlClient;
 using Dapper;
 using Mysqlx;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace DoAnTotNghiep.Pages
@@ -69,7 +70,7 @@ namespace DoAnTotNghiep.Pages
                     parts[i] = parts[i].Trim();
                 }
 
-                if (hoadon.ten_kh != "Client" && (parts[0] == "Đang chờ xét duyệt"||parts[0] == "Đã duyệt"))
+                if (hoadon.ten_kh != "Client" && (parts[0] == "Đang chờ xét duyệt" || parts[0] == "Đã duyệt"))
                     count++;
 
             }
@@ -82,23 +83,23 @@ namespace DoAnTotNghiep.Pages
 
         //Tạo mã qr
         [BindProperty]
-        public string QRCodeUrl { get; set; } // Lưu trữ URL QR code
+        public string QRCodeUrl { get; set; }
+        public TaiKhoanThanhToan taiKhoanThanhToan { get; set; }
 
         public async Task<IActionResult> OnGetGenerateQRCode(decimal amount)
         {
             try
             {
-                // Thông tin thanh toán
-                string bankId = "TPBANK"; // Mã ngân hàng
-                string accountNumber = "00003800981"; // Số tài khoản
-                string template = "print"; // Mẫu
-                string description = "Thanh Toan Hoa Don"; // Nội dung chuyển khoản
-                string accountName = "LE CONG NAM"; // Tên người nhận
+                taiKhoanThanhToan = await _context.TaiKhoanThanhToan.FirstAsync();
+                string bankId = taiKhoanThanhToan.ten_ngan_hang;
+                string accountNumber = taiKhoanThanhToan.so_tai_khoan;
+                string template = "print";
+                string description = "Thanh Toan Hoa Don";
+                string accountName = taiKhoanThanhToan.ten_tai_khoan;
 
-                // Tạo URL QuickLink
+                // URL QuickLink
                 string qrCodeUrl = $"https://img.vietqr.io/image/{bankId}-{accountNumber}-{template}.png?amount={amount}&addInfo={description}&accountName={accountName}";
 
-                // Cập nhật giá trị QRCodeModel
                 QRCodeModel.QRCodeUrl = qrCodeUrl;
 
                 // Trả về JSON chứa QRCodeUrl
@@ -218,7 +219,7 @@ namespace DoAnTotNghiep.Pages
         //Duyệt đơn hàng
         public IActionResult OnPostApproveOrder(int Id)
         {
-            
+
             using (var connection = new MySqlConnection(_connectionString))
             {
                 string query = "UPDATE hoa_don SET trang_thai = 'Đã duyệt' WHERE id = @id";
@@ -239,7 +240,7 @@ namespace DoAnTotNghiep.Pages
         //Từ chối đơn hàng
         public IActionResult OnPostRejectOrder(int Id)
         {
-            
+
             using (var connection = new MySqlConnection(_connectionString))
             {
                 string query = "UPDATE hoa_don SET trang_thai = 'Đã bị từ chối' WHERE id = @id";
@@ -260,7 +261,7 @@ namespace DoAnTotNghiep.Pages
         //Hoàn thiện đơn của khách hàng 
         public IActionResult OnPostCompleteOrder(int Id)
         {
-            
+
             using (var connection = new MySqlConnection(_connectionString))
             {
                 string query = "UPDATE hoa_don SET trang_thai = 'Đã hoàn thành' WHERE id = @id";

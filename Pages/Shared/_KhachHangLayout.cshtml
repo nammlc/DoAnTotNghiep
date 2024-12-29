@@ -25,6 +25,8 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 
+
+
 </head>
 
 <body>
@@ -32,9 +34,8 @@
         <div class="header-container">
             <h1 class="logo"><img src="~/image/logo.png" alt="" srcset="" style="width: 150px;"></h1>
             <nav class="nav">
-                <a href="#">Trang chủ</a>
-                <a href="#">Giới thiệu</a>
-                <a href="/KhachHang/TrangChu" >Thực đơn</a>
+                <a href="/khachhang/gioithieu">Giới thiệu</a>
+                <a href="/KhachHang/TrangChu">Thực đơn</a>
                 <a href="#">Liên hệ</a>
                 @{
                     var userName = HttpContextAccessor.HttpContext?.Session.GetString("User");
@@ -48,7 +49,8 @@
                                 Xin chào , @userName !
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item" href="/KhachHang/TrangCaNhan" style="margin-left : 0 ; color : #000">Xem đơn hàng đã mua</a></li>
+                                <li><a class="dropdown-item" href="/KhachHang/TrangCaNhan"
+                                        style="margin-left : 0 ; color : #000">Xem đơn hàng đã mua</a></li>
                                 <form method="post" asp-page="/KhachHang/KHDangNhap" asp-page-handler="Logout">
                                     <button type="submit" class="dropdown-item">Đăng xuất</button>
                                 </form>
@@ -58,7 +60,8 @@
                     }
                     else
                     {
-                        <a href="/KhachHang/KHDangNhap" style="text-decoration: none;color :#fff "> <strong>Đăng nhập </strong></a>
+                        <a href="/KhachHang/KHDangNhap" style="text-decoration: none;color :#fff "> <strong>Đăng nhập
+                            </strong></a>
                     }
                 }
             </nav>

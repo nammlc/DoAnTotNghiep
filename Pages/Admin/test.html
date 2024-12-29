@@ -1,95 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thống Kê Cá Nhân</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <style>
+    /* styles.css */
+    body {
+      font-family: "Arial", sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      color: #343a40;
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thống Kê Doanh Thu</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: Arial, sans-serif;
-        }
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-        h2 {
-            margin-top: 20px;
-        }
+    header h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
 
-        .card {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border: none;
-        }
+    .filter-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
 
-        .chart-container {
-            width: 100%;
-            height: 400px;
-            margin-top: 20px;
-        }
-    </style>
-</head>
+    .filter-section label {
+      font-size: 16px;
+      margin-right: 10px;
+    }
 
-<body>
-    <div class="container mt-4">
-        <h2 class="text-center">Thống Kê Doanh Thu Quán Bán Đồ Uống</h2>
+    .filter-section input {
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
 
-        <!-- Tổng quan doanh thu -->
-        <div class="row mt-4">
+    .filter-section .btn-primary {
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
 
-            <div class="col-md-4">
-                <a href="test2.html">
-                    <div class="card bg-primary text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">Tổng Doanh Thu Năm 2024</h5>
-                            <p id="tong-doanh-thu" class="fs-4">0 VNĐ</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
+    .filter-section .btn-primary:hover {
+      background-color: #0056b3;
+    }
 
+    .stats-summary {
+      margin-bottom: 20px;
+    }
 
-            <div class="col-md-4">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                        <h5 class="card-title">Tổng Lợi Nhuận</h5>
-                        <p id="tong-loi-nhuan" class="fs-4">0 VNĐ</p>
-                    </div>
-                </div>
-            </div>
+    .stats-summary h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
 
-            <div class="col-md-4">
-                <a href="test3.html">
-                    <div class="card bg-warning text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">Tổng Lương Nhân Viên</h5>
-                            <p id="tong-luong-nhan-vien" class="fs-4">0 VNĐ</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
 
+    .table th,
+    .table td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
 
-        </div>
+    .table th {
+      background-color: #007bff;
+      color: #fff;
+      text-transform: uppercase;
+    }
 
-        <!-- Biểu đồ -->
+    .table tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
 
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <h5 class="text-center">Doanh Thu Theo Thời Gian</h5>
-                <canvas id="doanhThuThoiGian" class="chart-container"></canvas>
-            </div>
-            <div class="col-md-6">
-                <h5 class="text-center">Doanh Thu Theo Món</h5>
-                <canvas id="doanhThuMon" class="chart-container"></canvas>
-            </div>
-        </div>
+    .table tbody tr:hover {
+      background-color: #e9ecef;
+    }
+  </style>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Thống Kê Cá Nhân</h1>
+      </header>
 
+      <div class="filter-section">
+        <label for="datePicker">Chọn ngày:</label>
+        <input type="date" id="datePicker" value="" />
+        <button id="viewStats" class="btn-primary">Xem Thống Kê</button>
+      </div>
 
+      <div class="stats-summary">
+        <h2>Thống Kê Ngày <span id="selectedDate">Hôm Nay</span></h2>
+        <p>
+          <strong>Nhân viên:</strong>
+          <span id="employeeName">Nguyễn Văn A</span>
+        </p>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Tên Món</th>
+            <th>Số Lượng</th>
+          </tr>
+        </thead>
+        <tbody id="statsBody">
+          <!-- Nội dung sẽ được thêm bằng JavaScript -->
+        </tbody>
+      </table>
     </div>
+    <script src="script.js"></script>
+  </body>
+  <script>
+    // script.js
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="test.js"></script>
-</body>
+    // Giả lập dữ liệu thống kê món ăn
+    const salesData = {
+      "2024-12-24": [
+        { tenMon: "Phở bò", soLuong: 10 },
+        { tenMon: "Bún chả", soLuong: 5 },
+        { tenMon: "Bánh mì", soLuong: 8 },
+      ],
+      "2024-12-23": [
+        { tenMon: "Cơm gà", soLuong: 15 },
+        { tenMon: "Lẩu thái", soLuong: 7 },
+      ],
+    };
 
+    // Hàm hiển thị thống kê cho một ngày
+    function renderStatistics(date) {
+      const statsBody = document.getElementById("statsBody");
+      const selectedDate = document.getElementById("selectedDate");
+
+      statsBody.innerHTML = ""; // Xóa nội dung cũ
+      selectedDate.innerText = date;
+
+      const dataForDate = salesData[date];
+
+      if (!dataForDate) {
+        statsBody.innerHTML = "<tr><td colspan='2'>Không có dữ liệu</td></tr>";
+        return;
+      }
+
+      dataForDate.forEach((item) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.tenMon}</td>
+          <td>${item.soLuong}</td>
+      `;
+        statsBody.appendChild(row);
+      });
+    }
+
+    // Gắn sự kiện cho nút "Xem Thống Kê"
+    document.getElementById("viewStats").addEventListener("click", () => {
+      const datePicker = document.getElementById("datePicker");
+      const selectedDate = datePicker.value || "2024-12-24"; // Giá trị mặc định là hôm nay
+      renderStatistics(selectedDate);
+    });
+
+    // Hiển thị dữ liệu mặc định cho ngày hiện tại
+    document.addEventListener("DOMContentLoaded", () => {
+      const today = "2024-12-24"; // Giả lập ngày hiện tại
+      document.getElementById("datePicker").value = today;
+      renderStatistics(today);
+    });
+  </script>
 </html>

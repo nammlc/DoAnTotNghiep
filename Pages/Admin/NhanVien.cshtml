@@ -1,440 +1,454 @@
 @page
 @model DoAnTotNghiep.Pages.NhanVienModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
 @{
     Layout = "_NhanVienLayout";
 }
-
-<div class="main-content">
-    <div class="main-content_header">
-        <div style="font-size: 4.5vh;">Quản lý nhân viên</div>
-        <button>
-            <a href="javascript:void(0)" style="text-decoration: none; color: #fff">
-                <img src="~/css/assets/icon/add.png" alt="">
-                Thêm mới
-            </a>
-        </button>
-    </div>
-    <div class="search-container">
-        <div class="search-container_left">
-            <input type="text" id="searchInput" name="searchQuery" value="@ViewBag.SearchQuery"
-                placeholder="Tìm kiếm theo mã, họ tên..." class="form-control">
-        </div>
-        <div class="search-container_right">
-            <div class="excel">
-                <img src="~/css/assets/icon/export-excel-50.png" alt="">
+@{
+    var userName = HttpContextAccessor.HttpContext?.Session.GetString("User");
+    if (userName != "ADMIN01")
+    {
+        <div style="position: relative; right: -23%; top : 40%"><strong> Bạn không có quyền sử dụng trang web này ! Vui lòng
+                đăng nhập với
+                tài khoản của admin</strong></div>
+    }
+    else
+    {
+        <div class="main-content">
+            <div class="main-content_header">
+                <div style="font-size: 4.5vh;">Quản lý nhân viên</div>
+                <button>
+                    <a href="javascript:void(0)" style="text-decoration: none; color: #fff">
+                        <img src="~/css/assets/icon/add.png" alt="">
+                        Thêm mới
+                    </a>
+                </button>
             </div>
-            <div class="reload">
-                <img src="~/css/assets/icon/refresh.png" alt="" id="reloadBtn">
+            <div class="search-container">
+                <div class="search-container_left">
+                    <input type="text" id="searchInput" name="searchQuery" value="@ViewBag.SearchQuery"
+                        placeholder="Tìm kiếm theo mã, họ tên..." class="form-control">
+                </div>
+                <div class="search-container_right">
+                    <div class="excel">
+                        <img src="~/css/assets/icon/export-excel-50.png" alt="">
+                    </div>
+                    <div class="reload">
+                        <img src="~/css/assets/icon/refresh.png" alt="" id="reloadBtn">
+                    </div>
+                </div>
             </div>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã nhân viên</th>
+                        <th>Họ tên đầy đủ</th>
+                        <th>Giới tính</th>
+                        <th>Địa chỉ</th>
+                        <th>Ngày sinh</th>
+                        <th>Địa chỉ email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.NhanViens != null && Model.NhanViens.Any())
+                    {
+                        // Khai báo biến currentPage
+                        int currentPage = (int)(ViewData["CurrentPage"] ?? 1);
+                        int pageSize = 10;
+                        int stt = (currentPage - 1) * pageSize + 1;
+
+
+                        foreach (var nhanVien in Model.NhanViens)
+                        {
+                            if (nhanVien.vi_tri != "Admin")
+                            {
+                                <tr class="all-staff">
+                                    <td>@stt</td>
+                                    <td data-code="@nhanVien.ma_nhan_vien">@nhanVien.ma_nhan_vien</td>
+                                    <td data-type="@nhanVien.ten_nhan_vien">@nhanVien.ten_nhan_vien</td>
+                                    <td>@nhanVien.gioi_tinh</td>
+                                    <td>@nhanVien.dia_chi</td>
+                                    <td>@nhanVien.ngay_sinh.ToString("dd/MM/yyyy")</td>
+                                    <td style="display: flex; justify-content: space-between;">
+                                        <div>@nhanVien.email</div>
+                                        <div class="hide-icon_form">
+                                            <div class="edit-btn" data-id="@nhanVien.id">
+                                                <i class="fa-solid fa-user-pen" style="color: rgb(26, 195, 37);"></i>
+                                            </div>
+                                            <div class="delete-btn" data-id="@nhanVien.id" data-code="@nhanVien.ma_nhan_vien"
+                                                style="border: none; padding-left: 5px;">
+                                                <i class="fa-solid fa-x" style="color: red;"></i>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                stt++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center">Không có dữ liệu</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- Pagination will be dynamically generated here -->
+                </ul>
+            </nav>
+
+
         </div>
-    </div>
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>STT</th>
-                <th>Mã nhân viên</th>
-                <th>Họ tên đầy đủ</th>
-                <th>Giới tính</th>
-                <th>Địa chỉ</th>
-                <th>Ngày sinh</th>
-                <th>Địa chỉ email</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null && Model.NhanViens != null && Model.NhanViens.Any())
-            {
-                // Khai báo biến currentPage
-                int currentPage = (int)(ViewData["CurrentPage"] ?? 1);
-                int pageSize = 10;
-                int stt = (currentPage - 1) * pageSize + 1;
+        <div class="footer"></div>
 
-
-                foreach (var nhanVien in Model.NhanViens)
-                {
-                    <tr class="all-staff">
-                        <td>@stt</td>
-                        <td data-code="@nhanVien.ma_nhan_vien">@nhanVien.ma_nhan_vien</td>
-                        <td data-type="@nhanVien.ten_nhan_vien">@nhanVien.ten_nhan_vien</td>
-                        <td>@nhanVien.gioi_tinh</td>
-                        <td>@nhanVien.dia_chi</td>
-                        <td>@nhanVien.ngay_sinh.ToString("dd/MM/yyyy")</td>
-                        <td style="display: flex; justify-content: space-between;">
-                            <div>@nhanVien.email</div>
-                            <div class="hide-icon_form">
-                                <div class="edit-btn" data-id="@nhanVien.id">
-                                    <i class="fa-solid fa-user-pen" style="color: rgb(26, 195, 37);"></i>
+        <div class="modal fade" id="addNewStaffModal" tabindex="-1" aria-labelledby="addNewStaffModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addNewStaffModalLabel">Thêm mới nhân viên</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close-btn">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="employeeForm" asp-page-handler="NhanVien" method="post">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="ma_nhan_vien" class="form-label">Mã nhân viên:</label>
+                                    <input type="text" class="form-control" id="ma_nhan_vien" name="ma_nhan_vien" required
+                                        value="Create Automatically" readonly />
                                 </div>
-                                <div class="delete-btn" data-id="@nhanVien.id" data-code="@nhanVien.ma_nhan_vien"
-                                    style="border: none; padding-left: 5px;">
-                                    <i class="fa-solid fa-x" style="color: red;"></i>
+                                <div class="col-md-6">
+                                    <label for="ten_nhan_vien" class="form-label">Họ và tên:</label>
+                                    <input type="text" class="form-control" id="ten_nhan_vien" name="ten_nhan_vien" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ngay_sinh" class="form-label">Ngày sinh:</label>
+                                    <input type="date" class="form-control" id="ngay_sinh" name="ngay_sinh" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label d-block">Giới tính:</label>
+                                    <div class="choose_gender" style="display: flex;">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gioi_tinh" id="gioiTinhNam"
+                                                value="Nam" required>
+                                            <label class="form-check-label" for="gioiTinhNam">Nam</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gioi_tinh" id="gioiTinhNu"
+                                                value="Nữ">
+                                            <label class="form-check-label" for="gioiTinhNu">Nữ</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gioi_tinh" id="gioiTinhKhac"
+                                                value="Khác">
+                                            <label class="form-check-label" for="gioiTinhKhac">Khác</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </td>
-                    </tr>
-                    stt++;
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="vi_tri" class="form-label">Vị trí</label>
+                                    <select id="vi_tri" name="vi_tri" class="form-control">
+                                        <option value="">Chọn vị trí</option>
+                                        <option value="Nhân viên">Nhân viên</option>
+                                        <option value="Quản lý">Quản lý</option>
+                                        <option value="Giám đốc">Giám đốc</option>
+                                        <!-- Thêm các tùy chọn khác nếu cần -->
+                                        <option value="Khác">Khác</option>
+                                    </select>
+                                    <input type="text" id="vi_tri_other" name="vi_tri_other" class="form-control mt-2 d-none"
+                                        placeholder="Nhập vị trí khác" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="so_cmnd" class="form-label">Số CMND:</label>
+                                    <input type="text" class="form-control" id="so_cmnd" name="so_cmnd" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="ngay_cap_cmnd" class="form-label">Ngày cấp CMND:</label>
+                                    <input type="date" class="form-control" id="ngay_cap_cmnd" name="ngay_cap_cmnd" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="noi_cap_cmnd" class="form-label">Nơi cấp CMND:</label>
+                                    <input type="text" class="form-control" id="noi_cap_cmnd" name="noi_cap_cmnd" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="dia_chi" class="form-label">Địa chỉ:</label>
+                                    <input type="text" class="form-control" id="dia_chi" name="dia_chi" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="so_dien_thoai" class="form-label">Điện thoại di động:</label>
+                                    <input type="tel" class="form-control" id="so_dien_thoai" name="so_dien_thoai" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="so_dien_thoai_co_dinh" class="form-label">Điện thoại cố định:</label>
+                                    <input type="tel" class="form-control" id="so_dien_thoai_co_dinh"
+                                        name="so_dien_thoai_co_dinh">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="email" class="form-label">Email:</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="so_tai_khoan_ngan_hang" class="form-label">Tài khoản ngân hàng:</label>
+                                    <input type="text" class="form-control" id="so_tai_khoan_ngan_hang"
+                                        name="so_tai_khoan_ngan_hang" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="ten_ngan_hang" class="form-label">Tên ngân hàng</label>
+                                    <select id="ten_ngan_hang" name="ten_ngan_hang" class="form-control">
+                                        <option value="">Chọn ngân hàng</option>
+                                        <option value="Ngân hàng A">Ngân hàng A</option>
+                                        <option value="Ngân hàng B">Ngân hàng B</option>
+                                        <option value="Ngân hàng C">Ngân hàng C</option>
+                                        <!-- Thêm các tùy chọn khác nếu cần -->
+                                        <option value="Khác">Khác</option>
+                                    </select>
+                                    <input type="text" id="ten_ngan_hang_other" name="ten_ngan_hang_other"
+                                        class="form-control mt-2 d-none" placeholder="Nhập tên ngân hàng khác" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="chi_nhanh_ngan_hang" class="form-label">Chi nhánh ngân hàng:</label>
+                                    <input type="text" class="form-control" id="chi_nhanh_ngan_hang" name="chi_nhanh_ngan_hang"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col text-end">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                        id="close-btn2">Hủy</button>
+                                    <button type="submit" class="btn btn-primary"
+                                        style="background-color: rgb(13, 179, 13);">Lưu</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có chắc chắn muốn xóa nhân viên <strong id="employeeCode"></strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var toggleSidebar = document.getElementById("toggleSidebar");
+                var sidebar = document.querySelector(".sidebar");
+                var mainContent = document.querySelector(".main-content");
+
+                toggleSidebar.addEventListener("click", function () {
+                    if (sidebar.style.width === "55px") {
+                        sidebar.style.width = "200px";
+                        mainContent.style.paddingLeft = "23px";
+                        toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-left" style="padding-right : 10px "></i> Thu gọn';
+                    } else {
+                        sidebar.style.width = "55px";
+                        mainContent.style.paddingLeft = "30px";
+                        toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                document.querySelector(".main-content_header button").addEventListener("click", function () {
+
+                    var myModal = new bootstrap.Modal(document.getElementById('addNewStaffModal'), {
+                        keyboard: false
+                    });
+                    myModal.show();
+                });
+                document.getElementById("close-btn").addEventListener("click", function () {
+                    console.log("tắt modal");
+                    var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewStaffModal'));
+                    if (myModal) {
+                        myModal.hide();
+                    }
+                });
+                document.getElementById("close-btn2").addEventListener("click", function () {
+                    var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewStaffModal'));
+                    if (myModal) {
+                        myModal.hide();
+                    }
+                });
+
+
+                document.querySelectorAll(".edit-btn").forEach(function (div) {
+                    div.addEventListener("click", function () {
+                        var id = this.getAttribute('data-id');
+                        var editUrl = '@Url.Page("/NhanVien")?handler=edit&&id=__id__'.replace('__id__', id);
+                        console.log(editUrl)
+
+                        window.location.href = editUrl;
+                    });
+                });
+
+                document.querySelectorAll(".delete-btn").forEach(function (div) {
+                    div.addEventListener("click", function () {
+                        deleteEmployeeId = this.getAttribute("data-id");
+                        console.log(deleteEmployeeId);
+                        var employeeCode = this.getAttribute("data-code");
+
+                        // Hiển thị mã nhân viên trên modal
+                        document.getElementById("employeeCode").innerText = employeeCode;
+
+                        // Hiển thị modal
+                        $('#confirmDeleteModal').modal('show');
+                    });
+                });
+
+                document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+                    if (deleteEmployeeId) {
+
+                        const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                        fetch(`/Admin/NhanVien?handler=Delete&id=${deleteEmployeeId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                "XSRF-TOKEN": csrfToken
+                            }
+                        })
+                            .then(response => {
+                                console.log(response.status)
+                                if (response.ok) {
+                                    alert("Xóa thành công");
+                                    window.location.reload();
+                                } else {
+                                    return response.text().then(text => {
+                                        alert("Xóa không thành công: " + text);
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Có lỗi xảy ra:', error);
+                                alert("Có lỗi xảy ra khi xóa.");
+                            })
+                            .finally(() => {
+                                $('#confirmDeleteModal').modal('hide');
+                            });
+                    }
+                });
+
+
+            });
+            document.getElementById("reloadBtn").addEventListener("click", function () {
+                window.location.reload();
+            });
+
+
+
+        </script>
+        <script>
+            const staffsPerPage = 10; // Số nhân viên mỗi trang
+            let currentPage = 1; // Trang hiện tại
+            let staffs = document.querySelectorAll('.all-staff'); // Tất cả nhân viên
+
+            function filterStaffs(searchQuery) {
+                const filteredStaffs = [];
+                staffs.forEach(staff => {
+                    const name = staff.querySelector('[data-type]')?.textContent.toLowerCase() || '';
+                    const code = staff.querySelector('[data-code]')?.textContent.toLowerCase() || '';
+                    if (name.includes(searchQuery) || code.includes(searchQuery)) {
+                        filteredStaffs.push(staff); // Thêm nhân viên vào danh sách đã lọc
+                    }
+                });
+                return filteredStaffs; // Trả về danh sách nhân viên đã lọc
+            }
+
+            function showPage(page, filteredStaffs) {
+                const start = (page - 1) * staffsPerPage;
+                const end = start + staffsPerPage;
+
+                // Ẩn tất cả nhân viên
+                staffs.forEach(staff => {
+                    staff.style.display = "none"; // Ẩn tất cả
+                });
+
+                // Hiển thị nhân viên theo trang trong danh sách đã lọc
+                filteredStaffs.forEach((staff, index) => {
+                    if (index >= start && index < end) {
+                        staff.style.display = "table-row"; // Hiển thị nhân viên nếu nằm trong khoảng
+                    }
+                });
+
+                // Cập nhật trạng thái phân trang
+                updatePagination(page, filteredStaffs.length);
+            }
+
+            function updatePagination(page, totalFilteredStaffs) {
+                const pagination = document.querySelector('.pagination');
+                const totalPages = Math.ceil(totalFilteredStaffs / staffsPerPage); // Tính tổng số trang
+                pagination.innerHTML = ''; // Xóa danh sách phân trang hiện tại
+
+                // Thêm nút trước
+                if (page > 1) {
+                    pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page - 1})">«</a></li>`;
+                }
+
+                // Thêm các nút trang
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === page) {
+                        pagination.innerHTML += `<li class="page-item active"><a class="page-link" href="#">${i}</a></li>`;
+                    } else {
+                        pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${i})">${i}</a></li>`;
+                    }
+                }
+
+                // Thêm nút sau
+                if (page < totalPages) {
+                    pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page + 1})">»</a></li>`;
                 }
             }
-            else
-            {
-                <tr>
-                    <td colspan="7" class="text-center">Không có dữ liệu</td>
-                </tr>
+
+            function changePage(page) {
+                currentPage = page; // Cập nhật trang hiện tại
+                const filteredStaffs = filterStaffs(document.getElementById('searchInput').value.toLowerCase());
+                showPage(currentPage, filteredStaffs); // Hiển thị trang
             }
-        </tbody>
-    </table>
 
-    <!-- Pagination -->
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            <!-- Pagination will be dynamically generated here -->
-        </ul>
-    </nav>
-
-
-
-</div>
-</div>
-<div class="footer"></div>
-
-<div class="modal fade" id="addNewStaffModal" tabindex="-1" aria-labelledby="addNewStaffModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addNewStaffModalLabel">Thêm mới nhân viên</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close-btn">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="employeeForm" asp-page-handler="NhanVien" method="post">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="ma_nhan_vien" class="form-label">Mã nhân viên:</label>
-                            <input type="text" class="form-control" id="ma_nhan_vien" name="ma_nhan_vien" required
-                                value="Create Automatically" readonly />
-                        </div>
-                        <div class="col-md-6">
-                            <label for="ten_nhan_vien" class="form-label">Họ và tên:</label>
-                            <input type="text" class="form-control" id="ten_nhan_vien" name="ten_nhan_vien" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="ngay_sinh" class="form-label">Ngày sinh:</label>
-                            <input type="date" class="form-control" id="ngay_sinh" name="ngay_sinh" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label d-block">Giới tính:</label>
-                            <div class="choose_gender" style="display: flex;">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="gioi_tinh" id="gioiTinhNam"
-                                        value="Nam" required>
-                                    <label class="form-check-label" for="gioiTinhNam">Nam</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="gioi_tinh" id="gioiTinhNu"
-                                        value="Nữ">
-                                    <label class="form-check-label" for="gioiTinhNu">Nữ</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="gioi_tinh" id="gioiTinhKhac"
-                                        value="Khác">
-                                    <label class="form-check-label" for="gioiTinhKhac">Khác</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="vi_tri" class="form-label">Vị trí</label>
-                            <select id="vi_tri" name="vi_tri" class="form-control">
-                                <option value="">Chọn vị trí</option>
-                                <option value="Nhân viên">Nhân viên</option>
-                                <option value="Quản lý">Quản lý</option>
-                                <option value="Giám đốc">Giám đốc</option>
-                                <!-- Thêm các tùy chọn khác nếu cần -->
-                                <option value="Khác">Khác</option>
-                            </select>
-                            <input type="text" id="vi_tri_other" name="vi_tri_other" class="form-control mt-2 d-none"
-                                placeholder="Nhập vị trí khác" />
-                        </div>
-                        <div class="col-md-4">
-                            <label for="so_cmnd" class="form-label">Số CMND:</label>
-                            <input type="text" class="form-control" id="so_cmnd" name="so_cmnd" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="ngay_cap_cmnd" class="form-label">Ngày cấp CMND:</label>
-                            <input type="date" class="form-control" id="ngay_cap_cmnd" name="ngay_cap_cmnd" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="noi_cap_cmnd" class="form-label">Nơi cấp CMND:</label>
-                            <input type="text" class="form-control" id="noi_cap_cmnd" name="noi_cap_cmnd" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="dia_chi" class="form-label">Địa chỉ:</label>
-                            <input type="text" class="form-control" id="dia_chi" name="dia_chi" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="so_dien_thoai" class="form-label">Điện thoại di động:</label>
-                            <input type="tel" class="form-control" id="so_dien_thoai" name="so_dien_thoai" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="so_dien_thoai_co_dinh" class="form-label">Điện thoại cố định:</label>
-                            <input type="tel" class="form-control" id="so_dien_thoai_co_dinh"
-                                name="so_dien_thoai_co_dinh">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="email" class="form-label">Email:</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="so_tai_khoan_ngan_hang" class="form-label">Tài khoản ngân hàng:</label>
-                            <input type="text" class="form-control" id="so_tai_khoan_ngan_hang"
-                                name="so_tai_khoan_ngan_hang" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="ten_ngan_hang" class="form-label">Tên ngân hàng</label>
-                            <select id="ten_ngan_hang" name="ten_ngan_hang" class="form-control">
-                                <option value="">Chọn ngân hàng</option>
-                                <option value="Ngân hàng A">Ngân hàng A</option>
-                                <option value="Ngân hàng B">Ngân hàng B</option>
-                                <option value="Ngân hàng C">Ngân hàng C</option>
-                                <!-- Thêm các tùy chọn khác nếu cần -->
-                                <option value="Khác">Khác</option>
-                            </select>
-                            <input type="text" id="ten_ngan_hang_other" name="ten_ngan_hang_other"
-                                class="form-control mt-2 d-none" placeholder="Nhập tên ngân hàng khác" />
-                        </div>
-                        <div class="col-md-4">
-                            <label for="chi_nhanh_ngan_hang" class="form-label">Chi nhánh ngân hàng:</label>
-                            <input type="text" class="form-control" id="chi_nhanh_ngan_hang" name="chi_nhanh_ngan_hang"
-                                required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col text-end">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                                id="close-btn2">Hủy</button>
-                            <button type="submit" class="btn btn-primary"
-                                style="background-color: rgb(13, 179, 13);">Lưu</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Bạn có chắc chắn muốn xóa nhân viên <strong id="employeeCode"></strong>?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var toggleSidebar = document.getElementById("toggleSidebar");
-        var sidebar = document.querySelector(".sidebar");
-        var mainContent = document.querySelector(".main-content");
-
-        toggleSidebar.addEventListener("click", function () {
-            if (sidebar.style.width === "55px") {
-                sidebar.style.width = "200px";
-                mainContent.style.paddingLeft = "23px";
-                toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-left" style="padding-right : 10px "></i> Thu gọn';
-            } else {
-                sidebar.style.width = "55px";
-                mainContent.style.paddingLeft = "30px";
-                toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
-            }
-        });
-    });
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelector(".main-content_header button").addEventListener("click", function () {
-
-            var myModal = new bootstrap.Modal(document.getElementById('addNewStaffModal'), {
-                keyboard: false
+            document.getElementById('searchInput').addEventListener('input', function () {
+                const searchQuery = this.value.toLowerCase();
+                const filteredStaffs = filterStaffs(searchQuery);
+                currentPage = 1; // Reset trang về 1 khi tìm kiếm
+                showPage(currentPage, filteredStaffs); // Hiển thị lại trang với nhân viên đã lọc
             });
-            myModal.show();
-        });
-        document.getElementById("close-btn").addEventListener("click", function () {
-            console.log("tắt modal");
-            var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewStaffModal'));
-            if (myModal) {
-                myModal.hide();
-            }
-        });
-        document.getElementById("close-btn2").addEventListener("click", function () {
-            var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewStaffModal'));
-            if (myModal) {
-                myModal.hide();
-            }
-        });
 
-
-        document.querySelectorAll(".edit-btn").forEach(function (div) {
-            div.addEventListener("click", function () {
-                var id = this.getAttribute('data-id');
-                var editUrl = '@Url.Page("/NhanVien")?handler=edit&&id=__id__'.replace('__id__', id);
-                console.log(editUrl)
-
-                window.location.href = editUrl;
-            });
-        });
-
-        document.querySelectorAll(".delete-btn").forEach(function (div) {
-            div.addEventListener("click", function () {
-                deleteEmployeeId = this.getAttribute("data-id");
-                console.log(deleteEmployeeId);
-                var employeeCode = this.getAttribute("data-code");
-
-                // Hiển thị mã nhân viên trên modal
-                document.getElementById("employeeCode").innerText = employeeCode;
-
-                // Hiển thị modal
-                $('#confirmDeleteModal').modal('show');
-            });
-        });
-
-        document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
-            if (deleteEmployeeId) {
-
-                const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                fetch(`/Admin/NhanVien?handler=Delete&id=${deleteEmployeeId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        "XSRF-TOKEN": csrfToken 
-                    }
-                })
-                    .then(response => {
-                        console.log(response.status)
-                        if (response.ok) {
-                            alert("Xóa thành công");
-                            window.location.reload();
-                        } else {
-                            return response.text().then(text => {
-                                alert("Xóa không thành công: " + text);
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Có lỗi xảy ra:', error);
-                        alert("Có lỗi xảy ra khi xóa.");
-                    })
-                    .finally(() => {
-                        $('#confirmDeleteModal').modal('hide');
-                    });
-            }
-        });
-
-
-    });
-    document.getElementById("reloadBtn").addEventListener("click", function () {
-        window.location.reload();
-    });
-
-
-
-</script>
-<script>
-    const staffsPerPage = 10; // Số nhân viên mỗi trang
-    let currentPage = 1; // Trang hiện tại
-    let staffs = document.querySelectorAll('.all-staff'); // Tất cả nhân viên
-
-    function filterStaffs(searchQuery) {
-        const filteredStaffs = [];
-        staffs.forEach(staff => {
-            const name = staff.querySelector('[data-type]')?.textContent.toLowerCase() || ''; 
-            const code = staff.querySelector('[data-code]')?.textContent.toLowerCase() || '';
-            if (name.includes(searchQuery) || code.includes(searchQuery)) {
-                filteredStaffs.push(staff); // Thêm nhân viên vào danh sách đã lọc
-            } 
-        });
-        return filteredStaffs; // Trả về danh sách nhân viên đã lọc
+            // Khởi động hiển thị trang đầu tiên
+            showPage(currentPage, staffs);
+        </script>
     }
-
-    function showPage(page, filteredStaffs) {
-        const start = (page - 1) * staffsPerPage;
-        const end = start + staffsPerPage;
-
-        // Ẩn tất cả nhân viên
-        staffs.forEach(staff => {
-            staff.style.display = "none"; // Ẩn tất cả
-        });
-
-        // Hiển thị nhân viên theo trang trong danh sách đã lọc
-        filteredStaffs.forEach((staff, index) => {
-            if (index >= start && index < end) {
-                staff.style.display = "table-row"; // Hiển thị nhân viên nếu nằm trong khoảng
-            }
-        });
-
-        // Cập nhật trạng thái phân trang
-        updatePagination(page, filteredStaffs.length);
-    }
-
-    function updatePagination(page, totalFilteredStaffs) {
-        const pagination = document.querySelector('.pagination');
-        const totalPages = Math.ceil(totalFilteredStaffs / staffsPerPage); // Tính tổng số trang
-        pagination.innerHTML = ''; // Xóa danh sách phân trang hiện tại
-
-        // Thêm nút trước
-        if (page > 1) {
-            pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page - 1})">«</a></li>`;
-        }
-
-        // Thêm các nút trang
-        for (let i = 1; i <= totalPages; i++) {
-            if (i === page) {
-                pagination.innerHTML += `<li class="page-item active"><a class="page-link" href="#">${i}</a></li>`;
-            } else {
-                pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${i})">${i}</a></li>`;
-            }
-        }
-
-        // Thêm nút sau
-        if (page < totalPages) {
-            pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page + 1})">»</a></li>`;
-        }
-    }
-
-    function changePage(page) {
-        currentPage = page; // Cập nhật trang hiện tại
-        const filteredStaffs = filterStaffs(document.getElementById('searchInput').value.toLowerCase());
-        showPage(currentPage, filteredStaffs); // Hiển thị trang
-    }
-
-    document.getElementById('searchInput').addEventListener('input', function () {
-        const searchQuery = this.value.toLowerCase();
-        const filteredStaffs = filterStaffs(searchQuery);
-        currentPage = 1; // Reset trang về 1 khi tìm kiếm
-        showPage(currentPage, filteredStaffs); // Hiển thị lại trang với nhân viên đã lọc
-    });
-
-    // Khởi động hiển thị trang đầu tiên
-    showPage(currentPage, staffs);
-</script>
+}

@@ -1,117 +1,124 @@
 @page
 @model DoAnTotNghiep.Pages.BangLuongNhanVienModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Bảng Lương Nhân Viên";
     Layout = "_NhanVienLayout";
 }
+@{
+    var userName = HttpContextAccessor.HttpContext?.Session.GetString("User");
+    if (userName != "ADMIN01")
+    {
+        <div style="position: relative; right: -23%; top : 40%"><strong> Bạn không có quyền sử dụng trang web này ! Vui lòng đăng nhập với
+                tài khoản của admin</strong></div>
+    }
+    else
+    {
 
-<div class="container mt-4">
-    <h2 class="text-center">Bảng Lương Nhân Viên</h2>
-    <!-- Biểu đồ -->
-    <canvas id="chartLuongTheoThang"></canvas>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script>
-    let hoaDonData = @Html.Raw(Json.Serialize(Model.hoaDons));
-    let nhanVienData = @Html.Raw(Json.Serialize(Model.nhanViens));
+        <div class="container mt-4">
+            <h2 class="text-center">Bảng Lương Nhân Viên</h2>
+            <!-- Biểu đồ -->
+            <canvas id="chartLuongTheoThang"></canvas>
+        </div>
 
-    // Đối tượng lưu trữ các ngày làm việc duy nhất cho từng nhân viên theo tháng
-    const employeeDatesByMonth = {};
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        <script>
+            let hoaDonData = @Html.Raw(Json.Serialize(Model.hoaDons));
+            let nhanVienData = @Html.Raw(Json.Serialize(Model.nhanViens));
 
-    // Tạo một mảng để theo dõi các tháng đã xử lý
-    const processedMonths = [];
+            // Đối tượng lưu trữ các ngày làm việc duy nhất cho từng nhân viên theo tháng
+            const employeeDatesByMonth = {};
 
-    // Tính số ngày công cho từng nhân viên trong từng tháng
-    hoaDonData.forEach(hoaDon => {
-        let employeeNameReal = hoaDon.ten_nhan_vien; // Tên nhân viên thực tế
+            // Tính số ngày công cho từng nhân viên trong từng tháng
+            hoaDonData.forEach(hoaDon => {
+                let employeeNameReal = hoaDon.ten_nhan_vien; // Tên nhân viên thực tế
 
-        // Kiểm tra nếu tên nhân viên không phải là "Client" và không phải là số (dạng số điện thoại)
-        if (employeeNameReal && employeeNameReal !== "Client" && isNaN(employeeNameReal)) {
-            let employeeDate = new Date(hoaDon.gio_vao).toISOString().split('T')[0]; // Lấy ngày từ `gio_vao`
-            let month = new Date(hoaDon.gio_vao).getMonth(); // Lấy tháng từ `gio_vao`
+                // Kiểm tra nếu tên nhân viên hợp lệ
+                if (employeeNameReal && employeeNameReal !== "Client" && isNaN(employeeNameReal)) {
+                    let employeeDate = new Date(hoaDon.gio_vao).toISOString().split('T')[0]; // Lấy ngày từ `gio_vao`
+                    let month = new Date(hoaDon.gio_vao).getMonth(); // Lấy tháng từ `gio_vao`
 
-            if (!employeeDate) return;
+                    if (!employeeDatesByMonth[month]) {
+                        employeeDatesByMonth[month] = {};
+                    }
 
-            if (!employeeDatesByMonth[month]) {
-                employeeDatesByMonth[month] = {}; // Khởi tạo đối tượng nếu chưa có
-            }
+                    if (!employeeDatesByMonth[month][employeeNameReal]) {
+                        employeeDatesByMonth[month][employeeNameReal] = new Set();
+                    }
 
-            if (!employeeDatesByMonth[month][employeeNameReal]) {
-                employeeDatesByMonth[month][employeeNameReal] = new Set(); // Khởi tạo Set nếu chưa có
-            }
-
-            // Chỉ tính các hóa đơn hoàn thành của nhân viên
-            if (hoaDon.ten_kh === "Client" && hoaDon.trang_thai === "Đã hoàn thành") {
-                employeeDatesByMonth[month][employeeNameReal].add(employeeDate); // Thêm ngày công vào Set
-            }
-        }
-    });
-
-    // Tính lương cho từng nhân viên dựa trên số ngày công trong tháng
-    const luongTheoNhanVien = {};
-    Object.keys(employeeDatesByMonth).forEach(month => {
-        Object.keys(employeeDatesByMonth[month]).forEach(tenNhanVien => {
-            const soNgayCong = employeeDatesByMonth[month][tenNhanVien].size; // Lấy số ngày công từ size của Set
-            const luong = soNgayCong * 300_000; // Tính lương (300,000 VNĐ mỗi ngày)
-
-            if (!luongTheoNhanVien[tenNhanVien]) {
-                luongTheoNhanVien[tenNhanVien] = {}; // Khởi tạo đối tượng cho nhân viên nếu chưa có
-            }
-
-            luongTheoNhanVien[tenNhanVien][month] = luong; // Lưu lương theo tháng cho nhân viên
-        });
-    });
-
-    // In ra lương nhân viên theo tháng
-    console.log("Lương nhân viên theo tháng:", luongTheoNhanVien);
-
-    const tongTienTheoThang = Array(12).fill(0);
-
-    hoaDonData.forEach(hd => {
-        const month = new Date(hd.gio_vao).getMonth();
-        if (hd.trang_thai === "Đã hoàn thành" && hd.ten_kh === "Client" && hd.ten_nhan_vien !== "Client") {
-            const employeeNameReal = hd.ten_nhan_vien;
-            const totalSalaryForEmployee = luongTheoNhanVien[employeeNameReal][month] || 0;
-            if (!processedMonths.includes(month)) {
-                tongTienTheoThang[month] += totalSalaryForEmployee;
-                processedMonths.push(month);
-            }
-        }
-    });
-
-    // In ra tổng lương của tất cả nhân viên
-    console.log("Tổng lương của tất cả nhân viên:", tongTienTheoThang);
-
-    // Vẽ biểu đồ tổng lương theo tháng
-    const ctx = document.getElementById('chartLuongTheoThang').getContext('2d');
-    const chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: Array.from({ length: 12 }, (_, i) => `Tháng ${i + 1}`),
-            datasets: [{
-                label: 'Tổng Lương (VNĐ)',
-                data: tongTienTheoThang,
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 2
-            }]
-        },
-        options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: true },
-                    title: { display: true, text: `Tổng Lương Nhân Viên Theo Tháng` }
-                },
-                onClick: function (event, chartElements) {
-                    if (chartElements.length > 0) {
-                        const monthIndex = chartElements[0].index;
-                        const selectedMonth = monthIndex + 1;
-                        window.location.href = `/admin/ChiTietLuongNhanVien?month=${selectedMonth}`;
+                    // Chỉ tính các hóa đơn hoàn thành
+                    if (hoaDon.ten_kh === "Client" && hoaDon.trang_thai === "Đã hoàn thành") {
+                        employeeDatesByMonth[month][employeeNameReal].add(employeeDate);
                     }
                 }
-            }
-    });
-</script>
+            });
 
+            // Tính tổng lương theo tháng
+            const tongTienTheoThang = Array(12).fill(0); // Khởi tạo mảng 12 tháng với giá trị 0
+
+            Object.keys(employeeDatesByMonth).forEach(month => {
+                Object.keys(employeeDatesByMonth[month]).forEach(employeeName => {
+                    const soNgayCong = employeeDatesByMonth[month][employeeName].size;
+                    const luong = soNgayCong * 300_000; // Giả sử lương là 300,000 VNĐ/ngày
+                    tongTienTheoThang[month] += luong; // Cộng lương vào tổng lương theo tháng
+                });
+            });
+
+            // In ra tổng lương của tất cả nhân viên
+            console.log("Tổng lương của tất cả nhân viên:", tongTienTheoThang);
+
+            // Vẽ biểu đồ tổng lương theo tháng
+            const ctx = document.getElementById('chartLuongTheoThang').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({ length: 12 }, (_, i) => `Tháng ${i + 1}`),
+                    datasets: [{
+                        label: 'Tổng Lương (VNĐ)',
+                        data: tongTienTheoThang,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true },
+                        title: { display: true, text: `Tổng Lương Nhân Viên Theo Tháng` }
+                    },
+                    onClick: function (event, chartElements) {
+                        if (chartElements.length > 0) {
+                            const monthIndex = chartElements[0].index;
+                            const selectedMonth = monthIndex + 1;
+                            window.location.href = `/admin/ChiTietLuongNhanVien?month=${selectedMonth}`;
+                        }
+                    }
+                }
+            });
+
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var toggleSidebar = document.getElementById("toggleSidebar");
+                var sidebar = document.querySelector(".sidebar");
+                var mainContent = document.querySelector(".main-content");
+
+                toggleSidebar.addEventListener("click", function () {
+                    console.log("click")
+                    if (sidebar.style.width === "55px") {
+                        sidebar.style.width = "200px";
+                        mainContent.style.paddingLeft = "23px";
+                        toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-left" style="padding-right : 10px "></i> Thu gọn';
+                    } else {
+                        sidebar.style.width = "55px";
+                        mainContent.style.paddingLeft = "30px";
+                        toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+                    }
+                });
+            });
+        </script>
+    }
+}

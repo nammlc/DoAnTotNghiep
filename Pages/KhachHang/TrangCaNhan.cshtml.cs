@@ -61,7 +61,7 @@ namespace DoAnTotNghiep.Pages
                     string qr = "On Cart";
                     // Lấy đơn hàng của khách hàng
                     var ordersQuery = "SELECT * FROM hoa_don WHERE ten_kh = @userId && trang_thai != @qr";
-                    HoaDons = connection.Query<HoaDon>(ordersQuery, new { userId = user.ho_ten, qr }).ToList();
+                    HoaDons = connection.Query<HoaDon>(ordersQuery, new { userId = user.ho_ten, qr }).OrderByDescending(h=> h.gio_vao).ToList();
                 }
             }
         }

@@ -13,8 +13,7 @@ namespace DoAnTotNghiep.Data
         public DbSet<HoaDon> HoaDon { get; set; }
         public DbSet<BanAn> BanAn { get; set; }
         public DbSet<KhachHangs> KhachHang { get; set; }
-
-
+        public DbSet<TaiKhoanThanhToan> TaiKhoanThanhToan { get; set; }
         public MyDbContext(DbContextOptions<MyDbContext> options)
             : base(options)
         {
@@ -29,9 +28,9 @@ namespace DoAnTotNghiep.Data
                  .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<HoaDon>()
-                .HasOne(h => h.KhachHang) 
-                .WithMany(k => k.HoaDons) 
-                .HasForeignKey(h => h.khach_hang_id) 
+                .HasOne(h => h.KhachHang)
+                .WithMany(k => k.HoaDons)
+                .HasForeignKey(h => h.khach_hang_id)
                 .OnDelete(DeleteBehavior.SetNull);
         }
     }

@@ -13,6 +13,7 @@ using MySql.Data.MySqlClient;
 using Dapper;
 using Mysqlx;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.EntityFrameworkCore;
 
 namespace DoAnTotNghiep.Pages
 {
@@ -116,6 +117,47 @@ namespace DoAnTotNghiep.Pages
 
             return new OkResult();
         }
+
+        //Lấy thông tin bàn ăn 
+        public BanAn banAn { get; set; }
+        public HoaDon hoaDons { get; set; }
+
+        public async Task<IActionResult> OnGetTableDetail(int tableId)
+        {
+            banAn = await _context.BanAn.FirstOrDefaultAsync(m => m.id == tableId);
+            if (banAn == null)
+            {
+                return new JsonResult(new { success = false, message = "Không tìm thấy bàn ăn." });
+            }
+
+            HoaDon hoaDon = null;
+            if (banAn.hoa_don_id != null)
+            {
+                hoaDon = await _context.HoaDon.FirstOrDefaultAsync(m => m.id == banAn.hoa_don_id);
+            }
+
+            return new JsonResult(new
+            {
+                success = true,
+                banAn = new
+                {
+                    banAn.id,
+                    banAn.ten_ban,
+                    banAn.trang_thai,
+                    banAn.hoa_don_id
+                },
+                hoaDon = hoaDon == null ? null : new
+                {
+                    hoaDon.id,
+                    hoaDon.tong_tien,
+                    gio_vao = hoaDon.gio_vao?.ToString("dd/MM/yyyy HH:mm"),
+                    gio_ra = hoaDon.gio_ra?.ToString("dd/MM/yyyy HH:mm"),
+                    hoaDon.list_mon_an,
+                    hoaDon.ten_ban
+                }
+            });
+        }
+
 
         //kết thúc đơn hàng
         public HoaDon hoaDon { get; set; }

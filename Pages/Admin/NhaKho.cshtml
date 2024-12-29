@@ -1,463 +1,385 @@
 @page
 @model DoAnTotNghiep.Pages.NhaKhoModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @{
     Layout = "_NhanVienLayout";
 }
+@{
+    var userName = HttpContextAccessor.HttpContext?.Session.GetString("User");
+    if (userName != "ADMIN01")
+    {
+        <div style="position: relative; right: -23%; top : 40%"><strong> Bạn không có quyền sử dụng trang web này ! Vui lòng
+                đăng nhập với
+                tài khoản của admin</strong></div>
+    }
+    else
+    {
 
-<div class="main-content">
-    <div class="main-content_header">
-        <div style="font-size: 4.5vh;">Quản lý nhà kho</div>
-        <button>
-            <a href="javascript:void(0)" style="text-decoration: none; color: #fff">
-                <img src="~/css/assets/icon/add.png" alt="">
-                Thêm mới
-            </a>
-        </button>
-    </div>
-    <div class="search-container">
-        <div class="search-container_left">
-            <form method="get" action="@Url.Action("/Admin/NhaKho")">
-                <input type="text" id="searchInput" name="searchQuery" value="@ViewBag.SearchQuery"
-                    placeholder="Tìm kiếm theo tên nguyên liệu..." class="form-control">
-
-
-            </form>
-        </div>
-        <div class="search-container_right">
-            <div class="excel">
-                <img src="~/css/assets/icon/export-excel-50.png" alt="">
+        <div class="main-content">
+            <div class="main-content_header">
+                <div style="font-size: 4.5vh;">Quản lý nhà kho</div>
+                <button>
+                    <a href="javascript:void(0)" style="text-decoration: none; color: #fff">
+                        <img src="~/css/assets/icon/add.png" alt="">
+                        Thêm mới
+                    </a>
+                </button>
             </div>
-            <div class="reload">
-                <img src="~/css/assets/icon/refresh.png" alt="" id="reloadBtn">
+            <div class="search-container">
+                <div class="search-container_left">
+                    <form method="get" action="@Url.Action("/Admin/NhaKho")">
+                        <input type="text" id="searchInput" name="searchQuery" value="@ViewBag.SearchQuery"
+                            placeholder="Tìm kiếm theo tên nguyên liệu..." class="form-control">
+
+
+                    </form>
+                </div>
+                <div class="search-container_right">
+                    <div class="excel">
+                        <img src="~/css/assets/icon/export-excel-50.png" alt="">
+                    </div>
+                    <div class="reload">
+                        <img src="~/css/assets/icon/refresh.png" alt="" id="reloadBtn">
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>STT</th>
-                <th>Tên nguyên liệu</th>
-                <th>Số lượng trong kho</th>
-                <th>Giá nguyên liệu</th>
-                <th>Đơn vị</th>
-                <th>Chú thích</th>
-                <th>Nhà cung cấp</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null && Model.NhaKhos != null && Model.NhaKhos.Any())
-            {
-                // Khai báo biến currentPage
-                int currentPage = (int)(ViewData["CurrentPage"] ?? 1);
-                int pageSize = 10;
-                int stt = (currentPage - 1) * pageSize + 1;
-
-
-                foreach (var nhaKho in Model.NhaKhos)
-                {
+            <table class="table table-bordered table-hover">
+                <thead>
                     <tr>
-                        <td>@stt</td>
-                        <td>@nhaKho.ten_nguyen_lieu</td>
-                        <td>@nhaKho.so_luong_trong_kho</td>
-                        <td>@nhaKho.gia_nguyen_lieu VNĐ</td>
-                        <td>@nhaKho.don_vi</td>
-                        <td>@nhaKho.chu_thich</td>
-                        <td style="display: flex; justify-content: space-between;">
-                            <div>@nhaKho.nha_cung_cap</div>
-                            <div class="hide-icon_form">
-                                <div class="edit-btn" data-id="@nhaKho.id">
-                                    <i class="fa-solid fa-user-pen" style="color: rgb(26, 195, 37);"></i>
+                        <th>STT</th>
+                        <th>Tên nguyên liệu</th>
+                        <th>Số lượng trong kho</th>
+                        <th>Giá nguyên liệu</th>
+                        <th>Đơn vị</th>
+                        <th>Chú thích</th>
+                        <th>Nhà cung cấp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.NhaKhos != null && Model.NhaKhos.Any())
+                    {
+                        // Khai báo biến currentPage
+                        int currentPage = (int)(ViewData["CurrentPage"] ?? 1);
+                        int pageSize = 10;
+                        int stt = (currentPage - 1) * pageSize + 1;
+
+
+                        foreach (var nhaKho in Model.NhaKhos)
+                        {
+                            <tr class="all-dish">
+                                <td>@stt</td>
+                                <td>@nhaKho.ten_nguyen_lieu</td>
+                                <td>@nhaKho.so_luong_trong_kho</td>
+                                <td>@nhaKho.gia_nguyen_lieu VNĐ</td>
+                                <td>@nhaKho.don_vi</td>
+                                <td>@nhaKho.chu_thich</td>
+                                <td style="display: flex; justify-content: space-between;">
+                                    <div>@nhaKho.nha_cung_cap</div>
+                                    <div class="hide-icon_form">
+                                        <div class="edit-btn" data-id="@nhaKho.id">
+                                            <i class="fa-solid fa-user-pen" style="color: rgb(26, 195, 37);"></i>
+                                        </div>
+                                        <div class="delete-btn" data-id="@nhaKho.id" data-code="@nhaKho.id"
+                                            style="border: none; padding-left: 5px;">
+                                            <i class="fa-solid fa-x" style="color: red;"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center">Không có dữ liệu</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+
+                </ul>
+            </nav>
+        </div>
+        <div class="footer"></div>
+
+        <div class="modal fade" id="addNewStaffModal" tabindex="-1" aria-labelledby="addNewStaffModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addNewStaffModalLabel">Thêm mới Nguyên Liệu</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close-btn">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="employeeForm" asp-page-handler="NguyenLieu" method="post">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="ma_nguyen_lieu" class="form-label">Mã Nguyên Liệu:</label>
+                                    <input type="text" class="form-control" id="ma_nguyen_lieu" name="ma_nguyen_lieu" required
+                                        value="Create Automatically" readonly />
                                 </div>
-                                <div class="delete-btn" data-id="@nhaKho.id" data-code="@nhaKho.id"
-                                    style="border: none; padding-left: 5px;">
-                                    <i class="fa-solid fa-x" style="color: red;"></i>
+                                <div class="col-md-6">
+                                    <label for="ten_nguyen_lieu" class="form-label">Tên nguyên liệu:</label>
+                                    <input type="text" class="form-control" id="ten_nguyen_lieu" name="ten_nguyen_lieu"
+                                        required>
                                 </div>
                             </div>
-                        </td>
-                    </tr>
-                    stt++;
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="don_vi" class="form-label">Đơn vị tính</label>
+                                    <select id="don_vi" name="don_vi" class="form-control">
+                                        <option value="">Chọn đơn vị</option>
+                                        <option value="kg">Kg</option>
+                                        <option value="Gói">Gói</option>
+                                        <option value="Quả">Quả</option>
+                                        <option value="Chai">Chai</option>
+                                        <option value="Lít">Lít</option>
+                                        <option value="Hộp">Hộp</option>
+                                        <option value="Khác">Khác</option>
+                                    </select>
+                                    <input type="text" id="don_vi_other" name="don_vi_other" class="form-control mt-2 d-none"
+                                        placeholder="Nhập đơn vị khác" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="gia_nguyen_lieu" class="form-label">Giá nhập nguyên liệu:</label>
+                                    <input type="text" class="form-control" id="gia_nguyen_lieu" name="gia_nguyen_lieu"
+                                        required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="nha_cung_cap" class="form-label">Chọn nhà cung cấp</label>
+                                    <select id="nha_cung_cap" name="nha_cung_cap" class="form-control">
+                                        <option value="">Chọn nhà cung cấp</option>
+                                        <option value="Mật ong Đà Lạt">Mật ong Đà Lạt</option>
+                                        <option value="Đường Thành Côngi">Đường Thành Công</option>
+                                        <option value="Vinamilk">Vinamilk</option>
+                                        <option value="Bột Cacao Đà Lạt">Bột Cacao Đà Lạt</option>
+                                        <option value="Đá Long Biên">Đá Long Biên</option>
+                                        <option value="Syrup Phúc Long">Syrup Phúc Long</option>
+                                        <option value="Bột mì Hà Nội">Bột mì Hà Nội</option>
+                                        <option value="Bột nở Việt Mỹ">Bột nở Việt Mỹ</option>
+                                        <option value="Trứng gà Đồng Nai">Trứng gà Đồng Nai</option>
+                                        <option value="Nestle">Nestle</option>
+                                        <option value="Syrup Phúc Long">Syrup Phúc Long</option>
+                                        <option value="Yến mạch Quảng Ninh">Yến mạch Quảng Ninh</option>
+                                        <option value="Nước suối Đà Lạt">Nước suối Đà Lạt</option>
+                                        <option value="Gelatin Đà Lạt">Gelatin Đà Lạt</option>
+                                        <option value="Dừa Bến Tre">Dừa Bến Tre</option>
+                                        <option value="Vườn chanh Cần Thơ">Vườn chanh Cần Thơ</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="so_luong_trong_kho" class="form-label">Số lượng nhập ban đầu:</label>
+                                    <input type="text" class="form-control" id="so_luong_trong_kho" name="so_luong_trong_kho"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="chu_thich" class="form-label">Chú thích:</label>
+                                    <input type="text" class="form-control" id="chu_thich" name="chu_thich" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col text-end">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                        id="close-btn2">Hủy</button>
+                                    <button type="submit" class="btn btn-primary"
+                                        style="background-color: rgb(13, 179, 13);">Lưu</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có chắc chắn muốn xóa nguyên liệu này <strong id="employeeCode"></strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                document.querySelector(".main-content_header button").addEventListener("click", function () {
+
+                    var myModal = new bootstrap.Modal(document.getElementById('addNewDishModal'), {
+                        keyboard: false
+                    });
+                    myModal.show();
+                });
+                document.getElementById("close-btn").addEventListener("click", function () {
+                    console.log("tắt modal");
+                    var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewDishModal'));
+                    if (myModal) {
+                        myModal.hide();
+                    }
+                });
+                document.getElementById("close-btn2").addEventListener("click", function () {
+                    var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewDishModal'));
+                    if (myModal) {
+                        myModal.hide();
+                    }
+                });
+
+
+                document.querySelectorAll(".edit-btn").forEach(function (div) {
+                    div.addEventListener("click", function () {
+                        var id = this.getAttribute('data-id');
+                        var editUrl = '@Url.Page("/MonAn")?handler=edit&&id=__id__'.replace('__id__', id);
+                        console.log(editUrl)
+
+                        window.location.href = editUrl;
+                    });
+                });
+
+                document.querySelectorAll(".delete-btn").forEach(function (div) {
+                    div.addEventListener("click", function () {
+                        deleteDishId = this.getAttribute("data-id");
+                        console.log(deleteDishId);
+                        var employeeCode = this.getAttribute("data-code");
+
+                        // Hiển thị mã món ăn trên modal
+                        document.getElementById("employeeCode").innerText = employeeCode;
+
+                        // Hiển thị modal
+                        $('#confirmDeleteModal').modal('show');
+                    });
+                });
+
+                document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+                    if (deleteDishId) {
+
+                        const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                        fetch(`/Admin/MonAn?handler=Delete&id=${deleteDishId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                "XSRF-TOKEN": csrfToken
+                            }
+                        })
+                            .then(response => {
+                                console.log(response.status)
+                                if (response.ok) {
+                                    alert("Xóa thành công");
+                                    window.location.reload();
+                                } else {
+                                    return response.text().then(text => {
+                                        alert("Xóa không thành công: " + text);
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Có lỗi xảy ra:', error);
+                                alert("Có lỗi xảy ra khi xóa.");
+                            })
+                            .finally(() => {
+                                $('#confirmDeleteModal').modal('hide');
+                            });
+                    }
+                });
+
+
+            });
+            document.getElementById("reloadBtn").addEventListener("click", function () {
+                window.location.reload();
+            });
+
+
+
+        </script>
+        <script>
+            const dishPerPage = 10; // Số món ăn mỗi trang
+            let currentPage = 1; // Trang hiện tại
+            let dishs = Array.from(document.querySelectorAll('.all-dish')); // Chuyển NodeList thành mảng
+
+            function filterDishs(searchQuery) {
+                const filteredDishs = [];
+                dishs.forEach(dish => {
+                    const name = dish.children[2]?.textContent.toLowerCase() || ''; // Cột "Tên món ăn"
+                    const code = dish.children[1]?.textContent.toLowerCase() || ''; // Cột "Mã món ăn"
+                    if (name.includes(searchQuery) || code.includes(searchQuery)) {
+                        filteredDishs.push(dish);
+                    }
+                });
+                return filteredDishs;
+            }
+
+            function showPage(page, filteredDishs) {
+                const start = (page - 1) * dishPerPage;
+                const end = start + dishPerPage;
+
+                dishs.forEach(dish => {
+                    dish.style.display = "none"; // Ẩn tất cả
+                });
+
+                filteredDishs.forEach((dish, index) => {
+                    if (index >= start && index < end) {
+                        dish.style.display = "table-row"; // Hiển thị món ăn nếu nằm trong khoảng
+                    }
+                });
+
+                updatePagination(page, filteredDishs.length);
+            }
+
+            function updatePagination(page, totalFilteredDishs) {
+                const pagination = document.querySelector('.pagination');
+                const totalPages = Math.ceil(totalFilteredDishs / dishPerPage);
+                pagination.innerHTML = '';
+
+                if (page > 1) {
+                    pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page - 1})">«</a></li>`;
+                }
+
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === page) {
+                        pagination.innerHTML += `<li class="page-item active"><a class="page-link" href="#">${i}</a></li>`;
+                    } else {
+                        pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${i})">${i}</a></li>`;
+                    }
+                }
+
+                if (page < totalPages) {
+                    pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page + 1})">»</a></li>`;
                 }
             }
-            else
-            {
-                <tr>
-                    <td colspan="7" class="text-center">Không có dữ liệu</td>
-                </tr>
+
+            function changePage(page) {
+                currentPage = page;
+                const filteredDishs = filterDishs(document.getElementById('searchInput').value.toLowerCase());
+                showPage(currentPage, filteredDishs);
             }
-        </tbody>
-    </table>
 
-    @if (Model != null && Model.NhaKhos != null && Model.NhaKhos.Any())
-    {
-        int currentPage = (int)(ViewData["CurrentPage"] ?? 1);
-        int totalPages = (int)(ViewData["TotalPages"] ?? 0);
-        int TotalStaff = (int)(ViewData["TotalStaff"]);
-        <nav aria-label="Page navigation example" class="pagination-container">
-            <div class="" style="padding-top: 8px;">Có @TotalStaff Nguyên Liệu</div>
-            <ul class="pagination">
-                <li class="page-item @(currentPage > 1 ? "" : "disabled")">
-                    <a class="page-link"
-                        href="@Url.Page("NhaKho", new { page = 1, searchQuery = ViewData["SearchQuery"] })">«</a>
-                </li>
-                <li class="page-item @(currentPage > 1 ? "" : "disabled")">
-                    <a class="page-link"
-                        href="@Url.Page("NhaKho", new { page = currentPage - 1, searchQuery = ViewData["SearchQuery"] })">‹</a>
-                </li>
-                <li class="page-item active">
-                    <span class="page-link">@currentPage</span>
-                </li>
-                <li class="page-item @(currentPage < totalPages ? "" : "disabled")">
-                    <a class="page-link"
-                        href="@Url.Page("NhaKho", new { page = currentPage + 1, searchQuery = ViewData["SearchQuery"] })">›</a>
-                </li>
-                <li class="page-item @(currentPage < totalPages ? "" : "disabled")">
-                    <a class="page-link"
-                        href="@Url.Page("NhaKho", new { page = totalPages, searchQuery = ViewData["SearchQuery"] })">»</a>
-                </li>
-            </ul>
-            <div class="pagination-info" style="padding: 8px;">
-                <span>Tổng số trang: @Model.TotalPages</span>
-            </div>
-        </nav>
-    }
-
-
-
-</div>
-</div>
-<div class="footer"></div>
-
-<div class="modal fade" id="addNewStaffModal" tabindex="-1" aria-labelledby="addNewStaffModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addNewStaffModalLabel">Thêm mới Nguyên Liệu</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close-btn">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="employeeForm" asp-page-handler="NguyenLieu" method="post">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="ma_nguyen_lieu" class="form-label">Mã Nguyên Liệu:</label>
-                            <input type="text" class="form-control" id="ma_nguyen_lieu" name="ma_nguyen_lieu" required
-                                value="Create Automatically" readonly />
-                        </div>
-                        <div class="col-md-6">
-                            <label for="ten_nguyen_lieu" class="form-label">Tên nguyên liệu:</label>
-                            <input type="text" class="form-control" id="ten_nguyen_lieu" name="ten_nguyen_lieu" required>
-                        </div>                      
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="don_vi" class="form-label">Đơn vị tính</label>
-                            <select id="don_vi" name="don_vi" class="form-control">
-                                <option value="">Chọn đơn vị</option>
-                                <option value="kg">Kg</option>
-                                <option value="Gói">Gói</option>
-                                <option value="Quả">Quả</option>
-                                <option value="Chai">Chai</option>
-                                <option value="Lít">Lít</option>
-                                <option value="Hộp">Hộp</option>                             
-                                <option value="Khác">Khác</option>
-                            </select>
-                            <input type="text" id="don_vi_other" name="don_vi_other" class="form-control mt-2 d-none"
-                                placeholder="Nhập đơn vị khác" />
-                        </div>
-                        <div class="col-md-4">
-                            <label for="gia_nguyen_lieu" class="form-label">Giá nhập nguyên liệu:</label>
-                            <input type="text" class="form-control" id="gia_nguyen_lieu" name="gia_nguyen_lieu" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="nha_cung_cap" class="form-label">Chọn nhà cung cấp</label>
-                            <select id="nha_cung_cap" name="nha_cung_cap" class="form-control">
-                                <option value="">Chọn nhà cung cấp</option>
-                                <option value="Mật ong Đà Lạt">Mật ong Đà Lạt</option>
-                                <option value="Đường Thành Côngi">Đường Thành Công</option>
-                                <option value="Vinamilk">Vinamilk</option>
-                                <option value="Bột Cacao Đà Lạt">Bột Cacao Đà Lạt</option>
-                                <option value="Đá Long Biên">Đá Long Biên</option>
-                                <option value="Syrup Phúc Long">Syrup Phúc Long</option>                             
-                                <option value="Bột mì Hà Nội">Bột mì Hà Nội</option>
-                                <option value="Bột nở Việt Mỹ">Bột nở Việt Mỹ</option>
-                                <option value="Trứng gà Đồng Nai">Trứng gà Đồng Nai</option>
-                                <option value="Nestle">Nestle</option>
-                                <option value="Syrup Phúc Long">Syrup Phúc Long</option>
-                                <option value="Yến mạch Quảng Ninh">Yến mạch Quảng Ninh</option>
-                                <option value="Nước suối Đà Lạt">Nước suối Đà Lạt</option>
-                                <option value="Gelatin Đà Lạt">Gelatin Đà Lạt</option>
-                                <option value="Dừa Bến Tre">Dừa Bến Tre</option>
-                                <option value="Vườn chanh Cần Thơ">Vườn chanh Cần Thơ</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="so_luong_trong_kho" class="form-label">Số lượng nhập ban đầu:</label>
-                            <input type="text" class="form-control" id="so_luong_trong_kho" name="so_luong_trong_kho" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="chu_thich" class="form-label">Chú thích:</label>
-                            <input type="text" class="form-control" id="chu_thich" name="chu_thich" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col text-end">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-btn2">Hủy</button>
-                            <button type="submit" class="btn btn-primary" 
-                                style="background-color: rgb(13, 179, 13);">Lưu</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Bạn có chắc chắn muốn xóa nguyên liệu này <strong id="employeeCode"></strong>?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var toggleSidebar = document.getElementById("toggleSidebar");
-        var sidebar = document.querySelector(".sidebar");
-        var mainContent = document.querySelector(".main-content");
-
-        toggleSidebar.addEventListener("click", function () {
-            console.log("click")
-            if (sidebar.style.width === "55px") {
-                sidebar.style.width = "200px";
-                mainContent.style.paddingLeft = "23px";
-                toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-left" style="padding-right : 10px "></i> Thu gọn';
-            } else {
-                sidebar.style.width = "55px";
-                mainContent.style.paddingLeft = "30px";
-                toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
-            }
-        });
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelector(".main-content_header button").addEventListener("click", function () {
-            var myModal = new bootstrap.Modal(document.getElementById('addNewStaffModal'), {
-                keyboard: false
+            document.getElementById('searchInput').addEventListener('input', function () {
+                const searchQuery = this.value.toLowerCase();
+                const filteredDishs = filterDishs(searchQuery);
+                currentPage = 1;
+                showPage(currentPage, filteredDishs);
             });
-            myModal.show();
-        });
-        document.getElementById("close-btn").addEventListener("click", function () {
-            console.log("tắt modal");
-            var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewStaffModal'));
-            if (myModal) {
-                myModal.hide(); 
-            }
-        });
-        document.getElementById("close-btn2").addEventListener("click", function () {
-            console.log("tắt hộ cái");
-            var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewStaffModal'));
-            if (myModal) {
-                myModal.hide(); 
-            }
-        });
 
-        document.querySelectorAll(".edit-btn").forEach(function (div) {
-            div.addEventListener("click", function () {
-                var id = this.getAttribute('data-id');
-                var editUrl = '@Url.Page("/NhaKho")?handler=edit&&id=__id__'.replace('__id__', id);
-                console.log(editUrl)
-
-                window.location.href = editUrl;
-            });
-        });
-
-        document.querySelectorAll(".delete-btn").forEach(function (div) {
-            div.addEventListener("click", function () {
-                deleteEmployeeId = this.getAttribute("data-id");
-                console.log(deleteEmployeeId);
-                var employeeCode = this.getAttribute("data-code");
-
-                // Hiển thị mã Nguyên Liệu trên modal
-                document.getElementById("employeeCode").innerText = employeeCode;
-
-                // Hiển thị modal
-                $('#confirmDeleteModal').modal('show');
-            });
-        });
-
-        document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
-            if (deleteEmployeeId) {
-                const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                fetch(`/Admin/NhaKho?handler=Delete&id=${deleteEmployeeId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        "XSRF-TOKEN": csrfToken 
-                    }
-                })
-                    .then(response => {
-                        console.log(response.status)
-                        if (response.ok) {
-                            alert("Xóa thành công");
-                            window.location.reload();
-                        } else {
-                            return response.text().then(text => {
-                                alert("Xóa không thành công: " + text);
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Có lỗi xảy ra:', error);
-                        alert("Có lỗi xảy ra khi xóa.");
-                    })
-                    .finally(() => {
-                        $('#confirmDeleteModal').modal('hide');
-                    });
-            }
-        });
-
-        document.querySelectorAll('.close, .btn-secondary').forEach(function (element) {
-            element.addEventListener('click', function () {
-                console.log("click")
-                $('#confirmDeleteModal').modal('hide');
-            });
-        });
-
-    });
-    document.getElementById("reloadBtn").addEventListener("click", function () {
-        window.location.reload();
-    });
-
-
-
-</script>
-<script>
-    const dishesPerPage = 12; // Số món ăn mỗi trang
-    let currentPage = 1; // Trang hiện tại
-    let dishes = document.querySelectorAll('.dish-item'); // Tất cả món ăn
-
-    function filterDishes(searchQuery) {
-        const filteredDishes = [];
-        dishes.forEach(dish => {
-            const name = dish.querySelector('.name_dish').textContent.toLowerCase();
-            const type = dish.getAttribute('data-type') ? dish.getAttribute('data-type').toLowerCase() : '';
-            const choose = dish.getAttribute('data-choose') ? dish.getAttribute('data-choose').toLowerCase() : '';
-            if (name.includes(searchQuery) || type.includes(searchQuery) || choose.includes(searchQuery)) {
-                dish.style.display = "block"; // Hiển thị món ăn nếu phù hợp
-                filteredDishes.push(dish); // Thêm món ăn vào danh sách đã lọc
-            } else {
-                dish.style.display = "none"; // Ẩn món ăn nếu không phù hợp
-            }
-        });
-        return filteredDishes; // Trả về danh sách món ăn đã lọc
+            showPage(currentPage, dishs);
+        </script>
     }
-
-    function showPage(page, filteredDishes) {
-        const start = (page - 1) * dishesPerPage;
-        const end = start + dishesPerPage;
-
-        // Ẩn tất cả món ăn
-        dishes.forEach(dish => {
-            dish.style.display = "none"; // Ẩn tất cả
-        });
-
-        // Hiển thị món ăn theo trang trong danh sách đã lọc
-        filteredDishes.forEach((dish, index) => {
-            if (index >= start && index < end) {
-                dish.style.display = "block"; // Hiển thị món ăn nếu nằm trong khoảng
-            }
-        });
-
-        // Cập nhật trạng thái phân trang
-        updatePagination(page, filteredDishes.length);
-    }
-
-    function updatePagination(page, totalDishes) {
-        const pagination = document.querySelector('.pagination');
-        const totalPages = Math.ceil(totalDishes / dishesPerPage); // Tính tổng số trang
-        pagination.innerHTML = ''; // Xóa danh sách phân trang hiện tại
-
-        // Thêm nút trước
-        if (page > 1) {
-            pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page - 1}, ${totalDishes})">«</a></li>`;
-        }
-
-        // Thêm các nút trang
-        for (let i = 1; i <= totalPages; i++) {
-            if (i === page) {
-                pagination.innerHTML += `<li class="page-item active"><a class="page-link" href="#">${i}</a></li>`;
-            } else {
-                pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${i}, ${totalDishes})">${i}</a></li>`;
-            }
-        }
-
-        // Thêm nút sau
-        if (page < totalPages) {
-            pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${page + 1}, ${totalDishes})">»</a></li>`;
-        }
-    }
-
-    function changePage(page, totalDishes) {
-        currentPage = page; // Cập nhật trang hiện tại
-        const filteredDishes = filterDishes(document.getElementById('searchInput').value.toLowerCase());
-        showPage(currentPage, filteredDishes); // Hiển thị trang
-    }
-
-    document.getElementById('searchInput').addEventListener('input', function () {
-        const searchQuery = this.value.toLowerCase();
-        const filteredDishes = filterDishes(searchQuery);
-        currentPage = 1; // Reset trang về 1 khi tìm kiếm
-        showPage(currentPage, filteredDishes); // Hiển thị lại trang với món ăn đã lọc
-    });
-
-    document.getElementById('doUong').addEventListener('click', function () {
-        const searchQuery = this.value.toLowerCase();
-        const filteredDishes = filterDishes(searchQuery);
-        currentPage = 1;
-        showPage(currentPage, filteredDishes);
-    });
-
-    document.getElementById('monAn').addEventListener('click', function () {
-        const searchQuery = this.value.toLowerCase();
-        console.log("click");
-        const filteredDishes = filterDishes(searchQuery);
-        currentPage = 1;
-        showPage(currentPage, filteredDishes);
-    });
-
-    document.getElementById('tatCaMon').addEventListener('click', function () {
-        const searchQuery = this.value.toLowerCase();
-        const filteredDishes = filterDishes(searchQuery);
-        currentPage = 1;
-        showPage(currentPage, filteredDishes);
-    });
-    document.getElementById('select').addEventListener('change', function () {
-        const searchQuery = this.value.toLowerCase();
-        console.log("change");
-        const filteredDishes = filterDishes(searchQuery);
-        currentPage = 1;
-        showPage(currentPage, filteredDishes);
-    });
-    // Khởi động hiển thị trang đầu tiên
-    showPage(currentPage, dishes);
-</script>
+}

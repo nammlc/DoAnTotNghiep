@@ -10,6 +10,32 @@
     Layout = "_KhachHangLayout";
 }
 
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination a {
+        padding: 10px;
+        text-decoration: none;
+        color: #007bff;
+        margin: 0 5px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .pagination a:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .pagination span {
+        padding: 10px;
+        margin: 0 5px;
+    }
+</style>
 <div class="container mt-4">
     <!-- Thông tin cá nhân -->
     <div class="card">
@@ -57,7 +83,7 @@
             <h4>Danh Sách Đơn Hàng</h4>
         </div>
         <div class="card-body">
-            <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped" id="orderTable">
                 <thead class="table-light">
                     <tr>
                         <th>ID hóa đơn</th>
@@ -65,49 +91,57 @@
                         <th>Tổng tiền</th>
                         <th>Món ăn</th>
                         <th>Địa chỉ giao hàng</th>
-                        <th>Số điện Thoại giao hàng</th>
-                        <th>Trạng Thái Đơn Hàng</i></th>
+                        <th>Số điện thoại giao hàng</th>
+                        <th>Trạng thái đơn hàng</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="orderList">
                     @if (Model.HoaDons == null || !Model.HoaDons.Any())
                     {
                         <p> Bạn chưa mua hàng</p>
                     }
                     else
                     {
-
-
                         @foreach (var order in Model.HoaDons)
                         {
-                            <tr>
+                            <tr class="order-row">
                                 <td>@order.id</td>
                                 <td>@order.gio_vao</td>
                                 <td><strong>@order.tong_tien.ToString("#,##0")</strong> VNĐ</td>
                                 <td style="color: rgb(20, 20, 238);" class="detail-info">Xem danh sách món ăn</td>
                                 <td>@order.ten_ban</td>
                                 <td>@order.ten_nhan_vien</td>
-                                @if(order.trang_thai == "Đã hoàn thành"){
-                                <td style="color: #527818;">@order.trang_thai</td>
-                                    
+                                @if (order.trang_thai == "Đã hoàn thành")
+                                {
+                                    <td style="color: #527818;">@order.trang_thai</td>
                                 }
-                                else if(order.trang_thai == "Đã bị từ chối"){
+                                else if (order.trang_thai == "Đã bị từ chối")
+                                {
                                     <td style="color: rgb(206, 9, 9);">@order.trang_thai</td>
                                 }
-                                else{
+                                else
+                                {
                                     <td style="color: rgb(21, 64, 236);">@order.trang_thai</td>
-
                                 }
                             </tr>
-                        }}
+                        }
+                    }
                 </tbody>
             </table>
+
+            <!-- Phân trang -->
+            <div id="pagination" class="pagination">
+                <button id="prevPage" class="btn btn-primary" disabled>Trang trước</button>
+                <span id="pageInfo"></span>
+                <button id="nextPage" class="btn btn-primary">Trang sau</button>
+            </div>
         </div>
     </div>
+
 </div>
 
 
-<div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel"
+<div class="modal fade" id="orderDetailModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -144,14 +178,16 @@
 
     document.querySelectorAll('.detail-info').forEach((cell, index) => {
         cell.style.cursor = "pointer";
-
+        console.log("click");
         cell.addEventListener('click', function () {
             const hoadon = hoaDons[index];
             const listMonAn = JSON.parse(hoadon.list_mon_an);
-
+            console.log(listMonAn);
+            const orderDetailsModalLabel = document.getElementById("orderDetailsModalLabel");
+            const orderDetailModal = document.getElementById("orderDetailModal");
+            orderDetailsModalLabel.textContent = `Chi tiết đơn hàng ${hoadon.id}`;
             const orderItemsTable = document.getElementById("orderItemsTable");
             orderItemsTable.innerHTML = '';
-
             listMonAn.forEach(item => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -162,7 +198,7 @@
                 `;
                 orderItemsTable.appendChild(row);
             });
-            $('#orderDetailsModal').modal('show');
+            $('#orderDetailModal').modal('show');
         });
     });
     document.getElementById("close-btn2").addEventListener("click", function () {
@@ -217,4 +253,58 @@
         }
     });
 
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const rowsPerPage = 10;  // Số hàng trên mỗi trang
+        let currentPage = 1;  // Trang hiện tại
+
+        // Lấy tất cả các dòng trong bảng
+        const rows = Array.from(document.querySelectorAll('.order-row'));
+        const totalRows = rows.length;
+
+        // Tính toán tổng số trang
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+        // Hàm hiển thị danh sách hóa đơn cho trang hiện tại
+        function displayPage(page) {
+            const start = (page - 1) * rowsPerPage;
+            const end = page * rowsPerPage;
+
+            // Ẩn tất cả các dòng
+            rows.forEach((row, index) => {
+                if (index >= start && index < end) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Cập nhật thông tin trang
+            document.getElementById('pageInfo').innerText = `Trang ${page} / ${totalPages}`;
+
+            // Cập nhật trạng thái nút phân trang
+            document.getElementById('prevPage').disabled = page === 1;
+            document.getElementById('nextPage').disabled = page === totalPages;
+        }
+
+        // Các sự kiện cho nút phân trang
+        document.getElementById('prevPage').addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                displayPage(currentPage);
+            }
+        });
+
+        document.getElementById('nextPage').addEventListener('click', function () {
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayPage(currentPage);
+            }
+        });
+
+        // Hiển thị trang đầu tiên
+        displayPage(currentPage);
+    });
 </script>

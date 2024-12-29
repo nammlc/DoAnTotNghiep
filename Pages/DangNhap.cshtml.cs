@@ -34,13 +34,13 @@ public class DangNhapModel : PageModel
     }
     public IActionResult OnPostLogout()
     {
-        
+
         HttpContext.Session.Clear();
 
-        
-        HttpContext.Response.Cookies.Delete(".AspNetCore.Cookies"); 
 
-        
+        HttpContext.Response.Cookies.Delete(".AspNetCore.Cookies");
+
+
         return RedirectToPage("/DangNhap");
     }
 
@@ -68,7 +68,14 @@ public class DangNhapModel : PageModel
                         "login"
                     )
                 );
-                return RedirectToPage("/Home");
+                if (user.vi_tri != "Admin")
+                {
+                    return RedirectToPage("/Home");
+                }
+                else
+                {
+                    return RedirectToPage("/Admin/thongke");
+                }
             }
             else
             {

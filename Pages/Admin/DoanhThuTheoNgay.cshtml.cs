@@ -33,7 +33,7 @@ namespace DoAnTotNghiep.Pages
             int daysInMonth = DateTime.DaysInMonth(2024, month);
             RevenueData = new List<int>(new int[daysInMonth]);
             var dailyRevenueQuery = _context.HoaDon
-                .Where(h => h.gio_vao.HasValue && h.gio_vao.Value.Month == month)
+                .Where(h => h.gio_vao.HasValue && h.gio_vao.Value.Month == month && h.trang_thai == "Đã hoàn thành")
                 .GroupBy(h => h.gio_vao.Value.Day) 
                 .Select(g => new { Day = g.Key, TotalRevenue = g.Sum(h => h.tong_tien) })
                 .ToList();

@@ -13,7 +13,6 @@ using MySql.Data.MySqlClient;
 using Dapper;
 using Mysqlx;
 
-
 namespace DoAnTotNghiep.Pages
 {
     public class OrderModel : PageModel
@@ -50,7 +49,7 @@ namespace DoAnTotNghiep.Pages
                     trang_thai = hd.trang_thai ?? "",
                     ten_kh = hd.ten_kh
                 })
-                
+
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(searchQuery))
@@ -66,12 +65,17 @@ namespace DoAnTotNghiep.Pages
             ViewData["TotalPages"] = TotalPages;
             ViewData["CurrentPage"] = pageNumber;
             ViewData["TongHoaDon"] = allBill.Count();
-            
-            
-            HoaDons = allBill.ToList();
+
+            // var dailyRevenueQuery = _context.HoaDon
+            //     .Where(h => h.gio_vao.HasValue && h.gio_vao.Value.Month == month && h.trang_thai == "Đã hoàn thành")
+            //     .GroupBy(h => h.gio_vao.Value.Day) 
+            //     .Select(g => new { Day = g.Key, TotalRevenue = g.Sum(h => h.tong_tien) })
+            //     .ToList();
+            HoaDons = allBill.Where(h => h.ten_nhan_vien == HttpContext.Session.GetString("User")).ToList();
             long tongTienTrongCa = 0;
-            foreach(var hoadon in HoaDons){
-                if(hoadon.ten_nhan_vien == HttpContext.Session.GetString("User"))
+            foreach (var hoadon in HoaDons)
+            {
+                if (hoadon.ten_nhan_vien == HttpContext.Session.GetString("User"))
                 {
                     tongTienTrongCa = tongTienTrongCa + hoadon.tong_tien;
                 }

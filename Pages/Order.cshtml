@@ -5,7 +5,7 @@
 }
 
 <div class="order-header">
-    <div><strong>Chi tiết hóa đơn</strong></div>
+    <div id="bill_id"><strong>Chi tiết hóa đơn</strong></div>
     <div><strong>Tổng tiền trong tháng : @ViewData["tongTienTrongCa"] VNĐ</strong></div>
 </div>
 <div class="" style="display: flex; justify-content: space-between;">
@@ -40,30 +40,30 @@
             int stt = 1;
             foreach (var hoadon in Model.HoaDons)
             {
-                if(hoadon.ten_nhan_vien == HttpContext.Session.GetString("User"))
+                if (hoadon.ten_nhan_vien == HttpContext.Session.GetString("User"))
                 {
-                <tr class="bill-item">
-                    <td>@stt</td>
-                    <td>@hoadon.id</td>
-                    <td>@hoadon.ten_ban</td>
-                    <td>@hoadon.gio_vao?.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    <td>@hoadon.gio_ra?.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    <td>@hoadon.tong_tien.ToString("#,##0") VNĐ</td>
-                    <td class = "detail-info" style = "color : rgb(2, 2, 151)">Ấn để xem danh sách</td>
-                    <td>@hoadon.ten_nhan_vien</td>
-                    @if (hoadon.trang_thai.Equals("Đã hoàn thành"))
-                    {
-                        <td style="color: green">@hoadon.trang_thai </td>
-                    }
-                    else
-                    {
-                        <td style="color: red;">@hoadon.trang_thai </td>
-                    }
+                    <tr class="bill-item">
+                        <td>@stt</td>
+                        <td>@hoadon.id</td>
+                        <td>@hoadon.ten_ban</td>
+                        <td>@hoadon.gio_vao?.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@hoadon.gio_ra?.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@hoadon.tong_tien.ToString("#,##0") VNĐ</td>
+                        <td class="detail-info" style="color : rgb(2, 2, 151)">Ấn để xem danh sách</td>
+                        <td>@hoadon.ten_nhan_vien</td>
+                        @if (hoadon.trang_thai.Equals("Đã hoàn thành"))
+                        {
+                            <td style="color: green">@hoadon.trang_thai </td>
+                        }
+                        else
+                        {
+                            <td style="color: red;">@hoadon.trang_thai </td>
+                        }
 
 
-                </tr>
+                    </tr>
 
-                stt++;
+                    stt++;
                 }
             }
         }
@@ -73,16 +73,16 @@
 
 <!-- Modal hiển thị chi tiết đơn hàng -->
 <div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel"
-     aria-hidden="true">
+    aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="orderDetailsModalLabel">Chi tiết đơn hàng</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id = "close-btn1">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close-btn1">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" style ="max-height : 400px; overflow : scroll">
+            <div class="modal-body" style="max-height : 400px; overflow : scroll">
                 <table class="table">
                     <thead>
                         <tr>
@@ -98,7 +98,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" id = "close-btn2">Đóng</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-btn2">Đóng</button>
             </div>
         </div>
     </div>
@@ -218,8 +218,9 @@
         cell.addEventListener('click', function () {
             const hoadon = hoaDons[index];
             const listMonAn = JSON.parse(hoadon.list_mon_an);
-
+            const orderDetailsModalLabel = document.getElementById("orderDetailsModalLabel");
             const orderItemsTable = document.getElementById("orderItemsTable");
+            orderDetailsModalLabel.textContent = `Chi tiết đơn hàng ${hoadon.id}`;
             orderItemsTable.innerHTML = '';
 
             listMonAn.forEach(item => {
@@ -235,17 +236,17 @@
             $('#orderDetailsModal').modal('show');
         });
     });
-     document.getElementById("close-btn2").addEventListener("click", function () {
-            var myModal = bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal'));
-            if (myModal) {
-                myModal.hide();
-            }
-        });
-     document.getElementById("close-btn1").addEventListener("click", function () {
+    document.getElementById("close-btn2").addEventListener("click", function () {
+        var myModal = bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal'));
+        if (myModal) {
+            myModal.hide();
+        }
+    });
+    document.getElementById("close-btn1").addEventListener("click", function () {
 
-            var myModal = bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal'));
-            if (myModal) {
-                myModal.hide();
-            }
-        });
+        var myModal = bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal'));
+        if (myModal) {
+            myModal.hide();
+        }
+    });
 </script>

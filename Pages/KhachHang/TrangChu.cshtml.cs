@@ -13,6 +13,7 @@ using MySql.Data.MySqlClient;
 using Dapper;
 using Mysqlx;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace DoAnTotNghiep.Pages
@@ -167,7 +168,7 @@ namespace DoAnTotNghiep.Pages
 
                 var hoaDon = new HoaDon
                 {
-                    tong_tien = orderData.tong_tien *1000,
+                    tong_tien = orderData.tong_tien,
                     gio_vao = DateTime.Now,
                     gio_ra = DateTime.Now,
                     list_mon_an = JsonSerializer.Serialize(orderData.list_mon_an, jsonOptions),
@@ -214,17 +215,18 @@ namespace DoAnTotNghiep.Pages
 
         //Tạo mã qr
         public QRCodeViewModel QRCodeModel { get; set; } = new QRCodeViewModel();
+        public TaiKhoanThanhToan taiKhoanThanhToan { get; set; }
 
         public async Task<IActionResult> OnGetGenerateQRCode(decimal amount)
         {
             try
             {
-
-                string bankId = "TPBANK";
-                string accountNumber = "00003800981";
-                string template = "print";
+                taiKhoanThanhToan = await _context.TaiKhoanThanhToan.FirstAsync();
+                string bankId = taiKhoanThanhToan.ten_ngan_hang;
+                string accountNumber = taiKhoanThanhToan.so_tai_khoan;
+                string template = "1";
                 string description = "Thanh Toan Hoa Don";
-                string accountName = "LE CONG NAM";
+                string accountName = taiKhoanThanhToan.ten_tai_khoan;
 
                 string qrCodeUrl = $"https://img.vietqr.io/image/{bankId}-{accountNumber}-{template}.png?amount={amount}&addInfo={description}&accountName={accountName}";
 
@@ -237,10 +239,6 @@ namespace DoAnTotNghiep.Pages
                 return Content("Không thể tạo mã QR: " + ex.Message);
             }
         }
-
-
-
-
         //Danh sách hóa đơn
         public IList<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
         public string DiaChi { get; set; }

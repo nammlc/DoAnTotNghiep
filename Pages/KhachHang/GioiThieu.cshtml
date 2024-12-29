@@ -1,0 +1,191 @@
+@page
+@{
+    Layout = "_KhachHangLayout";
+}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sản phẩm - Highlands Coffee</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+        }
+
+        header nav ul {
+            display: flex;
+            justify-content: center;
+            list-style-type: none;
+        }
+
+        header nav ul li {
+            margin: 0 20px;
+        }
+
+        header nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        main {
+            padding: 50px 20px;
+        }
+
+
+        .product-category.coffee {
+            background: linear-gradient(to top, #80322c 0%, #df8f83 50%, #fff 100%);
+            color: white;
+            transition: all 0.3s ease-in-out;
+        }
+
+
+        .product-category.freeze {
+            background: linear-gradient(to top, #408eee 0%, #82b0f2 50%, #fff 100%);
+            color: white;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .product-category.tea {
+            background: linear-gradient(to top, #9cdc90 0%, #9dd38f 50%, #fff 100%);
+            color: white;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .product-description {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-text {
+            width: 45%;
+            text-align: left;
+            padding-right: 20px;
+        }
+
+        .product-text h2 {
+            font-size: 32px;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+
+        .product-text p {
+            font-size: 18px;
+            color: #eee;
+        }
+
+        .product-text button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #fff;
+            color: #333;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .product-text button:hover {
+            background-color: #ddd;
+        }
+
+        .product-image {
+            width: 45%;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 85%;
+            height: auto;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+
+        }
+
+        .product-category:hover .product-image img {
+            transform: scale(1.1);
+            filter: blur(0);
+        }
+    </style>
+    <!-- Main content -->
+    <main>
+        <!-- Cà phê -->
+        <section class="product-category coffee">
+            <div class="product-description">
+                <div class="product-text">
+                    <h2>Cà phê</h2>
+                    <p>
+                        Đây là sản phẩm cà phê cao cấp của chúng tôi, được chọn lọc từ
+                        những hạt cà phê chất lượng nhất, mang đến một trải nghiệm tuyệt
+                        vời cho người dùng.
+                    </p>
+                     <a href="/khachhang/TrangChu?handler=edit&&id=17" style="text-decoration: none; color: #fff ;"><button>Xem chi tiết</button></a>
+                </div>
+                <div class="product-image">
+                    <img src="https://www.highlandscoffee.com.vn/vnt_upload/product/04_2023/PHIN_SUA_DA_5.1.png"
+                        alt="Cà phê" />
+                </div>
+            </div>
+        </section>
+
+        <!-- FREEZE -->
+        <section class="product-category freeze">
+            <div class="product-description">
+                <div class="product-image">
+                    <img src="https://www.highlandscoffee.com.vn/vnt_upload/product/06_2023/FREEZE-TRA-XANH-5.1.png" alt="Freeze" />
+                </div>
+                <div class="product-text">
+                    <h2>FREEZE</h2>
+                    <p>
+                        Sản phẩm FREEZE với hương vị mát lạnh và tươi mới, là sự kết hợp
+                        hoàn hảo giữa các loại trái cây và đá xay.
+                    </p>
+                     <a href="/khachhang/TrangChu?handler=edit&&id=15" style="text-decoration: none; color: #fff ;"><button>Xem chi tiết</button></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trà -->
+        <section class="product-category tea">
+            <div class="product-description">
+                <div class="product-text">
+                    <h2>Trà</h2>
+                    <p>
+                        Trà của chúng tôi được pha chế từ những lá trà tươi ngon, mang đến
+                        sự thư giãn và thanh lọc cơ thể.
+                    </p>
+                    <a href="/khachhang/TrangChu?handler=edit&&id=13" style="text-decoration: none; color: #fff ;"><button>Xem chi tiết</button></a>
+                    
+                </div>
+                <div class="product-image">
+                    <img src="https://www.highlandscoffee.com.vn/vnt_upload/product/06_2023/TRA-SEN-VANG-CN-5.1.png" alt="Trà" />
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
