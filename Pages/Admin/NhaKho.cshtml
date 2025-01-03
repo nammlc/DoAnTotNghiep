@@ -220,96 +220,6 @@
                 </div>
             </div>
         </div>
-
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                document.querySelector(".main-content_header button").addEventListener("click", function () {
-
-                    var myModal = new bootstrap.Modal(document.getElementById('addNewDishModal'), {
-                        keyboard: false
-                    });
-                    myModal.show();
-                });
-                document.getElementById("close-btn").addEventListener("click", function () {
-                    console.log("tắt modal");
-                    var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewDishModal'));
-                    if (myModal) {
-                        myModal.hide();
-                    }
-                });
-                document.getElementById("close-btn2").addEventListener("click", function () {
-                    var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewDishModal'));
-                    if (myModal) {
-                        myModal.hide();
-                    }
-                });
-
-
-                document.querySelectorAll(".edit-btn").forEach(function (div) {
-                    div.addEventListener("click", function () {
-                        var id = this.getAttribute('data-id');
-                        var editUrl = '@Url.Page("/MonAn")?handler=edit&&id=__id__'.replace('__id__', id);
-                        console.log(editUrl)
-
-                        window.location.href = editUrl;
-                    });
-                });
-
-                document.querySelectorAll(".delete-btn").forEach(function (div) {
-                    div.addEventListener("click", function () {
-                        deleteDishId = this.getAttribute("data-id");
-                        console.log(deleteDishId);
-                        var employeeCode = this.getAttribute("data-code");
-
-                        // Hiển thị mã món ăn trên modal
-                        document.getElementById("employeeCode").innerText = employeeCode;
-
-                        // Hiển thị modal
-                        $('#confirmDeleteModal').modal('show');
-                    });
-                });
-
-                document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
-                    if (deleteDishId) {
-
-                        const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                        fetch(`/Admin/MonAn?handler=Delete&id=${deleteDishId}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                "XSRF-TOKEN": csrfToken
-                            }
-                        })
-                            .then(response => {
-                                console.log(response.status)
-                                if (response.ok) {
-                                    alert("Xóa thành công");
-                                    window.location.reload();
-                                } else {
-                                    return response.text().then(text => {
-                                        alert("Xóa không thành công: " + text);
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Có lỗi xảy ra:', error);
-                                alert("Có lỗi xảy ra khi xóa.");
-                            })
-                            .finally(() => {
-                                $('#confirmDeleteModal').modal('hide');
-                            });
-                    }
-                });
-
-
-            });
-            document.getElementById("reloadBtn").addEventListener("click", function () {
-                window.location.reload();
-            });
-
-
-
-        </script>
         <script>
             const dishPerPage = 10; // Số món ăn mỗi trang
             let currentPage = 1; // Trang hiện tại
@@ -381,5 +291,95 @@
 
             showPage(currentPage, dishs);
         </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                document.querySelector(".main-content_header button").addEventListener("click", function () {
+
+                    var myModal = new bootstrap.Modal(document.getElementById('addNewStaffModal'), {
+                        keyboard: false
+                    });
+                    myModal.show();
+                });
+                document.getElementById("close-btn").addEventListener("click", function () {
+                    console.log("tắt modal");
+                    var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewStaffModal'));
+                    if (myModal) {
+                        myModal.hide();
+                    }
+                });
+                document.getElementById("close-btn2").addEventListener("click", function () {
+                    var myModal = bootstrap.Modal.getInstance(document.getElementById('addNewStaffModal'));
+                    if (myModal) {
+                        myModal.hide();
+                    }
+                });
+
+
+                document.querySelectorAll(".edit-btn").forEach(function (div) {
+                    div.addEventListener("click", function () {
+                        var id = this.getAttribute('data-id');
+                        var editUrl = '@Url.Page("/NhaKho")?handler=edit&&id=__id__'.replace('__id__', id);
+                        console.log(editUrl)
+
+                        window.location.href = editUrl;
+                    });
+                });
+
+                document.querySelectorAll(".delete-btn").forEach(function (div) {
+                    div.addEventListener("click", function () {
+                        deleteEmployeeId = this.getAttribute("data-id");
+                        console.log(deleteEmployeeId);
+                        var employeeCode = this.getAttribute("data-code");
+
+                        // Hiển thị mã nhân viên trên modal
+                        document.getElementById("employeeCode").innerText = employeeCode;
+
+                        // Hiển thị modal
+                        $('#confirmDeleteModal').modal('show');
+                    });
+                });
+
+                document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+                    if (deleteEmployeeId) {
+
+                        const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                        fetch(`/Admin/NhaKho?handler=Delete&id=${deleteEmployeeId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                "XSRF-TOKEN": csrfToken
+                            }
+                        })
+                            .then(response => {
+                                console.log(response.status)
+                                if (response.ok) {
+                                    alert("Xóa thành công");
+                                    window.location.reload();
+                                } else {
+                                    return response.text().then(text => {
+                                        alert("Xóa không thành công: " + text);
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Có lỗi xảy ra:', error);
+                                alert("Có lỗi xảy ra khi xóa.");
+                            })
+                            .finally(() => {
+                                $('#confirmDeleteModal').modal('hide');
+                            });
+                    }
+                });
+
+
+            });
+            document.getElementById("reloadBtn").addEventListener("click", function () {
+                window.location.reload();
+            });
+
+
+
+        </script>
     }
+
 }

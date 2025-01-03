@@ -27,14 +27,15 @@ namespace DoAnTotNghiep.Pages
         public List<int> RevenueData { get; set; }
         public string RevenueJson { get; set; } = "{}";
         public int SelectedMonth { get; set; }
-        public void OnGet(int month)
+        public void OnGet(int month, int year)
         {
             SelectedMonth = month;
-            int daysInMonth = DateTime.DaysInMonth(2024, month);
+            SelectedYear = year;
+            int daysInMonth = DateTime.DaysInMonth(year, month);
             RevenueData = new List<int>(new int[daysInMonth]);
             var dailyRevenueQuery = _context.HoaDon
-                .Where(h => h.gio_vao.HasValue && h.gio_vao.Value.Month == month && h.trang_thai == "Đã hoàn thành")
-                .GroupBy(h => h.gio_vao.Value.Day) 
+                .Where(h => h.gio_vao.HasValue && h.gio_vao.Value.Month == month && h.gio_vao.Value.Year == year && h.trang_thai == "Đã hoàn thành")
+                .GroupBy(h => h.gio_vao.Value.Day)
                 .Select(g => new { Day = g.Key, TotalRevenue = g.Sum(h => h.tong_tien) })
                 .ToList();
             foreach (var item in dailyRevenueQuery)

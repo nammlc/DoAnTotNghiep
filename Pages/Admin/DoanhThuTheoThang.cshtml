@@ -21,16 +21,21 @@
         <div class="text-center mt-3">
             <label for="selectYear" class="form-label">Chọn Năm:</label>
             <select id="selectYear" class="form-select w-auto d-inline">
-                <option value="2024">2024</option>
-                <option value="2023">2023</option>
-                <option value="2025">2025</option>
+                <option value="">Chọn Năm</option>
+                <option id="first_option" value=""></option>
+                <option id="second_option" value=""></option>
+                <option id="third_option" value=""></option>
             </select>
         </div>
+        <div style="position: relative; right: -42%;"><strong>Tổng doanh thu : @Model.totalBill.ToString("#,##0")
+                VNĐ</strong></div>
         <canvas id="chartDoanhSoTheoThang" class="mt-4" width="600px" height="250px"></canvas>
     </div>
 
     <script>
+        let currentYearr = new Date().getFullYear();
         const doanhSoTungThang = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueData));
+        const namDuocChon = @Model.SelectedYear;
         console.log(doanhSoTungThang);
         const monthlyRevenue = Array(12).fill(0);
 
@@ -57,13 +62,13 @@
                 responsive: true,
                 plugins: {
                     legend: { display: true },
-                    title: { display: true, text: `Doanh Số Theo Tháng (2023)` }
+                    title: { display: true, text: `Doanh Số Theo Tháng Trong Năm ${namDuocChon}` }
                 },
                 onClick: function (event, chartElements) {
                     if (chartElements.length > 0) {
                         const monthIndex = chartElements[0].index;
                         const selectedMonth = monthIndex + 1;
-                        window.location.href = `/admin/DoanhThuTheoNgay?month=${selectedMonth}`;
+                        window.location.href = `/admin/DoanhThuTheoNgay?month=${selectedMonth}&&year=${namDuocChon}`;
                     }
                 }
             }
@@ -76,25 +81,37 @@
         });
     </script>
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var toggleSidebar = document.getElementById("toggleSidebar");
-        var sidebar = document.querySelector(".sidebar");
-        var mainContent = document.querySelector(".main-content");
+        document.addEventListener("DOMContentLoaded", function () {
+            var toggleSidebar = document.getElementById("toggleSidebar");
+            var sidebar = document.querySelector(".sidebar");
+            var mainContent = document.querySelector(".main-content");
 
-        toggleSidebar.addEventListener("click", function () {
-            console.log("click")
-            if (sidebar.style.width === "55px") {
-                sidebar.style.width = "200px";
-                mainContent.style.paddingLeft = "23px";
-                toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-left" style="padding-right : 10px "></i> Thu gọn';
-            } else {
-                sidebar.style.width = "55px";
-                mainContent.style.paddingLeft = "30px";
-                toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
-            }
+            toggleSidebar.addEventListener("click", function () {
+                console.log("click")
+                if (sidebar.style.width === "55px") {
+                    sidebar.style.width = "200px";
+                    mainContent.style.paddingLeft = "23px";
+                    toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-left" style="padding-right : 10px "></i> Thu gọn';
+                } else {
+                    sidebar.style.width = "55px";
+                    mainContent.style.paddingLeft = "30px";
+                    toggleSidebar.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+                }
+            });
         });
-    });
-</script>
+    </script>
+    <script>
+        var first_option = document.getElementById("first_option");
+        var second_option = document.getElementById("second_option");
+        var third_option = document.getElementById("third_option");
+
+        first_option.value = currentYearr;
+        first_option.textContent = `${currentYearr}`;
+        second_option.value = currentYearr - 1;
+        second_option.textContent = `${currentYearr - 1}`;
+        third_option.value = currentYearr - 2;
+        third_option.textContent = `${currentYearr - 2}`;
+    </script>
 </body>
 
 </html>

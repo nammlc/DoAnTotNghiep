@@ -1,0 +1,58 @@
+@page
+@model DoAnTotNghiep.Pages.TestPayModel
+@{
+    ViewData["Title"] = "Thanh toán VNPAY";
+}
+
+<h2>Thanh toán VNPAY</h2>
+
+<form method="post" asp-page-handler="CreatePaymentUrl">
+    <div class="form-group">
+        <label for="ordertype">Loại hàng hóa</label>
+        <select name="ordertype" id="ordertype" class="form-control">
+            <option value="topup">Nạp tiền điện thoại</option>
+            <option value="billpayment">Thanh toán hóa đơn</option>
+            <option value="fashion">Thời trang</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="Amount">Số tiền</label>
+        <input class="form-control" id="Amount" name="Amount" type="text" value="100" />
+    </div>
+    <div class="form-group">
+        <label for="OrderDescription">Nội dung thanh toán</label>
+        <textarea class="form-control" id="OrderDescription"
+            name="OrderDescription">Thanh toan don hang thoi gian: 2025-01-03 22:00:56</textarea>
+    </div>
+    <div class="form-group">
+        <label for="bankcode">Ngân hàng</label>
+        <select name="bankcode" id="bankcode" class="form-control">
+            <option value="">Không chọn</option>
+            <option value="QRONLY">Thanh toan QRONLY</option>
+            <!-- Các ngân hàng khác -->
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="language">Ngôn ngữ</label>
+        <select name="language" id="language" class="form-control">
+            <option value="vn">Tiếng Việt</option>
+            <option value="en">English</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-default">Thanh toán Redirect</button>
+</form>
+
+@if (Model.PaymentUrl != null)
+{
+    <p>URL thanh toán: <a href="@Model.PaymentUrl" target="_blank">@Model.PaymentUrl</a></p>
+}
+
+@if (Model.PaymentResponse != null)
+{
+    <p>Kết quả thanh toán:</p>
+    <ul>
+        <li>Thành công: @Model.PaymentResponse.Success</li>
+        <li>Mã giao dịch: @Model.PaymentResponse.TransactionId</li>
+        <li>Thông tin đơn hàng: @Model.PaymentResponse.OrderDescription</li>
+    </ul>
+}

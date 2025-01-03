@@ -21,13 +21,16 @@ namespace DoAnTotNghiep.Pages
 
         public List<EmployeeSalary> EmployeeSalaries { get; set; } = new List<EmployeeSalary>();
         public int SelectedMonth { get; set; }
+        public int SelectedYear { get; set; }
 
-        public void OnGet(int month)
+
+        public void OnGet(int month, int year)
         {
             SelectedMonth = month;
+            SelectedYear = year;
             var hoaDonThang = _context.HoaDon
-                .Where(h => h.gio_vao.HasValue 
-                            && h.gio_vao.Value.Month == month 
+                .Where(h => h.gio_vao.HasValue && h.gio_vao.HasValue
+                            && h.gio_vao.Value.Month == month && h.gio_vao.Value.Year == SelectedYear
                             && h.trang_thai == "Đã hoàn thành"
                             && h.ten_kh == "Client")
                 .ToList();
@@ -36,10 +39,10 @@ namespace DoAnTotNghiep.Pages
             EmployeeSalaries = nhanVienList
                 .Select(nv =>
                 {
-                   
+
                     var hoaDonNhanVien = hoaDonThang
                         .Where(hd => hd.ten_nhan_vien == nv.ma_nhan_vien)
-                        .GroupBy(hd => hd.gio_vao.Value.Date) 
+                        .GroupBy(hd => hd.gio_vao.Value.Date)
                         .Count();
 
                     return new EmployeeSalary
@@ -47,20 +50,20 @@ namespace DoAnTotNghiep.Pages
                         EmployeeCode = nv.ma_nhan_vien,
                         EmployeeName = nv.ten_nhan_vien,
                         Position = nv.vi_tri,
-                        TotalSalary = hoaDonNhanVien * 300_000 
+                        TotalSalary = hoaDonNhanVien * 300_000
                     };
                 })
-                .Where(es => es.TotalSalary > 0) 
-                .OrderBy(es => es.EmployeeCode) 
+                .Where(es => es.TotalSalary > 0)
+                .OrderBy(es => es.EmployeeCode)
                 .ToList();
         }
 
         public class EmployeeSalary
         {
-            public string EmployeeName { get; set; } 
-            public string EmployeeCode { get; set; } 
-            public string Position { get; set; }   
-            public decimal TotalSalary { get; set; } 
+            public string EmployeeName { get; set; }
+            public string EmployeeCode { get; set; }
+            public string Position { get; set; }
+            public decimal TotalSalary { get; set; }
         }
     }
 }

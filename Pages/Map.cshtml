@@ -165,7 +165,7 @@
         overflow-x: auto;
         gap: 20px;
         white-space: nowrap;
-        
+
     }
 
     .menu-item {
@@ -174,7 +174,6 @@
         height: 150px;
         overflow: hidden;
         flex-shrink: 0;
-       
     }
 
     .menu-item img {
@@ -266,7 +265,8 @@
             if (hoadon.trang_thai != "Đã hoàn thành" && hoadon.ban_an_id == null && hoadon.trang_thai != "On Cart" &&
             hoadon.ten_kh == "Client" && hoadon.ten_nhan_vien != "Client")
             {
-                <option value="@hoadon.id">Tên KH: @hoadon.ten_ban ; Tổng hóa đơn: @hoadon.tong_tien.ToString("#,##0") VNĐ ;
+                <option value="@hoadon.id">Hóa đơn : @hoadon.id ; Tên KH: @hoadon.ten_ban ; Tổng hóa đơn:
+                    @hoadon.tong_tien.ToString("#,##0") VNĐ ;
                     Thời gian tạo hóa đơn : @hoadon.gio_vao </option>
             }
         }

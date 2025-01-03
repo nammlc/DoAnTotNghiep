@@ -9,7 +9,8 @@
     var userName = HttpContextAccessor.HttpContext?.Session.GetString("User");
     if (userName != "ADMIN01")
     {
-        <div style="position: relative; right: -23%; top : 40%"><strong> Bạn không có quyền sử dụng trang web này ! Vui lòng đăng nhập với
+        <div style="position: relative; right: -23%; top : 40%"><strong> Bạn không có quyền sử dụng trang web này ! Vui lòng
+                đăng nhập với
                 tài khoản của admin</strong></div>
     }
     else
@@ -17,9 +18,18 @@
 
 
         <div class="container mt-4">
-            <h2 class="text-center">Bảng Lương Nhân Viên</h2>
+            <h2 class="text-center"> Thống kê lương nhân viên năm @Model.SelectedYear</h2>
+            <div class="text-center mt-3">
+                <label for="selectYear" class="form-label">Chọn Năm:</label>
+                <select id="selectYear" class="form-select w-auto d-inline">
+                    <option value="">Chọn Năm</option>
+                    <option id="first_option" value=""></option>
+                    <option id="second_option" value=""></option>
+                    <option id="third_option" value=""></option>
+                </select>
+            </div>
             <!-- Biểu đồ -->
-            <canvas id="chartLuongTheoThang"></canvas>
+            <canvas id="chartLuongTheoThang" width="600" height="300"></canvas>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -27,7 +37,13 @@
         <script>
             let hoaDonData = @Html.Raw(Json.Serialize(Model.hoaDons));
             let nhanVienData = @Html.Raw(Json.Serialize(Model.nhanViens));
-
+            let selectedYear;
+            let currentYearr = new Date().getFullYear();
+            document.getElementById('selectYear').addEventListener('change', (e) => {
+                selectedYear = e.target.value;
+                window.location.href = `?selectedYear=${selectedYear}`;
+            });
+            console.log(selectedYear);
             // Đối tượng lưu trữ các ngày làm việc duy nhất cho từng nhân viên theo tháng
             const employeeDatesByMonth = {};
 
@@ -65,10 +81,6 @@
                     tongTienTheoThang[month] += luong; // Cộng lương vào tổng lương theo tháng
                 });
             });
-
-            // In ra tổng lương của tất cả nhân viên
-            console.log("Tổng lương của tất cả nhân viên:", tongTienTheoThang);
-
             // Vẽ biểu đồ tổng lương theo tháng
             const ctx = document.getElementById('chartLuongTheoThang').getContext('2d');
             const chart = new Chart(ctx, {
@@ -93,7 +105,7 @@
                         if (chartElements.length > 0) {
                             const monthIndex = chartElements[0].index;
                             const selectedMonth = monthIndex + 1;
-                            window.location.href = `/admin/ChiTietLuongNhanVien?month=${selectedMonth}`;
+                            window.location.href = `/admin/ChiTietLuongNhanVien?month=${selectedMonth}&&year=${@Model.SelectedYear}`;
                         }
                     }
                 }
@@ -107,7 +119,6 @@
                 var mainContent = document.querySelector(".main-content");
 
                 toggleSidebar.addEventListener("click", function () {
-                    console.log("click")
                     if (sidebar.style.width === "55px") {
                         sidebar.style.width = "200px";
                         mainContent.style.paddingLeft = "23px";
@@ -120,5 +131,19 @@
                 });
             });
         </script>
+        <script>
+
+            var first_option = document.getElementById("first_option");
+            var second_option = document.getElementById("second_option");
+            var third_option = document.getElementById("third_option");
+
+            first_option.value = currentYearr;
+            first_option.textContent = `${currentYearr}`;
+            second_option.value = currentYearr - 1;
+            second_option.textContent = `${currentYearr - 1}`;
+            third_option.value = currentYearr - 2;
+            third_option.textContent = `${currentYearr - 2}`;
+        </script>
+
     }
 }

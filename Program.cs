@@ -2,7 +2,7 @@ using MySql.Data.MySqlClient;
 using Microsoft.EntityFrameworkCore;
 using DoAnTotNghiep.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
-
+using DoAnTotNghiep.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +14,7 @@ builder.Services.AddDbContext<MyDbContext>(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
-
+builder.Services.AddScoped<VnPayService>();
 builder.Services.AddAntiforgery(options =>
 {
     options.HeaderName = "XSRF-TOKEN";

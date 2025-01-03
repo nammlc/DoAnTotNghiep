@@ -30,7 +30,7 @@ namespace DoAnTotNghiep.Pages
             nhanViens = await _context.NhanVien.ToListAsync();
 
             // Trả dữ liệu về trang dưới dạng JSON
-           return Page();
+            return Page();
         }
 
 

@@ -32,17 +32,17 @@
                                 <img src="~/image/order_online.png" alt="" width="45px" title="Danh sách đơn online"
                                     data-bs-toggle="modal" data-bs-target="#onlineOrdersModal">
                                 <span id="totalBills" style="
-                                    position: absolute;
-                                    top: -5px;
-                                    right: 0;
-                                    background-color: red;
-                                    color: white;
-                                    font-size: 14px;
-                                    font-weight: bold;
-                                    padding: 2px 6px;
-                                    border-radius: 50%;
-                                    min-width: 20px;
-                                    text-align: center;">
+                                        position: absolute;
+                                        top: -5px;
+                                        right: 0;
+                                        background-color: red;
+                                        color: white;
+                                        font-size: 14px;
+                                        font-weight: bold;
+                                        padding: 2px 6px;
+                                        border-radius: 50%;
+                                        min-width: 20px;
+                                        text-align: center;">
                                     @ViewData["TotalBill"]
                                 </span>
                             </div>
@@ -327,13 +327,13 @@
                         const listItem = document.createElement('li');
                         listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
                         listItem.innerHTML = `
-                                        <input type="checkbox" class="item-checkbox" data-name="${item.name}">
-                                        <div style="display: block; width: 45px; overflow-y: hidden;">${item.name}</div>
-                                        <span class="badge bg-primary rounded-pill" style="padding-right: 5px;">${formatCurrency(item.price * item.quantity)}.000 VNĐ</span>
-                                        <input type="number" value="${item.quantity}" class="form-control quantity-input" 
-                                            style="width: 60px;" data-name="${item.name}" min="1"/>
-                                        <button class="btn btn-danger remove-item" data-name="${item.name}">Xóa</button>
-                                    `;
+                                                    <input type="checkbox" class="item-checkbox" data-name="${item.name}">
+                                                    <div style="display: block; width: 45px; overflow-y: hidden;">${item.name}</div>
+                                                    <span class="badge bg-primary rounded-pill" style="padding-right: 5px;">${formatCurrency(item.price * item.quantity)}.000 VNĐ</span>
+                                                    <input type="number" value="${item.quantity}" class="form-control quantity-input" 
+                                                        style="width: 60px;" data-name="${item.name}" min="1"/>
+                                                    <button class="btn btn-danger remove-item" data-name="${item.name}">Xóa</button>
+                                                `;
                         orderList.appendChild(listItem);
                         total += item.price * item.quantity;
                     });
@@ -410,12 +410,12 @@
                     orderItems.forEach((item, index) => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                                        <td>${index + 1}</td> <!-- STT -->
-                                        <td>${item.name}</td> <!-- Tên Món -->
-                                        <td><strong>${formatCurrency(item.price)}.000 </strong>VND</td> 
-                                        <td>${item.quantity}</td> <!-- Số Lượng -->
-                                        <td><strong>${formatCurrency(item.price * item.quantity)}.000 </strong>VND</td> 
-                                    `;
+                                                    <td>${index + 1}</td> <!-- STT -->
+                                                    <td>${item.name}</td> <!-- Tên Món -->
+                                                    <td><strong>${formatCurrency(item.price)}.000 </strong>VND</td> 
+                                                    <td>${item.quantity}</td> <!-- Số Lượng -->
+                                                    <td><strong>${formatCurrency(item.price * item.quantity)}.000 </strong>VND</td> 
+                                                `;
                         orderTableBody.appendChild(row);
                         totalAmount += item.price * item.quantity;
                     });
@@ -603,8 +603,8 @@
                             if (data.success) {
                                 document.getElementById(`status-${orderId}`).innerText = "Đã duyệt";
                                 document.getElementById(`action-${orderId}`).innerHTML = `
-                                                    <button class="btn btn-primary" onclick="completeOrder(${orderId})" style="background-color : blue;">Hoàn thành đơn hàng</button>
-                                                `;
+                                                                <button class="btn btn-primary" onclick="completeOrder(${orderId})" style="background-color : blue;">Hoàn thành đơn hàng</button>
+                                                            `;
                                 alert(data.message);
                             } else {
                                 alert(data.message);
@@ -636,8 +636,8 @@
                             if (data.success) {
                                 document.getElementById(`status-${orderId}`).innerText = "Đơn bị từ chối";
                                 document.getElementById(`action-${orderId}`).innerHTML = `
-                                        <button class="btn btn-danger" style="background-color : red;">Đơn bị từ chối</button>
-                                        `;
+                                                    <button class="btn btn-danger" style="background-color : red;">Đơn bị từ chối</button>
+                                                    `;
                                 alert(data.message);
                             } else {
                                 alert(data.message);
@@ -669,8 +669,8 @@
                                 // Cập nhật giao diện
                                 document.getElementById(`status-${orderId}`).innerText = "Đã hoàn thành";
                                 document.getElementById(`action-${orderId}`).innerHTML = `
-                                            <span class="text-success">Đã hoàn thành</span>
-                                        `;
+                                                        <span class="text-success">Đã hoàn thành</span>
+                                                    `;
                                 alert(data.message);
                             } else {
                                 alert(data.message);
@@ -701,11 +701,11 @@
                         listMonAn.forEach(item => {
                             const row = document.createElement('tr');
                             row.innerHTML = `
-                                            <td><img src="${item.anh_minh_hoa}" alt="Ảnh món" style="width: 50px; height: auto;"></td>
-                                            <td>${item.ten_mon}</td>
-                                            <td>${(item.gia_tien).toLocaleString()} VNĐ</td>
-                                            <td>${item.so_luong}</td>
-                                        `;
+                                                        <td><img src="${item.anh_minh_hoa}" alt="Ảnh món" style="width: 50px; height: auto;"></td>
+                                                        <td>${item.ten_mon}</td>
+                                                        <td>${(item.gia_tien).toLocaleString()} VNĐ</td>
+                                                        <td>${item.so_luong}</td>
+                                                    `;
                             orderItemsTable.appendChild(row);
                         });
 
@@ -743,8 +743,6 @@
                         }
                     });
                 });
-
-
             </script>
 
         }

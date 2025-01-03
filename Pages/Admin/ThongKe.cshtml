@@ -8,7 +8,8 @@
     var userName = HttpContextAccessor.HttpContext?.Session.GetString("User");
     if (userName != "ADMIN01")
     {
-        <div style="position: relative; right: -23%; top : 40%"><strong> Bạn không có quyền sử dụng trang web này ! Vui lòng đăng nhập với
+        <div style="position: relative; right: -23%; top : 40%"><strong> Bạn không có quyền sử dụng trang web này ! Vui lòng
+                đăng nhập với
                 tài khoản của admin</strong></div>
     }
     else
@@ -107,12 +108,11 @@
                 // Hàm tính toán doanh thu và lợi nhuận
                 let totalRevenue = 0;
                 let totalProfit = 0;
-
+                let currentYear = new Date().getFullYear();
                 hoaDons.forEach(hoaDon => {
-                    if (hoaDon.trang_thai == "Đã hoàn thành") {
+                    let gioVaoDate = new Date(hoaDon.gio_vao);
+                    if (hoaDon.trang_thai == "Đã hoàn thành" && gioVaoDate.getFullYear() == currentYear) {
                         totalRevenue += hoaDon.tong_tien;
-
-                        // Giả sử lợi nhuận là 70% doanh thu
                         totalProfit += hoaDon.tong_tien * 0.7;
                     }
                 });
@@ -121,7 +121,6 @@
                 document.getElementById("tong-loi-nhuan").textContent = totalProfit.toLocaleString() + " VNĐ";
 
                 let currentMonth = new Date().getMonth() + 1;
-                let currentYear = new Date().getFullYear();
                 let totalSalary = 0;
                 let salaryPerDay = 300000;
                 let employeeAppearances = {};
@@ -133,12 +132,9 @@
                 hoaDons.forEach(hoaDon => {
                     let employeeName = hoaDon.ten_kh;
                     let employeeNameReal = hoaDon.ten_nhan_vien;
-
                     if (employeeNameReal && employeeName === "Client") {
                         let employeeDate = getDateFromString(hoaDon.gio_vao);
-
                         if (!employeeDate) return;
-
                         // Chỉ tính cho tháng và năm hiện tại
                         if (
                             employeeDate.getMonth() + 1 === currentMonth &&
@@ -147,7 +143,6 @@
                             if (!employeeAppearances[employeeNameReal]) {
                                 employeeAppearances[employeeNameReal] = new Set();
                             }
-
                             if (hoaDon.ten_kh === "Client" && hoaDon.trang_thai === "Đã hoàn thành") {
                                 employeeAppearances[employeeNameReal].add(employeeDate.toDateString());
                             }
@@ -162,8 +157,6 @@
 
                         let salary = appearances * salaryPerDay;
                         totalSalary += salary;
-                    } else {
-                        console.log(`No appearances data for employee with code: ${nhanVien.ma_nhan_vien}`);
                     }
                 });
 

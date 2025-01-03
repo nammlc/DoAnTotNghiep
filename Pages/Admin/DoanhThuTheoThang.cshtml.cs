@@ -26,13 +26,14 @@ namespace DoAnTotNghiep.Pages
         public int SelectedYear { get; set; }
         public Dictionary<int, long> RevenueData { get; set; } = new();
         public string RevenueJson { get; set; } = "{}";
+        public long totalBill{get;set;}
 
-        public async Task OnGetAsync(int? selectedYear)
+        public async Task<ActionResult> OnGetAsync(int? selectedYear)
         {
-            
+
             Years = await _context.HoaDon
-                .Where(h => h.gio_vao.HasValue) 
-                .Select(h => h.gio_vao.Value.Year) 
+                .Where(h => h.gio_vao.HasValue)
+                .Select(h => h.gio_vao.Value.Year)
                 .Distinct()
                 .OrderByDescending(y => y)
                 .ToListAsync();
@@ -42,17 +43,20 @@ namespace DoAnTotNghiep.Pages
             
             var revenue = await _context.HoaDon
                 .Where(h => h.gio_vao.HasValue && h.gio_vao.Value.Year == SelectedYear && h.trang_thai == "Đã hoàn thành")
-                .GroupBy(h => h.gio_vao.Value.Month) 
+                .GroupBy(h => h.gio_vao.Value.Month)
                 .Select(g => new
                 {
-                    Month = g.Key, 
+                    Month = g.Key,
                     TotalRevenue = g.Sum(h => h.tong_tien)
                 })
                 .ToListAsync();
 
             RevenueData = revenue.ToDictionary(r => r.Month, r => r.TotalRevenue);
-
+            foreach(var totalbill in revenue){
+                totalBill += totalbill.TotalRevenue;
+            }
             RevenueJson = System.Text.Json.JsonSerializer.Serialize(RevenueData);
+            return Page();
         }
     }
 }

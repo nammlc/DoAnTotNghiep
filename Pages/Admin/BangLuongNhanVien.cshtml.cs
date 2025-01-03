@@ -23,10 +23,14 @@ namespace DoAnTotNghiep.Pages
 
         public List<HoaDon> hoaDons { get; set; }
         public List<NhanVien> nhanViens { get; set; }
+        public int SelectedYear { get; set; }
 
-        public async Task<IActionResult> OnGet()
+        public async Task<IActionResult> OnGet(int? selectedYear)
         {
-            hoaDons = await _context.HoaDon.ToListAsync();
+            SelectedYear = selectedYear ?? DateTime.Now.Year;
+            hoaDons = await _context.HoaDon
+            .Where(h => h.gio_vao.HasValue && h.gio_vao.Value.Year == SelectedYear && h.trang_thai == "Đã hoàn thành")
+            .ToListAsync();
             nhanViens = await _context.NhanVien.ToListAsync();
             return Page();
         }
